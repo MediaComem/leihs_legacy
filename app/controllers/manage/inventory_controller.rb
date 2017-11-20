@@ -24,6 +24,7 @@ class Manage::InventoryController < Manage::ApplicationController
                             current_inventory_pool)
         responsibles = \
           InventoryPool
+            .only_active_inventory_pools
             .distinct
             .joins(:items)
             .where("items.id IN (#{items.select('items.id').to_sql})")

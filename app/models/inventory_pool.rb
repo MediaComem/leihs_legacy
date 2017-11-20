@@ -7,9 +7,9 @@ class InventoryPool < ApplicationRecord
   audited
 
   #################################################################################
-  default_scope do
-    where(is_active: true)
-  end
+  # default_scope do
+  #   where(is_active: true)
+  # end
   #################################################################################
 
   after_save do
@@ -152,6 +152,8 @@ class InventoryPool < ApplicationRecord
   end
 
   #######################################################################
+
+  scope :only_active_inventory_pools, -> { where(is_active: true) }
 
   scope :search, lambda { |query|
     sql = all

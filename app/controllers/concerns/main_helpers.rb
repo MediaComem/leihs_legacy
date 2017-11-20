@@ -21,7 +21,7 @@ module MainHelpers
     end
 
     def current_managed_inventory_pools
-      current_user.inventory_pools.managed.sort
+      current_user.inventory_pools.only_active_inventory_pools.managed.sort
     end
 
     def add_visitor(user)

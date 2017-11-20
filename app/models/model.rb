@@ -303,7 +303,9 @@ class Model < ApplicationRecord
   end
 
   def self.filter_for_user(models, params, user, category, borrowable = false)
-    models = user.models # FIXME: intersect with the models argument
+    # FIXME: intersect with the models argument
+    models = user.models.where(inventory_pools: { is_active: true })
+
     models = if category
                models.from_category_and_all_its_descendants(category)
              else
@@ -313,7 +315,8 @@ class Model < ApplicationRecord
     unless params[:inventory_pool_ids].blank?
       models = \
         models.all_from_inventory_pools \
-          user.inventory_pools.where(id: params[:inventory_pool_ids]).map(&:id)
+          user.inventory_pools.only_active_inventory_pools
+            .where(id: params[:inventory_pool_ids]).map(&:id)
     end
     models
   end

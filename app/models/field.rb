@@ -58,7 +58,9 @@ class Field < ApplicationRecord
   def values
     case data['values']
     when 'all_inventory_pools'
-      (InventoryPool.all.map { |x| { value: x.id, label: x.name } }).as_json
+      (InventoryPool.all.only_active_inventory_pools.map do |x|
+        { value: x.id, label: x.name }
+      end).as_json
     when 'all_buildings'
       Building.all.map { |x| { value: x.id, label: x.to_s } }.as_json
     when 'all_suppliers'
