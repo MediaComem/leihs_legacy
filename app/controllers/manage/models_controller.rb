@@ -112,6 +112,14 @@ class Manage::ModelsController < Manage::ApplicationController
     end
   end
 
+  def new_timeline
+    model = fetch_model
+    @props = {
+      model: model,
+      availability: model.availability_in(current_inventory_pool)
+    }
+  end
+
   private
 
   def fetch_model
