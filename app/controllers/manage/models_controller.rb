@@ -121,10 +121,16 @@ class Manage::ModelsController < Manage::ApplicationController
       [e, current_inventory_pool.entitlement_groups.find(e)]
     end.to_h
 
+    running_reservations = availability.running_reservations.map do |rr|
+      rr.reload
+      {id: rr.id, user: rr.user, group_id: rr.allocated_group_id, inventory_code: rr.item.try(:inventory_code)}
+    end
+
     @props = {
       model: model,
       availability: availability,
-      groups: groups
+      groups: groups,
+      running_reservations: running_reservations
     }
   end
 
