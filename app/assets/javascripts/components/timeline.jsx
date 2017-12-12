@@ -165,18 +165,7 @@
 
     },
 
-    renderTotal(d) {
-      return this.renderAnyQuantity(
-        'day_' + this.fullFormat(d),
-        this.totalQuantity(d)
-      )
-    },
 
-    renderTotals() {
-      return this.daysToShow().map((d) => {
-        return this.renderTotal(d)
-      })
-    },
 
     //
     // changesCount() {
@@ -219,13 +208,49 @@
       }
     },
 
-    renderAnyQuantity(key, value) {
+    renderAnyQuantity(text, day, key, value) {
+
+
+
+      if(day.isSame(this.firstDateToShow())) {
+
+        var colSpan = moment.duration(this.firstChangeAsMoment().diff(this.firstDateToShow())).asDays()
+
+        var tdStyle = {
+          padding: '5px',
+          paddingTop: '30px',
+          paddingBottom: '30px'
+        }
+
+        var divStyle = {
+          fontSize: '14px',
+          textAlign: 'right',
+          height: '30px',
+          paddingTop: '6px',
+          paddingRight: '20px'
+        }
+
+
+        return (
+          <td key={key} colSpan={colSpan} style={tdStyle}>
+            <div style={divStyle}>
+              {text}
+            </div>
+          </td>
+        )
+      } else if(day.isBefore(this.firstChangeAsMoment())) {
+        return null
+      }
+
+
+
       var tdStyle = {
         padding: '5px',
         paddingTop: '30px',
         border: 'dotted black',
         borderWidth: '0px 1px 0px 0px',
       }
+
 
       var signal = '#ada'
       if(value != null && value != undefined && value < 0) {
@@ -264,8 +289,19 @@
 
     },
 
+    renderTotal(d) {
+      return this.renderAnyQuantity(
+        'Total verfügbar',
+        d,
+        'day_' + this.fullFormat(d),
+        this.totalQuantity(d)
+      )
+    },
+
     renderGroupQuantity(d, group) {
       return this.renderAnyQuantity(
+        'Verfügbar in Gruppe \'' + group.name + '\'',
+        d,
         'group_day_' + this.fullFormat(d),
         this.groupQuantity(d, group)
       )
@@ -273,21 +309,29 @@
 
     renderGeneralQuantity(d) {
       return this.renderAnyQuantity(
+        'Verfügbar für alle',
+        d,
         'group_day_' + this.fullFormat(d),
         this.generalQuantity(d)
       )
     },
 
+    renderTotals() {
+      return _.compact(this.daysToShow().map((d) => {
+        return this.renderTotal(d)
+      }))
+    },
+
     renderGroupQuantities(group) {
-      return this.daysToShow().map((d) => {
+      return _.compact(this.daysToShow().map((d) => {
         return this.renderGroupQuantity(d, group)
-      })
+      }))
     },
 
     renderGeneralQuantities() {
-      return this.daysToShow().map((d) => {
+      return _.compact(this.daysToShow().map((d) => {
         return this.renderGeneralQuantity(d)
-      })
+      }))
     },
 
     renderGroup(group) {
@@ -411,7 +455,7 @@
       } else if(this.isStartReservationDay(rf, d)) {
         return (
           <td key={'group_reservation_day_' + rf.rid + '_' + this.fullFormat(d)} colSpan={this.reservationColspan(rf, d)} style={{padding: '5px 0px 5px 0px'}}>
-            <div style={{backgroundColor: '#adadad', fontSize: '12px', color: '#333', padding: '3px', overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'), height: '20px', paddingLeft: '6px'}}>
+            <div style={{backgroundColor: '#adadad', fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'), height: '20px', paddingLeft: '6px'}}>
               {this.renderReservationFrameContent(rf, d)}
             </div>
           </td>
