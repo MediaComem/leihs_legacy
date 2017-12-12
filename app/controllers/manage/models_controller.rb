@@ -122,9 +122,17 @@ class Manage::ModelsController < Manage::ApplicationController
 
   def new_timeline
     model = fetch_model
+
+    availability = model.availability_in(current_inventory_pool)
+
+    groups = availability.entitlements.keys.compact.map do |e|
+      [e, current_inventory_pool.entitlement_groups.find(e)]
+    end.to_h
+
     @props = {
       model: model,
-      availability: model.availability_in(current_inventory_pool)
+      availability: availability,
+      groups: groups
     }
   end
 
