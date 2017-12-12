@@ -46,11 +46,11 @@
     },
 
     firstDateToShow() {
-      return this.firstChangeAsMoment().add(- 1, 'month')
+      return moment(this.firstChangeAsMoment()).add(- 1, 'month')
     },
 
     lastDateToShow() {
-      return this.lastChangeAsMoment().add(1, 'month')
+      return moment(this.lastChangeAsMoment()).add(1, 'month')
     },
 
     numberOfDaysToShow() {
@@ -61,7 +61,7 @@
 
     daysToShow() {
       return _.range(0, this.numberOfDaysToShow()).map((d) => {
-        return this.firstDateToShow().add(d, 'days')
+        return moment(this.firstDateToShow()).add(d, 'days')
       })
     },
 
@@ -242,40 +242,116 @@
       )
     },
 
-    detailedReservations() {
-      return this.props.running_reservations
-    },
-
-    reservationsForGroup(group) {
-      return _.filter(this.detailedReservations(), (r) => {
-        return r.group_id == group.id
-      })
-    },
-
-    username(u) {
-      if(u.lastname) {
-        return u.firstname + ' ' + u.lastname
+    groupKey(groupId) {
+      if(!groupId) {
+        return ''
       } else {
-        return u.firstname
+        return groupId
       }
     },
 
-    renderGroupReservation(r) {
-      return (
-        <tr key={'group_reservation_' + r.id}>
-          <td>{this.username(r.user)}</td>
-        </tr>
+    collectReservationFrames(groupId) {
+
+      return _.reduce(
+        this.pairsMomentWithChange(),
+        (memo, p) => {
+          var day = _.first(p)
+          var changes = _.last(p)[this.groupKey(groupId)]
+          var rr = changes.running_reservations
+          // debugger
+
+          _.each(rr, (rid) => {
+            if(!memo[rid]) {
+              memo[rid] = {start: moment(day), end: null, rid}
+            }
+          })
+
+          _.each(memo, (frame, rid) => {
+            if(!_.contains(rr, rid)) {
+              if(!memo[rid].end) {
+                memo[rid].end = moment(day).add(- 1, 'days')
+              }
+            }
+          })
+
+          return memo
+        },
+        {}
       )
     },
 
-    renderGroupReservations(group) {
-      return this.reservationsForGroup(group).map((r) => {
-        return this.renderGroupReservation(r)
+    sortedReservationFrames(groupId) {
+      return _.sortBy(
+        this.collectReservationFrames(groupId),
+        (f) => {
+          var compare = ''
+          if(!f.start) {
+            compare += '0000-00-00'
+          } else {
+            compare += this.fullFormat(f.start)
+          }
+          compare += '/'
+          if(!f.end) {
+            compare += '9999-99-99'
+          } else {
+            compare += this.fullFormat(f.end)
+          }
+          return compare
+        }
+      )
+
+    },
+
+
+    renderReservationFrameContent(rf, d) {
+
+      if(!d.isBefore(rf.start, 'day') && !d.isAfter(rf.end, 'day')) {
+        return 'x'
+      } else {
+        return null
+      }
+
+    },
+
+    renderReservationFrameDay(rf, d) {
+      return (
+        <td key={'group_reservation_day_' + rf.rid + '_' + this.fullFormat(d)}>
+          {this.renderReservationFrameContent(rf, d)}
+        </td>
+
+      )
+    },
+
+    renderReservationFrameDays(rf) {
+      return this.daysToShow().map((d) => {
+        return this.renderReservationFrameDay(rf, d)
+      })
+    },
+
+
+    renderReservationFrame(rf) {
+
+      return (
+        <tr key={'group_reservation_' + rf.rid}>
+          {this.renderReservationFrameDays(rf)}
+        </tr>
+
+      )
+
+    },
+
+    renderGroupReservations(groupId) {
+      return this.sortedReservationFrames(groupId).map((rf) => {
+        return this.renderReservationFrame(rf)
       })
     },
 
     renderGroupAndReservations(group) {
-      return [this.renderGroup(group)].concat(this.renderGroupReservations(group))
+      return [this.renderGroup(group)].concat(this.renderGroupReservations(group.id))
+    },
+
+    renderGeneralAndReservations() {
+      return [this.renderGeneral()].concat(this.renderGroupReservations(null))
     },
 
     renderGeneral() {
@@ -292,7 +368,6 @@
 
 
     renderGroups() {
-
       return this.entitlements().map((e) => {
         return this.renderGroupAndReservations(this.groups()[e])
       })
@@ -313,7 +388,7 @@
               {this.renderTotals()}
             </tr>
             {this.renderGroups()}
-            {this.renderGeneral()}
+            {this.renderGeneralAndReservations()}
           </tbody>
         </table>
       )
