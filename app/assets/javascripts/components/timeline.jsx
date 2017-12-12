@@ -190,18 +190,21 @@
     //
     // },
 
-    entitlements() {
-      return _.compact(Object.keys(this.props.availability.entitlements))
-    },
-
     groups() {
       return this.props.groups
     },
 
     groupQuantity(d, group) {
-
       if(this.findChangeForDay(d)) {
         return this.findChangeForDay(d)[group.id].in_quantity
+      } else {
+        return null
+      }
+    },
+
+    generalQuantity(d) {
+      if(this.findChangeForDay(d)) {
+        return this.findChangeForDay(d)[''].in_quantity
       } else {
         return null
       }
@@ -213,27 +216,85 @@
       )
     },
 
+    renderGeneralQuantity(d) {
+      return (
+        <td key={'group_day_' + this.fullFormat(d)}>{this.generalQuantity(d)}</td>
+      )
+    },
+
     renderGroupQuantities(group) {
       return this.daysToShow().map((d) => {
         return this.renderGroupQuantity(d, group)
       })
+    },
 
+    renderGeneralQuantities() {
+      return this.daysToShow().map((d) => {
+        return this.renderGeneralQuantity(d)
+      })
     },
 
     renderGroup(group) {
-
       return (
         <tr key={'group_' + group.id}>
           {this.renderGroupQuantities(group)}
         </tr>
       )
-
     },
+
+    detailedReservations() {
+      return this.props.running_reservations
+    },
+
+    reservationsForGroup(group) {
+      return _.filter(this.detailedReservations(), (r) => {
+        return r.group_id == group.id
+      })
+    },
+
+    username(u) {
+      if(u.lastname) {
+        return u.firstname + ' ' + u.lastname
+      } else {
+        return u.firstname
+      }
+    },
+
+    renderGroupReservation(r) {
+      return (
+        <tr key={'group_reservation_' + r.id}>
+          <td>{this.username(r.user)}</td>
+        </tr>
+      )
+    },
+
+    renderGroupReservations(group) {
+      return this.reservationsForGroup(group).map((r) => {
+        return this.renderGroupReservation(r)
+      })
+    },
+
+    renderGroupAndReservations(group) {
+      return [this.renderGroup(group)].concat(this.renderGroupReservations(group))
+    },
+
+    renderGeneral() {
+      return (
+        <tr key={'general'}>
+          {this.renderGeneralQuantities()}
+        </tr>
+      )
+    },
+
+    entitlements() {
+      return _.compact(Object.keys(this.props.availability.entitlements))
+    },
+
 
     renderGroups() {
 
       return this.entitlements().map((e) => {
-        return this.renderGroup(this.groups()[e])
+        return this.renderGroupAndReservations(this.groups()[e])
       })
 
     },
@@ -252,6 +313,7 @@
               {this.renderTotals()}
             </tr>
             {this.renderGroups()}
+            {this.renderGeneral()}
           </tbody>
         </table>
       )
