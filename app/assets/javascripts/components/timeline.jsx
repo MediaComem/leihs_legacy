@@ -92,9 +92,17 @@
 
     renderMonths() {
 
+      var backgroundColor = (fd) => {
+        if(fd.month() % 2 == 1) {
+          return '#aaa'
+        } else {
+          return '#ccc'
+        }
+      }
+
       return this.firstDaysPerMonthToShow().map((fd) => {
         return (
-          <td key={'month_' + fd.format('YYYY-MM')} colSpan={this.daysToShowPerMonth(fd)}>{fd.format('MMM') + ' ' + fd.format('YYYY')}</td>
+          <td key={'month_' + fd.format('YYYY-MM')} colSpan={this.daysToShowPerMonth(fd)} style={{padding: '10px', backgroundColor: backgroundColor(fd), fontSize: '16px', textAlign: 'center'}}>{fd.format('MMM') + ' ' + fd.format('YYYY')}</td>
         )
       })
 
@@ -108,7 +116,7 @@
 
     renderDay(d) {
       return (
-        <td key={'day_' + this.fullFormat(d)}>{d.format('DD')}</td>
+        <td key={'day_' + this.fullFormat(d)} style={{padding: '10px', border: 'dotted black', borderWidth: '0px 1px 0px 0px', textAlign: 'center'}}>{d.format('DD')}</td>
       )
     },
 
@@ -158,8 +166,9 @@
     },
 
     renderTotal(d) {
-      return (
-        <td key={'day_' + this.fullFormat(d)}>{this.totalQuantity(d)}</td>
+      return this.renderAnyQuantity(
+        'day_' + this.fullFormat(d),
+        this.totalQuantity(d)
       )
     },
 
@@ -210,15 +219,62 @@
       }
     },
 
+    renderAnyQuantity(key, value) {
+      var tdStyle = {
+        padding: '5px',
+        paddingTop: '30px',
+        border: 'dotted black',
+        borderWidth: '0px 1px 0px 0px',
+      }
+
+      var signal = '#ada'
+      if(value != null && value != undefined && value < 0) {
+        signal = '#daa'
+      }
+
+      var divStyle = {
+        fontSize: '14px',
+        backgroundColor: signal,
+        borderRadius: '5px',
+        textAlign: 'center',
+        width: '30px',
+        height: '30px',
+        paddingTop: '6px'
+      }
+
+      var hiddenStyle = {
+        width: '30px',
+        height: '30px',
+        paddingTop: '6px'
+      }
+
+      if(value != null && value != undefined) {
+        return (
+          <td key={key} style={tdStyle}>
+            <div style={divStyle}>{value}</div>
+          </td>
+        )
+      } else {
+        return (
+          <td key={key} style={tdStyle}>
+            <div style={hiddenStyle}>{value}</div>
+          </td>
+        )
+      }
+
+    },
+
     renderGroupQuantity(d, group) {
-      return (
-        <td key={'group_day_' + this.fullFormat(d)}>{this.groupQuantity(d, group)}</td>
+      return this.renderAnyQuantity(
+        'group_day_' + this.fullFormat(d),
+        this.groupQuantity(d, group)
       )
     },
 
     renderGeneralQuantity(d) {
-      return (
-        <td key={'group_day_' + this.fullFormat(d)}>{this.generalQuantity(d)}</td>
+      return this.renderAnyQuantity(
+        'group_day_' + this.fullFormat(d),
+        this.generalQuantity(d)
       )
     },
 
@@ -303,23 +359,68 @@
     },
 
 
+    isStartReservationDay(rf, d) {
+      return d.isSame(rf.start, 'day')
+    },
+
+    isNoneReservationDay(rf, d) {
+      return d.isBefore(rf.start, 'day') || d.isAfter(rf.end, 'day')
+    },
+
+    reservationColspan(rf, d) {
+      return moment.duration(
+        rf.end.diff(rf.start)
+      ).asDays() + 1
+    },
+
+    reservationDetails(rf) {
+      return _.find(
+        this.props.running_reservations,
+        (rr) => {
+          return rr.id == rf.rid
+        }
+      )
+    },
+
+    reservationUsername(rf) {
+      var u = this.reservationDetails(rf).user
+      return u.firstname + ' ' + u.lastname
+    },
+
+
     renderReservationFrameContent(rf, d) {
 
-      if(!d.isBefore(rf.start, 'day') && !d.isAfter(rf.end, 'day')) {
-        return 'x'
-      } else {
-        return null
-      }
+      return this.reservationUsername(rf)
+      // if(!d.isBefore(rf.start, 'day') && !d.isAfter(rf.end, 'day')) {
+      //   return 'x'
+      // } else {
+      //   return null
+      // }
 
     },
 
-    renderReservationFrameDay(rf, d) {
-      return (
-        <td key={'group_reservation_day_' + rf.rid + '_' + this.fullFormat(d)}>
-          {this.renderReservationFrameContent(rf, d)}
-        </td>
 
-      )
+
+    renderReservationFrameDay(rf, d) {
+
+      if(this.isNoneReservationDay(rf, d)) {
+        return(
+          <td key={'group_reservation_day_' + rf.rid + '_' + this.fullFormat(d)} style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}>
+          </td>
+        )
+      } else if(this.isStartReservationDay(rf, d)) {
+        return (
+          <td key={'group_reservation_day_' + rf.rid + '_' + this.fullFormat(d)} colSpan={this.reservationColspan(rf, d)} style={{padding: '5px 0px 5px 0px'}}>
+            <div style={{backgroundColor: '#adadad', fontSize: '12px', color: '#333', padding: '3px', overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'), height: '20px', paddingLeft: '6px'}}>
+              {this.renderReservationFrameContent(rf, d)}
+            </div>
+          </td>
+        )
+      } else {
+        return (
+          null
+        )
+      }
     },
 
     renderReservationFrameDays(rf) {
