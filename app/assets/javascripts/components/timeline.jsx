@@ -19,7 +19,8 @@
       return Object.keys(this.changes()).sort()
     },
 
-    pairsMomentWithChange() {
+    pairsMomentWithChange() { return this.cached('pairsMomentWithChange', this._pairsMomentWithChange) },
+    _pairsMomentWithChange() {
       return this.changesAsStringDatesSorted().map((sd) => {
         return [
           this.parseFull(sd),
@@ -37,8 +38,8 @@
     //   )
     // },
 
-
-    firstReservationDayAsMoment() {
+    firstReservationDayAsMoment() { return this.cached('firstReservationDayAsMoment', this._firstReservationDayAsMoment) },
+    _firstReservationDayAsMoment() {
 
       if(this.firstReservationDayAsMomentCache) {
         return this.firstReservationDayAsMomentCache
@@ -67,13 +68,8 @@
       return mom
     },
 
-
-    lastReservationDayAsMoment() {
-
-
-      if(this.lastReservationDayAsMomentCache) {
-        return this.lastReservationDayAsMomentCache
-      }
+    lastReservationDayAsMoment() { return this.cached('lastReservationDayAsMoment', this._lastReservationDayAsMoment) },
+    _lastReservationDayAsMoment() {
 
       var mom = _.reduce(
         this.props.availability.running_reservations,
@@ -92,18 +88,46 @@
         null
       )
 
-
-      this.lastReservationDayAsMomentCache = mom
-
       return mom
 
     },
 
-    firstChangeAsMoment() {
+    cached(key, method) {
+      if(!this.cache) {
+        this.cache = {}
+      }
+      if(!this.cache[key]) {
+        this.cache[key] = method();
+      }
+      return this.cache[key]
+    },
+
+    cachedArg(arg, transform, key, method) {
+      if(!this.cache) {
+        this.cache = {}
+      }
+      if(!this.cache[key]) {
+        this.cache[key] = {}
+      }
+      var argKey = arg
+      if(transform) {
+        argKey = transform(arg);
+      }
+      if(!this.cache[key][argKey]) {
+        this.cache[key][argKey] = method(arg);
+      }
+      return this.cache[key][argKey]
+
+    },
+
+
+    firstChangeAsMoment() { return this.cached('firstChangeAsMoment', this._firstChangeAsMoment) },
+    _firstChangeAsMoment() {
       return _.first(_.first(this.pairsMomentWithChange()))
     },
 
-    lastChangeAsMoment() {
+    lastChangeAsMoment() { return this.cached('lastChangeAsMoment', this._lastChangeAsMoment) },
+    _lastChangeAsMoment() {
       return _.first(_.last(this.pairsMomentWithChange()))
     },
 
@@ -115,7 +139,8 @@
     //   return moment(this.lastChangeAsMoment()).add(1, 'month')
     // },
 
-    firstDateToShow() {
+    firstDateToShow() { return this.cached('firstDateToShow', this._firstDateToShow) },
+    _firstDateToShow() {
       return moment(
         moment.min(
           this.firstChangeAsMoment(),
@@ -124,7 +149,8 @@
       ).add(- 1, 'month')
     },
 
-    lastDateToShow() {
+    lastDateToShow() { return this.cached('lastDateToShow', this._lastDateToShow) },
+    _lastDateToShow() {
       return moment(
         moment.max(
           this.lastChangeAsMoment(),
@@ -133,19 +159,22 @@
       ).add(1, 'month')
     },
 
-    numberOfDaysToShow() {
+    numberOfDaysToShow() { return this.cached('numberOfDaysToShow', this._numberOfDaysToShow) },
+    _numberOfDaysToShow() {
       return moment.duration(
         this.lastDateToShow().diff(this.firstDateToShow())
       ).asDays()
     },
 
-    daysToShow() {
+    daysToShow() { return this.cached('daysToShow', this._daysToShow) },
+    _daysToShow() {
       return _.range(0, this.numberOfDaysToShow()).map((d) => {
         return moment(this.firstDateToShow()).add(d, 'days')
       })
     },
 
-    firstDaysPerMonthToShow() {
+    firstDaysPerMonthToShow() { return this.cached('firstDaysPerMonthToShow', this._firstDaysPerMonthToShow) },
+    _firstDaysPerMonthToShow() {
 
       return _.uniq(
         this.daysToShow(), false, (d) => {
@@ -206,7 +235,12 @@
       })
     },
 
-    findPairMomentWithChangeForDay(d) {
+    formatDate(d) {
+      return d.format('YYYY-MM-DD')
+    },
+
+    findPairMomentWithChangeForDay(d) { return this.cachedArg(d, this.formatDate, 'findPairMomentWithChangeForDay', this._findPairMomentWithChangeForDay) },
+    _findPairMomentWithChangeForDay(d) {
       var r = _.last(
         _.filter(
           this.pairsMomentWithChange(),
@@ -220,7 +254,7 @@
         return r
       }
 
-      console.log('find change for day ' + _.first(r).format('YYYY-MM-DD') + ' ' + this.lastChangeAsMoment().format('YYYY-MM-DD'))
+      // console.log('find change for day ' + _.first(r).format('YYYY-MM-DD') + ' ' + this.lastChangeAsMoment().format('YYYY-MM-DD'))
 
       if(d.isAfter(this.lastChangeAsMoment())) {
         return null
@@ -229,7 +263,8 @@
       }
     },
 
-    findChangeForDay(d) {
+    findChangeForDay(d) { return this.cachedArg(d, this.formatDate, 'findChangeForDay', this._findChangeForDay) },
+    _findChangeForDay(d) {
       if(this.findPairMomentWithChangeForDay(d)) {
         return _.last(this.findPairMomentWithChangeForDay(d))
       } else {
@@ -248,7 +283,6 @@
     },
 
     totalQuantity(d) {
-      console.log('total quantity ' + d.format('YYYY-MM-DD'))
       if(this.findChangeForDay(d)) {
         return this.sumQuantities(this.findChangeForDay(d))
       } else {
@@ -575,7 +609,8 @@
       }
     },
 
-    renderReservationFrameDays(rf) {
+    renderReservationFrameDays(rf) { return this.cachedArg(rf, (rf) => rf.rid, 'renderReservationFrameDays', this._renderReservationFrameDays) },
+    _renderReservationFrameDays(rf) {
       return this.daysToShow().map((d) => {
         return this.renderReservationFrameDay(rf, d)
       })
