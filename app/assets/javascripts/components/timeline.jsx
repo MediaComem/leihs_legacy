@@ -107,26 +107,30 @@
       return _.first(_.last(this.pairsMomentWithChange()))
     },
 
-    monthBeforefirstChange() {
-      return moment(this.firstChangeAsMoment()).add(- 1, 'month')
-    },
-
-    monthAfterFirstChange() {
-      return moment(this.lastChangeAsMoment()).add(1, 'month')
-    },
+    // monthBeforefirstChange() {
+    //   return moment(this.firstChangeAsMoment()).add(- 1, 'month')
+    // },
+    //
+    // monthAfterFirstChange() {
+    //   return moment(this.lastChangeAsMoment()).add(1, 'month')
+    // },
 
     firstDateToShow() {
-      return moment.min(
-        this.monthBeforefirstChange(),
-        this.firstReservationDayAsMoment()
-      )
+      return moment(
+        moment.min(
+          this.firstChangeAsMoment(),
+          this.firstReservationDayAsMoment()
+        )
+      ).add(- 1, 'month')
     },
 
     lastDateToShow() {
-      return moment.max(
-        this.monthAfterFirstChange(),
-        this.lastReservationDayAsMoment()
-      )
+      return moment(
+        moment.max(
+          this.lastChangeAsMoment(),
+          this.lastReservationDayAsMoment()
+        )
+      ).add(1, 'month')
     },
 
     numberOfDaysToShow() {
@@ -203,7 +207,7 @@
     },
 
     findPairMomentWithChangeForDay(d) {
-      return _.last(
+      var r = _.last(
         _.filter(
           this.pairsMomentWithChange(),
           (p) => {
@@ -211,6 +215,18 @@
           }
         )
       )
+
+      if(!r) {
+        return r
+      }
+
+      console.log('find change for day ' + _.first(r).format('YYYY-MM-DD') + ' ' + this.lastChangeAsMoment().format('YYYY-MM-DD'))
+
+      if(d.isAfter(this.lastChangeAsMoment())) {
+        return null
+      } else {
+        return r
+      }
     },
 
     findChangeForDay(d) {
@@ -232,6 +248,7 @@
     },
 
     totalQuantity(d) {
+      console.log('total quantity ' + d.format('YYYY-MM-DD'))
       if(this.findChangeForDay(d)) {
         return this.sumQuantities(this.findChangeForDay(d))
       } else {
@@ -519,7 +536,7 @@
 
     reservationUsername(rf) {
       var u = this.reservationDetails(rf).user
-      return u.firstname + ' ' + u.lastname
+      return u.firstname + ' ' + (u.lastname ? u.lastname : '')
     },
 
 
