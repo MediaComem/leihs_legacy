@@ -493,16 +493,16 @@
         this.collectReservationFrames(groupId),
         (f) => {
           var compare = ''
-          if(!f.start) {
+          if(!f.end) {
             compare += '0000-00-00'
           } else {
-            compare += this.fullFormat(f.start)
+            compare += this.fullFormat(f.end)
           }
           compare += '/'
-          if(!f.end) {
+          if(!f.start) {
             compare += '9999-99-99'
           } else {
-            compare += this.fullFormat(f.end)
+            compare += this.fullFormat(f.start)
           }
           return compare
         }
