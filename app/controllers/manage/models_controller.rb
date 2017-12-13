@@ -123,7 +123,7 @@ class Manage::ModelsController < Manage::ApplicationController
 
     running_reservations = availability.running_reservations.map do |rr|
       rr.reload
-      {id: rr.id, user: rr.user, group_id: rr.allocated_group_id, inventory_code: rr.item.try(:inventory_code)}
+      {id: rr.id, user: rr.user, group_id: rr.allocated_group_id, inventory_code: rr.item.try(:inventory_code), late: rr.late?}
     end
 
     @props = {
