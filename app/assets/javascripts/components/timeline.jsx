@@ -37,6 +37,68 @@
     //   )
     // },
 
+
+    firstReservationDayAsMoment() {
+
+      if(this.firstReservationDayAsMomentCache) {
+        return this.firstReservationDayAsMomentCache
+      }
+
+      var mom = _.reduce(
+        this.props.availability.running_reservations,
+        (memo, rr) => {
+          var d = this.parseFull(rr.start_date)
+          if(memo == null) {
+            return d
+          } else {
+            if(d.isBefore(memo)) {
+              return d
+            } else {
+              return memo
+            }
+          }
+        },
+        null
+      )
+
+
+      this.firstReservationDayAsMomentCache = mom
+
+      return mom
+    },
+
+
+    lastReservationDayAsMoment() {
+
+
+      if(this.lastReservationDayAsMomentCache) {
+        return this.lastReservationDayAsMomentCache
+      }
+
+      var mom = _.reduce(
+        this.props.availability.running_reservations,
+        (memo, rr) => {
+          var d = this.parseFull(rr.end_date)
+          if(memo == null) {
+            return d
+          } else {
+            if(d.isBefore(memo)) {
+              return d
+            } else {
+              return memo
+            }
+          }
+        },
+        null
+      )
+
+
+      this.lastReservationDayAsMomentCache = mom
+
+      return mom
+
+    },
+
     firstChangeAsMoment() {
       return _.first(_.first(this.pairsMomentWithChange()))
     },
@@ -45,12 +107,26 @@
       return _.first(_.last(this.pairsMomentWithChange()))
     },
 
-    firstDateToShow() {
+    monthBeforefirstChange() {
       return moment(this.firstChangeAsMoment()).add(- 1, 'month')
     },
 
-    lastDateToShow() {
+    monthAfterFirstChange() {
       return moment(this.lastChangeAsMoment()).add(1, 'month')
+    },
+
+    firstDateToShow() {
+      return moment.min(
+        this.monthBeforefirstChange(),
+        this.firstReservationDayAsMoment()
+      )
+    },
+
+    lastDateToShow() {
+      return moment.max(
+        this.monthAfterFirstChange(),
+        this.lastReservationDayAsMoment()
+      )
     },
 
     numberOfDaysToShow() {
@@ -352,32 +428,47 @@
 
     collectReservationFrames(groupId) {
 
-      return _.reduce(
-        this.pairsMomentWithChange(),
-        (memo, p) => {
-          var day = _.first(p)
-          var changes = _.last(p)[this.groupKey(groupId)]
-          var rr = changes.running_reservations
-          // debugger
+      return _.filter(this.props.running_reservations, (rr) => rr.group_id == groupId).map(
+        (rr) => {
+          return {
+            rr: rr,
+            arr: _.find(this.props.availability.running_reservations, (rr2) => rr2.id == rr.id)
+          }
+        }
+      ).map((prr) => {
+        return {
+          rid: prr.rr.id,
+          start: this.parseFull(prr.arr.start_date),
+          end: (prr.rr.late ? this.lastDateToShow() : this.parseFull(prr.arr.end_date))
+        }
+      })
 
-          _.each(rr, (rid) => {
-            if(!memo[rid]) {
-              memo[rid] = {start: moment(day), end: null, rid}
-            }
-          })
-
-          _.each(memo, (frame, rid) => {
-            if(!_.contains(rr, rid)) {
-              if(!memo[rid].end) {
-                memo[rid].end = moment(day).add(- 1, 'days')
-              }
-            }
-          })
-
-          return memo
-        },
-        {}
-      )
+      // return _.reduce(
+      //   this.pairsMomentWithChange(),
+      //   (memo, p) => {
+      //     var day = _.first(p)
+      //     var changes = _.last(p)[this.groupKey(groupId)]
+      //     var rr = changes.running_reservations
+      //     // debugger
+      //
+      //     _.each(rr, (rid) => {
+      //       if(!memo[rid]) {
+      //         memo[rid] = {start: moment(day), end: null, rid}
+      //       }
+      //     })
+      //
+      //     _.each(memo, (frame, rid) => {
+      //       if(!_.contains(rr, rid)) {
+      //         if(!memo[rid].end) {
+      //           memo[rid].end = moment(day).add(- 1, 'days')
+      //         }
+      //       }
+      //     })
+      //
+      //     return memo
+      //   },
+      //   {}
+      // )
     },
 
     sortedReservationFrames(groupId) {
