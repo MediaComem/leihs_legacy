@@ -52,9 +52,9 @@ window.TimelineRenderReservation = {
   },
 
 
-  renderReservationFrameDays(data, rf) {
+  renderReservationFrameDays(data, rfs) {
     return data.daysToShow.map((d) => {
-      return this.renderReservationFrameDay([rf], d)
+      return this.renderReservationFrameDay(rfs, d)
     })
   }
 
