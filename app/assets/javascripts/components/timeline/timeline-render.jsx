@@ -50,17 +50,17 @@ window.TimelineRender = {
     )
   },
 
-  renderGroupReservationTr(data, r) {
+  renderGroupReservationTr(data, rs, index) {
     return (
-      <tr key={'group_reservation_' + r.reservationId}>
-        {window.TimelineRenderReservation.renderReservationFrameDays(data, [r])}
+      <tr key={'group_reservation_line_' + index}>
+        {window.TimelineRenderReservation.renderReservationFrameDays(data, rs)}
       </tr>
     )
   },
 
   renderGroupReservationTrs(data, groupId) {
-    return data.reservationFrames[groupId].map((r) => {
-      return this.renderGroupReservationTr(data, r)
+    return data.reservationFrames[groupId].map((r, index) => {
+      return this.renderGroupReservationTr(data, [r], index)
     })
   },
 
