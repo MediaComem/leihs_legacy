@@ -672,7 +672,7 @@
 
       var data = this.processProps()
 
-      return (<div></div>)
+      return window.TimelineRender.renderTimeline(data)
 
       // return (
       //   <table>
