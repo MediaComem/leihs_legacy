@@ -1,5 +1,21 @@
 window.TimelineRender = {
 
+  groups(data) {
+    return data.props.groups
+  },
+
+  entitlementIds(data) {
+    return _.compact(Object.keys(data.props.availability.entitlements))
+  },
+
+  renderGroups(data) {
+    return this.entitlementIds(data).map((id) => {
+      return window.TimelineRenderGroup.renderGroup(data, this.groups(data)[id])
+      // return this.renderGroupAndReservations(this.groups()[id])
+    })
+
+  },
+
   renderTimeline(data) {
 
     return (
@@ -14,6 +30,7 @@ window.TimelineRender = {
           <tr>
             {window.TimelineRenderStatistics.renderTotals(data)}
           </tr>
+          {this.renderGroups(data)}
 
 
         </tbody>
