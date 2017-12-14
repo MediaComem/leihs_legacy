@@ -47,8 +47,16 @@ window.TimelineRenderHeader = {
 
 
   renderDay(d) {
+    var id = null
+    var backgroundColor = 'none'
+    if(d.isSame(moment(), 'day')) {
+      id = 'timeline_today'
+      backgroundColor = 'rgba(255, 0, 0, 0.1)'
+    }
+
+
     return (
-      <td key={'day_' + d.format('YYYY-MM-DD')} style={{padding: '10px', border: 'dotted black', borderWidth: '0px 1px 0px 0px', textAlign: 'center'}}>{d.format('DD')}</td>
+      <td id={id} key={'day_' + d.format('YYYY-MM-DD')} style={{backgroundColor: backgroundColor, padding: '10px', border: 'dotted black', borderWidth: '0px 1px 0px 0px', textAlign: 'center'}}>{d.format('DD')}</td>
     )
   },
 
