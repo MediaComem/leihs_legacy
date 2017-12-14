@@ -16,6 +16,22 @@ window.TimelineRender = {
 
   },
 
+  renderTotals(data) {
+
+    return window.TimelineRenderStatistics.renderStatisticsLine(
+      data,
+      'Total verfügbar',
+      'total',
+      window.TimelineTotalCalc.totalQuantity.bind(
+        window.TimelineTotalCalc
+      )
+      // this.renderQuantity.bind(this)
+    )
+
+
+  },
+
+
   renderTimeline(data) {
 
     return (
@@ -28,7 +44,7 @@ window.TimelineRender = {
             {window.TimelineRenderHeader.renderDays(data)}
           </tr>
           <tr>
-            {window.TimelineRenderStatistics.renderTotals(data)}
+            {this.renderTotals(data)}
           </tr>
           {this.renderGroups(data)}
 
