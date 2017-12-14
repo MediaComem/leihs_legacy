@@ -19,11 +19,21 @@ window.TimelineRenderReservation = {
     return d.format('YYYY-MM-DD')
   },
 
-  renderReservationFrameDay(rf, d) {
+  findReservationFrame(rfs, d) {
+    return _.find(rfs, (rf) => {
+      return !this.isNoneReservationDay(rf, d)
+    })
+  },
 
-    if(this.isNoneReservationDay(rf, d)) {
+  renderReservationFrameDay(rfs, d) {
+
+
+    var rf = this.findReservationFrame(rfs, d)
+
+
+    if(!rf) {
       return(
-        <td key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)} style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}>
+        <td key={'group_reservation_day_empty_' + this.momentIso(d)} style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}>
         </td>
       )
     } else if(this.isStartReservationDay(rf, d)) {
@@ -44,7 +54,7 @@ window.TimelineRenderReservation = {
 
   renderReservationFrameDays(data, rf) {
     return data.daysToShow.map((d) => {
-      return this.renderReservationFrameDay(rf, d)
+      return this.renderReservationFrameDay([rf], d)
     })
   }
 
