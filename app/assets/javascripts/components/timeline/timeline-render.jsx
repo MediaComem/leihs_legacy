@@ -32,15 +32,15 @@ window.TimelineRender = {
     )
   },
 
-  renderGeneral(data) {
-
-    return (
-      <tr key={'group_quantities_general'}>
-        {this.renderGroupQuantities(data, null, 'Ausleihbar für alle')}
-      </tr>
-    )
-
-  },
+  // renderGeneral(data) {
+  //
+  //   return (
+  //     <tr key={'group_quantities_general'}>
+  //       {this.renderGroupQuantities(data, null, 'Ausleihbar für alle')}
+  //     </tr>
+  //   )
+  //
+  // },
 
   renderGroupQuantitiesTr(data, groupId, label) {
     return (
