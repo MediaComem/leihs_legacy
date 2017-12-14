@@ -58,10 +58,60 @@ window.TimelineRender = {
     )
   },
 
-  layoutReservationFrames(rfs) {
-    return rfs.map((rf) => {
-      return [rf]
+  hasIntersection(rfs, rf) {
+
+    return _.find(rfs, (rfi) => {
+
+      var startA = rf.startMoment
+      var endA = rf.endMoment
+      var startB = rfi.startMoment
+      var endB = rfi.endMoment
+
+      if(startA.isAfter(endB) || startB.isAfter(endA)) {
+        return false
+      } else {
+        return true
+      }
+
     })
+
+  },
+
+  findNoneIntersectionLine(lines, rf) {
+    return _.find(lines, (line) => {
+      return !this.hasIntersection(line, rf)
+    })
+  },
+
+  layoutReservationFrames(rfs) {
+
+
+    return _.reduce(
+      rfs,
+      (memo, rf) => {
+
+        if(memo.length == 0) {
+          return memo.concat([[rf]])
+        } else {
+
+          var line = this.findNoneIntersectionLine(memo, rf)
+
+          if(!line) {
+            return memo.concat([[rf]])
+          } else {
+            line.push(rf)
+            return memo
+          }
+
+        }
+      },
+      []
+    ).map((line) => {
+      return _.sortBy(line, (rfi) => {
+        return rfi.startMoment.format('YYYY-MM-DD')
+      })
+    })
+
   },
 
   renderGroupReservationTrs(data, groupId) {
