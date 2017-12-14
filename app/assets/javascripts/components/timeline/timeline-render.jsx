@@ -58,9 +58,15 @@ window.TimelineRender = {
     )
   },
 
+  layoutReservationFrames(rfs) {
+    return rfs.map((rf) => {
+      return [rf]
+    })
+  },
+
   renderGroupReservationTrs(data, groupId) {
-    return data.reservationFrames[groupId].map((r, index) => {
-      return this.renderGroupReservationTr(data, [r], index)
+    return this.layoutReservationFrames(data.reservationFrames[groupId]).map((rfs, index) => {
+      return this.renderGroupReservationTr(data, rfs, index)
     })
   },
 
