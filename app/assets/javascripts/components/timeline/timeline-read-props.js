@@ -134,6 +134,7 @@ window.TimelineReadProps = {
         )
 
         return {
+          reservationId: rr.id,
           startMoment: this.parseMoment(rr.start_date),
           endMoment: this.parseMoment(rr.end_date),
           groupId: additionalInfo.group_id
