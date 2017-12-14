@@ -51,62 +51,9 @@ window.TimelineRenderStatistics = {
   },
 
 
-  sumQuantities(change) {
-    return _.reduce(
-      _.values(change),
-      (memo, c) => {
-        return memo + c.in_quantity
-      },
-      0
-    )
-  },
+  renderQuantity(data, day, lineKey, calculateQuantity) {
 
-
-  findInChangesList(data, d) {
-    var r = _.last(
-      _.filter(
-        data.changesList,
-        (p) => {
-          return !d.isBefore(p.moment, 'day')
-        }
-      )
-    )
-
-    if(!r) {
-      return r
-    }
-
-    if(d.isAfter(data.lastChangeMoment)) {
-      return null
-    } else {
-      return r
-    }
-  },
-
-
-  findChangesForDay(data, d) {
-    var foundChanges = this.findInChangesList(data, d)
-    if(foundChanges) {
-      return foundChanges.changes
-    } else {
-      null
-    }
-  },
-
-
-  totalQuantity(data, d) {
-    var changesForDay = this.findChangesForDay(data, d)
-    if(changesForDay) {
-      return this.sumQuantities(changesForDay)
-    } else {
-      return null
-    }
-  },
-
-
-  renderQuantity(data, day, lineKey) {
-
-    var value = this.totalQuantity(data, day)
+    var value = calculateQuantity(data, day)
 
     var tdStyle = {
       padding: '5px',
@@ -155,7 +102,7 @@ window.TimelineRenderStatistics = {
   },
 
 
-  renderStatisticsLine(data, label, lineKey, renderQuantity) {
+  renderStatisticsLine(data, label, lineKey, calculateQuantity) {
     return _.compact(
       data.daysToShow.map(
         (day) => {
@@ -166,23 +113,12 @@ window.TimelineRenderStatistics = {
           } else if(this.isDayCoverdByLabel(data, day)) {
             return null
           } else {
-            return renderQuantity(data, day, lineKey)
+            return this.renderQuantity(data, day, lineKey, calculateQuantity)
           }
         }
       )
     )
-  },
-
-
-  renderTotals(data) {
-
-    return this.renderStatisticsLine(
-      data,
-      'Total verfügbar',
-      'total',
-      this.renderQuantity.bind(this)
-    )
-
-
   }
+
+
 }
