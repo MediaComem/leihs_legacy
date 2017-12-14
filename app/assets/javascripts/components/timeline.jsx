@@ -627,24 +627,70 @@
 
     },
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // sortedReservationFrames(groupId) {
+    //   return _.sortBy(
+    //     this.collectReservationFrames(groupId),
+    //     (f) => {
+    //       var compare = ''
+    //       if(!f.end) {
+    //         compare += '0000-00-00'
+    //       } else {
+    //         compare += this.fullFormat(f.end)
+    //       }
+    //       compare += '/'
+    //       if(!f.start) {
+    //         compare += '9999-99-99'
+    //       } else {
+    //         compare += this.fullFormat(f.start)
+    //       }
+    //       return compare
+    //     }
+    //   )
+    //
+    // },
+
+
+    processProps() {
+      return window.TimelineReadProps.readProps(this.props)
+    },
+
+
     render () {
-      return (
-        <table>
-          <tbody>
-            <tr>
-              {this.renderMonths()}
-            </tr>
-            <tr>
-              {this.renderDays()}
-            </tr>
-            <tr>
-              {this.renderTotals()}
-            </tr>
-            {this.renderGroups()}
-            {this.renderGeneralAndReservations()}
-          </tbody>
-        </table>
-      )
+
+      var data = this.processProps()
+
+      return (<div></div>)
+
+      // return (
+      //   <table>
+      //     <tbody>
+      //       <tr>
+      //         {this.renderMonths()}
+      //       </tr>
+      //       <tr>
+      //         {this.renderDays()}
+      //       </tr>
+      //       <tr>
+      //         {this.renderTotals()}
+      //       </tr>
+      //       {this.renderGroups()}
+      //       {this.renderGeneralAndReservations()}
+      //     </tbody>
+      //   </table>
+      // )
     }
   })
 })()
