@@ -18,7 +18,7 @@ window.TimelineRender = {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
-      'Verfügbar in Gruppe \'' + group.name + '\'',
+      'Ausleihbar für Gruppe \'' + group.name + '\'',
       'group_' + group.id,
       groupQuantity
       // this.renderQuantity.bind(this)
@@ -35,7 +35,7 @@ window.TimelineRender = {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
-      'Verfügbar für alle',
+      'Ausleihbar für alle',
       'group_general',
       groupQuantity
       // this.renderQuantity.bind(this)
@@ -77,7 +77,7 @@ window.TimelineRender = {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
-      'Total verfügbar',
+      'Total ausleihbar',
       'total',
       window.TimelineTotalCalc.totalQuantity.bind(
         window.TimelineTotalCalc
