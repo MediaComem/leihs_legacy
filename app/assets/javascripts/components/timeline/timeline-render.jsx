@@ -53,7 +53,7 @@ window.TimelineRender = {
   renderGroupReservationTr(data, r) {
     return (
       <tr key={'group_reservation_' + r.reservationId}>
-        {window.TimelineRenderReservation.renderReservationFrameDays(data, r)}
+        {window.TimelineRenderReservation.renderReservationFrameDays(data, [r])}
       </tr>
     )
   },
