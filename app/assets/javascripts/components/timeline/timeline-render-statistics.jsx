@@ -23,7 +23,7 @@ window.TimelineRenderStatistics = {
     ).asDays()
   },
 
-  renderLabelTd(data) {
+  renderLabelTd(data, label, lineKey) {
     var colSpan = this.labelColspan(data)
 
     var tdStyle = {
@@ -40,13 +40,12 @@ window.TimelineRenderStatistics = {
       paddingRight: '20px'
     }
 
-    var text = 'Total verfügbar'
-    var key = 'label_' + 'total'
+    var key = 'label_' + lineKey
 
     return (
       <td key={key} colSpan={colSpan} style={tdStyle}>
         <div style={divStyle}>
-          {text}
+          {label}
         </div>
       </td>
     )
@@ -106,7 +105,7 @@ window.TimelineRenderStatistics = {
   },
 
 
-  renderQuantity(data, day) {
+  renderQuantity(data, day, lineKey) {
 
     var value = this.totalQuantity(data, day)
 
@@ -139,7 +138,7 @@ window.TimelineRenderStatistics = {
       paddingTop: '6px'
     }
 
-    var key = 'day_' + day.format('YYYY-MM-DD')
+    var key = lineKey + '_day_' + day.format('YYYY-MM-DD')
 
     if(value != null && value != undefined) {
       return (
@@ -156,16 +155,26 @@ window.TimelineRenderStatistics = {
     }
   },
 
-  renderTotal(data, day) {
+  renderQuantitiesWithLabel(data, day, label, lineKey, renderQuantity) {
 
     if(this.isLabelTd(data, day)) {
-      return this.renderLabelTd(data)
+      return this.renderLabelTd(data, label, lineKey)
     } else if(this.isDayCoverdByLabel(data, day)) {
       return null
     } else {
-      return this.renderQuantity(data, day)
+      return renderQuantity(data, day, lineKey)
     }
 
+  },
+
+  renderTotal(data, day) {
+    return this.renderQuantitiesWithLabel(
+      data,
+      day,
+      'Total verfügbar',
+      'total',
+      this.renderQuantity.bind(this)
+    )
   },
 
   renderTotals(data) {
