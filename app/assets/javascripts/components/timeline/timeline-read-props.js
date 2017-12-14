@@ -207,6 +207,7 @@ window.TimelineReadProps = {
     var daysToShow = this.daysToShow(startBoundaryMoment, numberOfDaysToShow)
 
     return {
+      props: props,
       changesList: changesList,
       firstChangeMoment: firstChangeMoment,
       lastChangeMoment: lastChangeMoment,
