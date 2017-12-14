@@ -137,7 +137,7 @@ window.TimelineReadProps = {
         if(additionalInfo.user) {
           username += additionalInfo.user.firstname
           if(additionalInfo.user.lastname) {
-            username += additionalInfo.user.lastname
+            username += ' ' + additionalInfo.user.lastname
           }
         }
 
