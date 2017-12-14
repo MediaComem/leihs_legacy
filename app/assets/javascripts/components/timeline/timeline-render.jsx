@@ -8,9 +8,66 @@ window.TimelineRender = {
     return _.compact(Object.keys(data.props.availability.entitlements))
   },
 
+
+
+  renderGroupQuantities(data, group) {
+
+    var groupQuantity = function(data, d) {
+      return window.TimelineGroupCalc.groupQuantity(data, group.id, d)
+    }
+
+    return window.TimelineRenderStatistics.renderStatisticsLine(
+      data,
+      'Verfügbar in Gruppe \'' + group.name + '\'',
+      'group_' + group.id,
+      groupQuantity
+      // this.renderQuantity.bind(this)
+    )
+
+
+
+  },
+
+  renderGeneralQuantities(data) {
+    var groupQuantity = function(data, d) {
+      return window.TimelineGroupCalc.groupQuantity(data, null, d)
+    }
+
+    return window.TimelineRenderStatistics.renderStatisticsLine(
+      data,
+      'Verfügbar für alle',
+      'group_general',
+      groupQuantity
+      // this.renderQuantity.bind(this)
+    )
+
+
+  },
+
+  renderGeneral(data) {
+
+    return (
+      <tr key={'group_quantities_general'}>
+        {this.renderGeneralQuantities(data)}
+      </tr>
+    )
+
+  },
+
+
+  renderGroup(data, group) {
+
+    return (
+      <tr key={'group_quantities_' + group.id}>
+        {this.renderGroupQuantities(data, group)}
+      </tr>
+    )
+
+  },
+
   renderGroups(data) {
     return this.entitlementIds(data).map((id) => {
-      return window.TimelineRenderGroup.renderGroup(data, this.groups(data)[id])
+      return this.renderGroup(data, this.groups(data)[id])
       // return this.renderGroupAndReservations(this.groups()[id])
     })
 
@@ -47,7 +104,7 @@ window.TimelineRender = {
             {this.renderTotals(data)}
           </tr>
           {this.renderGroups(data)}
-
+          {this.renderGeneral(data)}
 
         </tbody>
       </table>
