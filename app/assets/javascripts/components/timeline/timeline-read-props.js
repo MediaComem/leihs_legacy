@@ -85,7 +85,7 @@ window.TimelineReadProps = {
   },
 
 
-  firstMoment(firstChangeMoment, firstReservationMoment) {
+  startBoundaryMoment(firstChangeMoment, firstReservationMoment) {
     return moment(
       moment.min(
         firstChangeMoment,
@@ -94,7 +94,7 @@ window.TimelineReadProps = {
     ).add(- 1, 'month')
   },
 
-  lastMoment(lastChangeMoment, lastReservationMoment) {
+  endBoundaryMoment(lastChangeMoment, lastReservationMoment) {
     return moment(
       moment.max(
         lastChangeMoment,
@@ -182,8 +182,8 @@ window.TimelineReadProps = {
     var lastChangeMoment = this.lastChangeMoment(changesList);
     var firstReservationMoment = this.firstReservationMoment();
     var lastReservationMoment = this.lastReservationMoment();
-    var firstMoment = this.firstMoment(firstChangeMoment, firstReservationMoment);
-    var lastMoment = this.lastMoment(lastChangeMoment, lastReservationMoment);
+    var startBoundaryMoment = this.startBoundaryMoment(firstChangeMoment, firstReservationMoment);
+    var endBoundaryMoment = this.endBoundaryMoment(lastChangeMoment, lastReservationMoment);
     var reservationFrames = this.reservationFrames();
 
     return {
@@ -192,8 +192,8 @@ window.TimelineReadProps = {
       lastChangeMoment: lastChangeMoment,
       firstReservationMoment: firstReservationMoment,
       lastReservationMoment: lastReservationMoment,
-      firstMoment: firstMoment,
-      lastMoment: lastMoment,
+      startBoundaryMoment: startBoundaryMoment,
+      endBoundaryMoment: endBoundaryMoment,
       reservationFrames: reservationFrames
     }
   }
