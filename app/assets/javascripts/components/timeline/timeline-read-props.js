@@ -119,7 +119,7 @@ window.TimelineReadProps = {
   },
 
 
-  flatReservationFrames() {
+  flatReservationFrames(endBoundaryMoment) {
 
     return _.map(
       this.XXXavailability().running_reservations,
@@ -133,23 +133,32 @@ window.TimelineReadProps = {
           }
         )
 
+        var username = ''
+        if(additionalInfo.user) {
+          username += additionalInfo.user.firstname
+          if(additionalInfo.user.lastname) {
+            username += additionalInfo.user.lastname
+          }
+        }
+
         return {
           reservationId: rr.id,
           startMoment: this.parseMoment(rr.start_date),
-          endMoment: this.parseMoment(rr.end_date),
-          groupId: additionalInfo.group_id
+          endMoment: (additionalInfo.late ? endBoundaryMoment : this.parseMoment(rr.end_date)),
+          groupId: additionalInfo.group_id,
+          username: username
         }
       }
     )
   },
 
-  groupedReservationFrames() {
-    return _.groupBy(this.flatReservationFrames(), 'groupId')
+  groupedReservationFrames(endBoundaryMoment) {
+    return _.groupBy(this.flatReservationFrames(endBoundaryMoment), 'groupId')
   },
 
-  reservationFrames() {
+  reservationFrames(endBoundaryMoment) {
     return _.mapObject(
-      this.groupedReservationFrames(),
+      this.groupedReservationFrames(endBoundaryMoment),
       (reservations) => {
         return _.sortBy(
           reservations,
@@ -203,7 +212,7 @@ window.TimelineReadProps = {
     var lastReservationMoment = this.lastReservationMoment()
     var startBoundaryMoment = this.startBoundaryMoment(firstChangeMoment, firstReservationMoment)
     var endBoundaryMoment = this.endBoundaryMoment(lastChangeMoment, lastReservationMoment)
-    var reservationFrames = this.reservationFrames()
+    var reservationFrames = this.reservationFrames(endBoundaryMoment)
     var numberOfDaysToShow = this.numberOfDaysToShow(startBoundaryMoment, endBoundaryMoment)
     var daysToShow = this.daysToShow(startBoundaryMoment, numberOfDaysToShow)
 

@@ -5,59 +5,47 @@ window.TimelineRender = {
   },
 
   entitlementIds(data) {
-    return _.compact(Object.keys(data.props.availability.entitlements))
+
+    return Object.keys(data.props.availability.entitlements).map((k) => {
+      if(k == '') {
+        return null
+      } else {
+        return k
+      }
+    })
   },
 
 
 
-  renderGroupQuantities(data, group) {
+  renderGroupQuantities(data, groupId, label) {
 
     var groupQuantity = function(data, d) {
-      return window.TimelineGroupCalc.groupQuantity(data, group.id, d)
+      return window.TimelineGroupCalc.groupQuantity(data, groupId, d)
     }
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
-      'Ausleihbar für Gruppe \'' + group.name + '\'',
-      'group_' + group.id,
+      label, //'Ausleihbar für Gruppe \'' + groupName + '\'',
+      'group_' + groupId,
       groupQuantity
       // this.renderQuantity.bind(this)
     )
-
-
-
-  },
-
-  renderGeneralQuantities(data) {
-    var groupQuantity = function(data, d) {
-      return window.TimelineGroupCalc.groupQuantity(data, null, d)
-    }
-
-    return window.TimelineRenderStatistics.renderStatisticsLine(
-      data,
-      'Ausleihbar für alle',
-      'group_general',
-      groupQuantity
-      // this.renderQuantity.bind(this)
-    )
-
-
   },
 
   renderGeneral(data) {
 
     return (
       <tr key={'group_quantities_general'}>
-        {this.renderGeneralQuantities(data)}
+        {this.renderGroupQuantities(data, null, 'Ausleihbar für alle')}
       </tr>
     )
 
   },
 
-  renderGroupQuantitiesTr(data, group) {
+  renderGroupQuantitiesTr(data, groupId, label) {
     return (
-      <tr key={'group_quantities_' + group.id}>
-        {this.renderGroupQuantities(data, group)}
+      <tr key={'group_quantities_' + groupId}>
+        {this.renderGroupQuantities(data, groupId, label)}
       </tr>
     )
   },
@@ -80,13 +68,6 @@ window.TimelineRender = {
     return d.format('YYYY-MM-DD')
   },
 
-  reservationFrameUsername(rf) {
-    return 'test'
-    // var u = this.reservationDetails(rf).user
-    // return u.firstname + ' ' + (u.lastname ? u.lastname : '')
-  },
-
-
   renderReservationFrameDay(rf, d) {
 
     if(this.isNoneReservationDay(rf, d)) {
@@ -98,7 +79,7 @@ window.TimelineRender = {
       return (
         <td key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)} colSpan={this.reservationColspan(rf, d)} style={{padding: '5px 0px 5px 0px'}}>
           <div style={{backgroundColor: '#adadad', fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}>
-            {this.reservationFrameUsername(rf)}
+            {rf.username}
           </div>
         </td>
       )
@@ -124,23 +105,27 @@ window.TimelineRender = {
     )
   },
 
-  renderGroupReservationTrs(data, group) {
-    return data.reservationFrames[group.id].map((r) => {
+  renderGroupReservationTrs(data, groupId) {
+    return data.reservationFrames[groupId].map((r) => {
       return this.renderGroupReservationTr(data, r)
     })
   },
 
 
-  renderGroup(data, group) {
+  renderGroup(data, groupId, label) {
     return [
-      this.renderGroupQuantitiesTr(data, group),
-      this.renderGroupReservationTrs(data, group)
+      this.renderGroupQuantitiesTr(data, groupId, label),
+      this.renderGroupReservationTrs(data, groupId)
     ]
   },
 
   renderGroups(data) {
     return this.entitlementIds(data).map((id) => {
-      return this.renderGroup(data, this.groups(data)[id])
+
+      var groupId = id
+      var label = (id ? ('Ausleihbar für Gruppe \'' + this.groups(data)[groupId].name + '\'') : ('Ausleihbar für alle'))
+
+      return this.renderGroup(data, groupId, label)
       // return this.renderGroupAndReservations(this.groups()[id])
     })
 
@@ -181,7 +166,6 @@ window.TimelineRender = {
             {this.renderTotals(data)}
           </tr>
           {this.renderGroups(data)}
-          {this.renderGeneral(data)}
         </tbody>
       </table>
     )
