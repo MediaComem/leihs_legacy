@@ -39,7 +39,7 @@ window.TimelineRenderReservation = {
     } else if(this.isStartReservationDay(rf, d)) {
       return (
         <td key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)} colSpan={this.reservationColspan(rf, d)} style={{padding: '5px 0px 5px 0px'}}>
-          <div style={{backgroundColor: '#adadad', fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}>
+          <div style={{marginLeft: '2px', marginRight: '2px', backgroundColor: '#adadad', fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}>
             {rf.username}
           </div>
         </td>
