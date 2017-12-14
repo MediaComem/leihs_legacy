@@ -1,5 +1,7 @@
 window.TimelineFindChanges = {
 
+  // TODO This finding iteratively is not performant.
+
   findInChangesList(data, d) {
     var r = _.last(
       _.filter(
