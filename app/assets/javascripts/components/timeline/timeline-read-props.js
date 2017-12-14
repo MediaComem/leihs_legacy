@@ -173,18 +173,38 @@ window.TimelineReadProps = {
   },
 
 
+
+
+
+
+
+  numberOfDaysToShow(startBoundaryMoment, endBoundaryMoment) {
+    return moment.duration(
+      endBoundaryMoment.diff(startBoundaryMoment)
+    ).asDays()
+  },
+
+  daysToShow(startBoundaryMoment, numberOfDaysToShow) {
+    return _.range(0, numberOfDaysToShow).map((d) => {
+      return moment(startBoundaryMoment).add(d, 'days')
+    })
+  },
+
+
   readProps(props) {
 
     this.props = props
 
-    var changesList = this.changesList();
-    var firstChangeMoment = this.firstChangeMoment(changesList);
-    var lastChangeMoment = this.lastChangeMoment(changesList);
-    var firstReservationMoment = this.firstReservationMoment();
-    var lastReservationMoment = this.lastReservationMoment();
-    var startBoundaryMoment = this.startBoundaryMoment(firstChangeMoment, firstReservationMoment);
-    var endBoundaryMoment = this.endBoundaryMoment(lastChangeMoment, lastReservationMoment);
-    var reservationFrames = this.reservationFrames();
+    var changesList = this.changesList()
+    var firstChangeMoment = this.firstChangeMoment(changesList)
+    var lastChangeMoment = this.lastChangeMoment(changesList)
+    var firstReservationMoment = this.firstReservationMoment()
+    var lastReservationMoment = this.lastReservationMoment()
+    var startBoundaryMoment = this.startBoundaryMoment(firstChangeMoment, firstReservationMoment)
+    var endBoundaryMoment = this.endBoundaryMoment(lastChangeMoment, lastReservationMoment)
+    var reservationFrames = this.reservationFrames()
+    var numberOfDaysToShow = this.numberOfDaysToShow(startBoundaryMoment, endBoundaryMoment)
+    var daysToShow = this.daysToShow(startBoundaryMoment, numberOfDaysToShow)
 
     return {
       changesList: changesList,
@@ -194,7 +214,9 @@ window.TimelineReadProps = {
       lastReservationMoment: lastReservationMoment,
       startBoundaryMoment: startBoundaryMoment,
       endBoundaryMoment: endBoundaryMoment,
-      reservationFrames: reservationFrames
+      reservationFrames: reservationFrames,
+      numberOfDaysToShow: numberOfDaysToShow,
+      daysToShow: daysToShow
     }
   }
 
