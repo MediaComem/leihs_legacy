@@ -23,8 +23,7 @@ window.TimelineRenderStatistics = {
     ).asDays()
   },
 
-  renderLabelTd(data, label, lineKey) {
-    var colSpan = this.labelColspan(data)
+  renderLabelTd(data, label, lineKey, colSpan) {
 
     var tdStyle = {
       padding: '5px',
@@ -155,36 +154,35 @@ window.TimelineRenderStatistics = {
     }
   },
 
-  renderQuantitiesWithLabel(data, day, label, lineKey, renderQuantity) {
 
-    if(this.isLabelTd(data, day)) {
-      return this.renderLabelTd(data, label, lineKey)
-    } else if(this.isDayCoverdByLabel(data, day)) {
-      return null
-    } else {
-      return renderQuantity(data, day, lineKey)
-    }
+  renderStatisticsLine(data, label, lineKey, renderQuantity) {
+    return _.compact(
+      data.daysToShow.map(
+        (day) => {
 
+          if(this.isLabelTd(data, day)) {
+            var colSpan = this.labelColspan(data)
+            return this.renderLabelTd(data, label, lineKey, colSpan)
+          } else if(this.isDayCoverdByLabel(data, day)) {
+            return null
+          } else {
+            return renderQuantity(data, day, lineKey)
+          }
+        }
+      )
+    )
   },
 
-  renderTotal(data, day) {
-    return this.renderQuantitiesWithLabel(
+
+  renderTotals(data) {
+
+    return this.renderStatisticsLine(
       data,
-      day,
       'Total verfügbar',
       'total',
       this.renderQuantity.bind(this)
     )
-  },
 
-  renderTotals(data) {
 
-    return _.compact(
-      data.daysToShow.map(
-        (d) => {
-          return this.renderTotal(data, d)
-        }
-      )
-    )
   }
 }
