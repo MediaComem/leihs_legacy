@@ -43,6 +43,24 @@ window.TimelineRenderHeader = {
 
 
 
+  renderEmpty(d) {
+    var backgroundColor = 'none'
+    if(d.isSame(moment(), 'day')) {
+      backgroundColor = 'rgba(255, 0, 0, 0.1)'
+    }
+
+
+    return (
+      <td key={'day_empty_' + d.format('YYYY-MM-DD')} style={{backgroundColor: backgroundColor, padding: '3px', border: 'dotted black', borderWidth: '0px 1px 0px 0px', textAlign: 'center'}}></td>
+    )
+  },
+
+  renderEmpties(data) {
+    return data.daysToShow.map((d) => {
+      return this.renderEmpty(d)
+    })
+
+  },
 
 
 
