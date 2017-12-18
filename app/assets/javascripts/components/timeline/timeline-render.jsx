@@ -51,11 +51,14 @@ window.TimelineRender = {
   },
 
   renderGroupReservationTr(data, rs, index) {
-    return (
+    return [
+      <tr key='a'>
+        {window.TimelineRenderHeader.renderEmpties(data)}
+      </tr>,
       <tr key={'group_reservation_line_' + index}>
         {window.TimelineRenderReservation.renderReservationFrameDays(data, rs)}
       </tr>
-    )
+    ]
   },
 
   hasIntersection(rfs, rf) {
