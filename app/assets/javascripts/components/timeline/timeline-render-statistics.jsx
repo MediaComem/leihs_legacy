@@ -28,7 +28,9 @@ window.TimelineRenderStatistics = {
     var tdStyle = {
       padding: '5px',
       paddingTop: '30px',
-      paddingBottom: '30px'
+      paddingBottom: '30px',
+      border: 'dotted black',
+      borderWidth: '0px 1px 0px 0px'
     }
 
     var divStyle = {
@@ -55,12 +57,19 @@ window.TimelineRenderStatistics = {
 
     var value = calculateQuantity(data, day)
 
+    var backgroundColor = 'none'
+    if(day.isSame(moment(), 'day')) {
+      backgroundColor = 'rgba(255, 0, 0, 0.1)'
+    }
+
     var tdStyle = {
       padding: '5px',
       paddingTop: '30px',
       border: 'dotted black',
       borderWidth: '0px 1px 0px 0px',
+      backgroundColor: backgroundColor
     }
+
 
 
     var signal = '#ada'
