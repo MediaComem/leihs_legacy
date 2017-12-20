@@ -17,7 +17,7 @@ window.TimelineRender = {
 
 
 
-  renderGroupQuantities(data, fromDay, toDay, groupId, label) {
+  renderGroupQuantities(data, visibleDaysToShow, groupId, label) {
 
     var groupQuantity = function(data, d) {
       return window.TimelineGroupCalc.groupQuantity(data, groupId, d)
@@ -25,8 +25,7 @@ window.TimelineRender = {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
-      fromDay,
-      toDay,
+      visibleDaysToShow,
       label, //'Ausleihbar für Gruppe \'' + groupName + '\'',
       'group_' + groupId,
       groupQuantity
@@ -44,21 +43,21 @@ window.TimelineRender = {
   //
   // },
 
-  renderGroupQuantitiesTr(data, fromDay, toDay, groupId, label) {
+  renderGroupQuantitiesTr(data, visibleDaysToShow, groupId, label) {
     return (
       <tr key={'group_quantities_' + groupId}>
-        {this.renderGroupQuantities(data, fromDay, toDay, groupId, label)}
+        {this.renderGroupQuantities(data, visibleDaysToShow, groupId, label)}
       </tr>
     )
   },
 
-  renderGroupReservationTr(data, fromDay, toDay, rs, index) {
+  renderGroupReservationTr(data, visibleDaysToShow, rs, index) {
     return [
       <tr key='a'>
-        {window.TimelineRenderHeader.renderEmpties(data, fromDay, toDay)}
+        {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow)}
       </tr>,
       <tr key={'group_reservation_line_' + index}>
-        {window.TimelineRenderReservation.renderReservationFrameDays(data, fromDay, toDay, rs, data.endBoundaryMoment)}
+        {window.TimelineRenderReservation.renderReservationFrameDays(data, visibleDaysToShow, rs, data.endBoundaryMoment)}
       </tr>
     ]
   },
@@ -121,27 +120,27 @@ window.TimelineRender = {
 
   },
 
-  renderGroupReservationTrs(data, fromDay, toDay, groupId) {
+  renderGroupReservationTrs(data, visibleDaysToShow, groupId) {
     return this.layoutReservationFrames(data.reservationFrames[groupId]).map((rfs, index) => {
-      return this.renderGroupReservationTr(data, fromDay, toDay, rfs, index)
+      return this.renderGroupReservationTr(data, visibleDaysToShow, rfs, index)
     })
   },
 
 
-  renderGroup(data, fromDay, toDay, groupId, label) {
+  renderGroup(data, visibleDaysToShow, groupId, label) {
     return [
-      this.renderGroupQuantitiesTr(data, fromDay, toDay, groupId, label),
-      this.renderGroupReservationTrs(data, fromDay, toDay, groupId)
+      this.renderGroupQuantitiesTr(data, visibleDaysToShow, groupId, label),
+      this.renderGroupReservationTrs(data, visibleDaysToShow, groupId)
     ]
   },
 
-  renderGroups(data, fromDay, toDay) {
+  renderGroups(data, visibleDaysToShow) {
     return this.entitlementIds(data).map((id) => {
 
       var groupId = id
       var label = (id ? ('Ausleihbar für Gruppe \'' + this.groups(data)[groupId].name + '\'') : ('Ausleihbar für alle'))
 
-      return this.renderGroup(data, fromDay, toDay, groupId, label)
+      return this.renderGroup(data, visibleDaysToShow, groupId, label)
       // return this.renderGroupAndReservations(this.groups()[id])
     })
 
@@ -151,12 +150,11 @@ window.TimelineRender = {
   //   this.renderGroups(data).concat(this.red)
   // },
 
-  renderTotals(data, fromDay, toDay) {
+  renderTotals(data, visibleDaysToShow) {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
-      fromDay,
-      toDay,
+      visibleDaysToShow,
       'Total ausleihbar',
       'total',
       window.TimelineTotalCalc.totalQuantity.bind(
@@ -169,21 +167,21 @@ window.TimelineRender = {
   },
 
 
-  renderTimeline(data, fromDay, toDay) {
+  renderTimeline(data, visibleDaysToShow) {
 
     return (
       <table>
         <tbody>
           <tr>
-            {window.TimelineRenderHeader.renderMonths(data, fromDay, toDay)}
+            {window.TimelineRenderHeader.renderMonths(data, visibleDaysToShow)}
           </tr>
           <tr>
-            {window.TimelineRenderHeader.renderDays(data, fromDay, toDay)}
+            {window.TimelineRenderHeader.renderDays(data, visibleDaysToShow)}
           </tr>
           <tr>
-            {this.renderTotals(data, fromDay, toDay)}
+            {this.renderTotals(data, visibleDaysToShow)}
           </tr>
-          {this.renderGroups(data, fromDay, toDay)}
+          {this.renderGroups(data, visibleDaysToShow)}
         </tbody>
       </table>
     )

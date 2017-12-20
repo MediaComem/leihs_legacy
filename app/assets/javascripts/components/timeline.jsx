@@ -705,7 +705,17 @@
 
       var data = this.processProps()
 
-      return window.TimelineRender.renderTimeline(data, data.firstChangeMoment, data.lastChangeMoment)
+      var fromDay = data.firstChangeMoment
+      var toDay = data.lastChangeMoment
+
+      var visibleDaysToShow = _.filter(
+        data.daysToShow,
+        (d) => {
+          return !d.isBefore(fromDay, 'day') && !d.isAfter(toDay, 'day')
+        }
+      )
+
+      return window.TimelineRender.renderTimeline(data, visibleDaysToShow)
 
       // return (
       //   <table>
