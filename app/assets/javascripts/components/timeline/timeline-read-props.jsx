@@ -53,7 +53,7 @@ window.TimelineReadProps = {
         if(memo == null) {
           return d
         } else {
-          if(d.isBefore(memo)) {
+          if(d.isBefore(memo, 'day')) {
             return d
           } else {
             return memo

@@ -24,7 +24,7 @@ window.TimelineRenderHeader = {
     )
   },
 
-  renderMonths(data) {
+  renderMonths(data, fromDay, toDay) {
 
     var backgroundColor = (fd) => {
       if(fd.month() % 2 == 1) {
@@ -79,7 +79,7 @@ window.TimelineRenderHeader = {
   },
 
 
-  renderDays(data) {
+  renderDays(data, fromDay, toDay) {
     return data.daysToShow.map((d) => {
       return this.renderDay(d)
     })

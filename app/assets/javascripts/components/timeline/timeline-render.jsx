@@ -165,16 +165,25 @@ window.TimelineRender = {
   },
 
 
+  fromDay(data) {
+    return data.firstChangeMoment
+  },
+
+  toDay(data) {
+    return data.lastChangeMoment
+  },
+
+
   renderTimeline(data) {
 
     return (
       <table>
         <tbody>
           <tr>
-            {window.TimelineRenderHeader.renderMonths(data)}
+            {window.TimelineRenderHeader.renderMonths(data, this.fromDay(data), this.toDay(data))}
           </tr>
           <tr>
-            {window.TimelineRenderHeader.renderDays(data)}
+            {window.TimelineRenderHeader.renderDays(data, this.fromDay(data), this.toDay(data))}
           </tr>
           <tr>
             {this.renderTotals(data)}
