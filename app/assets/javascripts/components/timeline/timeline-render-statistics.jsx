@@ -14,7 +14,7 @@ window.TimelineRenderStatistics = {
   },
 
   isDayCoverdByLabel(data, day) {
-    return day.isBefore(data.firstChangeMoment)
+    return day.isBefore(data.firstChangeMoment, 'day')
   },
 
   labelColspan(data) {

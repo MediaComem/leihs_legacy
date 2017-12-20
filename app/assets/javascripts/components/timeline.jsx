@@ -51,7 +51,7 @@
           if(memo == null) {
             return d
           } else {
-            if(d.isBefore(memo)) {
+            if(d.isBefore(memo, 'day')) {
               return d
             } else {
               return memo
@@ -82,7 +82,7 @@
           if(memo == null) {
             return d
           } else {
-            if(d.isBefore(memo)) {
+            if(d.isBefore(memo, 'day')) {
               return d
             } else {
               return memo
@@ -331,7 +331,7 @@
             </div>
           </td>
         )
-      } else if(day.isBefore(this.firstChangeAsMoment())) {
+      } else if(day.isBefore(this.firstChangeAsMoment(), 'day')) {
         return null
       }
 
