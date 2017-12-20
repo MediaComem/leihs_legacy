@@ -55,7 +55,7 @@ window.TimelineRenderHeader = {
     )
   },
 
-  renderEmpties(data) {
+  renderEmpties(data, fromDay, toDay) {
     return data.daysToShow.map((d) => {
       return this.renderEmpty(d)
     })

@@ -52,13 +52,13 @@ window.TimelineRender = {
     )
   },
 
-  renderGroupReservationTr(data, rs, index) {
+  renderGroupReservationTr(data, fromDay, toDay, rs, index) {
     return [
       <tr key='a'>
-        {window.TimelineRenderHeader.renderEmpties(data)}
+        {window.TimelineRenderHeader.renderEmpties(data, fromDay, toDay)}
       </tr>,
       <tr key={'group_reservation_line_' + index}>
-        {window.TimelineRenderReservation.renderReservationFrameDays(data, rs, data.endBoundaryMoment)}
+        {window.TimelineRenderReservation.renderReservationFrameDays(data, fromDay, toDay, rs, data.endBoundaryMoment)}
       </tr>
     ]
   },
@@ -123,7 +123,7 @@ window.TimelineRender = {
 
   renderGroupReservationTrs(data, fromDay, toDay, groupId) {
     return this.layoutReservationFrames(data.reservationFrames[groupId]).map((rfs, index) => {
-      return this.renderGroupReservationTr(data, rfs, index)
+      return this.renderGroupReservationTr(data, fromDay, toDay, rfs, index)
     })
   },
 
