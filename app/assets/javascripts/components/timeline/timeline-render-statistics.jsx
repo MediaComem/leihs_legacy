@@ -111,7 +111,7 @@ window.TimelineRenderStatistics = {
   },
 
 
-  renderStatisticsLine(data, fromDay, toDay, label, lineKey, calculateQuantity) {
+  renderStatisticsLine(data, visibleDaysToShow, label, lineKey, calculateQuantity) {
     return _.compact(
       data.daysToShow.map(
         (day) => {

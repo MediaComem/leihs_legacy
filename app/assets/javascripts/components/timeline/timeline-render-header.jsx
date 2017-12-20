@@ -16,6 +16,10 @@ window.TimelineRenderHeader = {
     )
   },
 
+  visibleDaysToShow(data, visibleDaysToShow) {
+    return data.daysToShow
+  },
+
   firstDaysPerMonth(data) {
     return _.uniq(
       data.daysToShow, false, (d) => {
@@ -24,7 +28,7 @@ window.TimelineRenderHeader = {
     )
   },
 
-  renderMonths(data, fromDay, toDay) {
+  renderMonths(data, visibleDaysToShow) {
 
     var backgroundColor = (fd) => {
       if(fd.month() % 2 == 1) {
@@ -55,7 +59,7 @@ window.TimelineRenderHeader = {
     )
   },
 
-  renderEmpties(data, fromDay, toDay) {
+  renderEmpties(data, visibleDaysToShow) {
     return data.daysToShow.map((d) => {
       return this.renderEmpty(d)
     })
@@ -79,7 +83,7 @@ window.TimelineRenderHeader = {
   },
 
 
-  renderDays(data, fromDay, toDay) {
+  renderDays(data, visibleDaysToShow) {
     return data.daysToShow.map((d) => {
       return this.renderDay(d)
     })
