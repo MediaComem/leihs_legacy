@@ -705,8 +705,11 @@
 
       var data = this.processProps()
 
-      var fromDay = data.firstChangeMoment
-      var toDay = data.lastChangeMoment
+      var fromDay = moment(data.firstChangeMoment)
+      var toDay = moment(data.lastChangeMoment)
+
+      fromDay.add(- 1, 'month')
+      toDay.add(1, 'month')
 
       var visibleDaysToShow = _.filter(
         data.daysToShow,
