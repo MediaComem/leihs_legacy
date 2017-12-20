@@ -17,7 +17,7 @@ window.TimelineRender = {
 
 
 
-  renderGroupQuantities(data, groupId, label) {
+  renderGroupQuantities(data, fromDay, toDay, groupId, label) {
 
     var groupQuantity = function(data, d) {
       return window.TimelineGroupCalc.groupQuantity(data, groupId, d)
@@ -25,6 +25,8 @@ window.TimelineRender = {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
+      fromDay,
+      toDay,
       label, //'Ausleihbar für Gruppe \'' + groupName + '\'',
       'group_' + groupId,
       groupQuantity
@@ -42,10 +44,10 @@ window.TimelineRender = {
   //
   // },
 
-  renderGroupQuantitiesTr(data, groupId, label) {
+  renderGroupQuantitiesTr(data, fromDay, toDay, groupId, label) {
     return (
       <tr key={'group_quantities_' + groupId}>
-        {this.renderGroupQuantities(data, groupId, label)}
+        {this.renderGroupQuantities(data, fromDay, toDay, groupId, label)}
       </tr>
     )
   },
@@ -119,27 +121,27 @@ window.TimelineRender = {
 
   },
 
-  renderGroupReservationTrs(data, groupId) {
+  renderGroupReservationTrs(data, fromDay, toDay, groupId) {
     return this.layoutReservationFrames(data.reservationFrames[groupId]).map((rfs, index) => {
       return this.renderGroupReservationTr(data, rfs, index)
     })
   },
 
 
-  renderGroup(data, groupId, label) {
+  renderGroup(data, fromDay, toDay, groupId, label) {
     return [
-      this.renderGroupQuantitiesTr(data, groupId, label),
-      this.renderGroupReservationTrs(data, groupId)
+      this.renderGroupQuantitiesTr(data, fromDay, toDay, groupId, label),
+      this.renderGroupReservationTrs(data, fromDay, toDay, groupId)
     ]
   },
 
-  renderGroups(data) {
+  renderGroups(data, fromDay, toDay) {
     return this.entitlementIds(data).map((id) => {
 
       var groupId = id
       var label = (id ? ('Ausleihbar für Gruppe \'' + this.groups(data)[groupId].name + '\'') : ('Ausleihbar für alle'))
 
-      return this.renderGroup(data, groupId, label)
+      return this.renderGroup(data, fromDay, toDay, groupId, label)
       // return this.renderGroupAndReservations(this.groups()[id])
     })
 
@@ -149,10 +151,12 @@ window.TimelineRender = {
   //   this.renderGroups(data).concat(this.red)
   // },
 
-  renderTotals(data) {
+  renderTotals(data, fromDay, toDay) {
 
     return window.TimelineRenderStatistics.renderStatisticsLine(
       data,
+      fromDay,
+      toDay,
       'Total ausleihbar',
       'total',
       window.TimelineTotalCalc.totalQuantity.bind(
@@ -186,9 +190,9 @@ window.TimelineRender = {
             {window.TimelineRenderHeader.renderDays(data, this.fromDay(data), this.toDay(data))}
           </tr>
           <tr>
-            {this.renderTotals(data)}
+            {this.renderTotals(data, this.fromDay(data), this.toDay(data))}
           </tr>
-          {this.renderGroups(data)}
+          {this.renderGroups(data, this.fromDay(data), this.toDay(data))}
         </tbody>
       </table>
     )
