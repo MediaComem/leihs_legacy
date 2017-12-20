@@ -81,7 +81,7 @@ window.TimelineRenderReservation = {
   },
 
 
-  renderReservationFrameDays(data, rfs, endBoundaryMoment) {
+  renderReservationFrameDays(data, fromDay, toDay, rfs, endBoundaryMoment) {
     return data.daysToShow.map((d) => {
       return this.renderReservationFrameDay(rfs, d, endBoundaryMoment)
     })
