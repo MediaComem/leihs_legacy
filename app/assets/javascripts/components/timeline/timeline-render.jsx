@@ -169,30 +169,21 @@ window.TimelineRender = {
   },
 
 
-  fromDay(data) {
-    return data.firstChangeMoment
-  },
-
-  toDay(data) {
-    return data.lastChangeMoment
-  },
-
-
-  renderTimeline(data) {
+  renderTimeline(data, fromDay, toDay) {
 
     return (
       <table>
         <tbody>
           <tr>
-            {window.TimelineRenderHeader.renderMonths(data, this.fromDay(data), this.toDay(data))}
+            {window.TimelineRenderHeader.renderMonths(data, fromDay, toDay)}
           </tr>
           <tr>
-            {window.TimelineRenderHeader.renderDays(data, this.fromDay(data), this.toDay(data))}
+            {window.TimelineRenderHeader.renderDays(data, fromDay, toDay)}
           </tr>
           <tr>
-            {this.renderTotals(data, this.fromDay(data), this.toDay(data))}
+            {this.renderTotals(data, fromDay, toDay)}
           </tr>
-          {this.renderGroups(data, this.fromDay(data), this.toDay(data))}
+          {this.renderGroups(data, fromDay, toDay)}
         </tbody>
       </table>
     )

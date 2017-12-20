@@ -700,11 +700,12 @@
       }
     },
 
+
     render () {
 
       var data = this.processProps()
 
-      return window.TimelineRender.renderTimeline(data)
+      return window.TimelineRender.renderTimeline(data, data.firstChangeMoment, data.lastChangeMoment)
 
       // return (
       //   <table>
