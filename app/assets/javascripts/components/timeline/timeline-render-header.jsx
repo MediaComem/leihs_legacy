@@ -8,21 +8,17 @@ window.TimelineRenderHeader = {
     return fd.format('MMM') + ' ' + fd.format('YYYY')
   },
 
-  daysToShowPerMonth(data, firstDayOfMonth) {
+  daysToShowPerMonth(data, firstDayOfMonth, visibleDaysToShow) {
     return _.size(
-      _.filter(data.daysToShow, (d) => {
+      _.filter(visibleDaysToShow, (d) => {
         return this.momentMonthIso(d) == this.momentMonthIso(firstDayOfMonth)
       })
     )
   },
 
-  visibleDaysToShow(data, visibleDaysToShow) {
-    return data.daysToShow
-  },
-
-  firstDaysPerMonth(data) {
+  firstDaysPerMonth(data, visibleDaysToShow) {
     return _.uniq(
-      data.daysToShow, false, (d) => {
+      visibleDaysToShow, false, (d) => {
         return this.momentMonthIso(d)
       }
     )
@@ -38,9 +34,9 @@ window.TimelineRenderHeader = {
       }
     }
 
-    return this.firstDaysPerMonth(data).map((fd) => {
+    return this.firstDaysPerMonth(data, visibleDaysToShow).map((fd) => {
       return (
-        <td key={'month_' + this.momentMonthIso(fd)} colSpan={this.daysToShowPerMonth(data, fd)} style={{padding: '10px', backgroundColor: backgroundColor(fd), fontSize: '16px', textAlign: 'center'}}>{this.momentMonthHeader(fd)}</td>
+        <td key={'month_' + this.momentMonthIso(fd)} colSpan={this.daysToShowPerMonth(data, fd, visibleDaysToShow)} style={{padding: '10px', backgroundColor: backgroundColor(fd), fontSize: '16px', textAlign: 'center'}}>{this.momentMonthHeader(fd)}</td>
       )
     })
   },
@@ -60,7 +56,7 @@ window.TimelineRenderHeader = {
   },
 
   renderEmpties(data, visibleDaysToShow) {
-    return data.daysToShow.map((d) => {
+    return visibleDaysToShow.map((d) => {
       return this.renderEmpty(d)
     })
 
@@ -84,7 +80,7 @@ window.TimelineRenderHeader = {
 
 
   renderDays(data, visibleDaysToShow) {
-    return data.daysToShow.map((d) => {
+    return visibleDaysToShow.map((d) => {
       return this.renderDay(d)
     })
 

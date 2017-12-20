@@ -9,17 +9,17 @@ window.TimelineRenderStatistics = {
   //   )
   // },
 
-  isLabelTd(data, day) {
-    return day.isSame(data.startBoundaryMoment)
+  isLabelTd(data, day, fromDay) {
+    return day.isSame(fromDay)//data.startBoundaryMoment)
   },
 
   isDayCoverdByLabel(data, day) {
     return day.isBefore(data.firstChangeMoment, 'day')
   },
 
-  labelColspan(data) {
+  labelColspan(data, fromDay) {
     return moment.duration(
-      data.firstChangeMoment.diff(data.startBoundaryMoment)
+      data.firstChangeMoment.diff(fromDay)
     ).asDays()
   },
 
@@ -113,11 +113,11 @@ window.TimelineRenderStatistics = {
 
   renderStatisticsLine(data, visibleDaysToShow, label, lineKey, calculateQuantity) {
     return _.compact(
-      data.daysToShow.map(
+      visibleDaysToShow.map(
         (day) => {
 
-          if(this.isLabelTd(data, day)) {
-            var colSpan = this.labelColspan(data)
+          if(this.isLabelTd(data, day, visibleDaysToShow[0])) {
+            var colSpan = this.labelColspan(data, visibleDaysToShow[0])
             return this.renderLabelTd(data, label, lineKey, colSpan)
           } else if(this.isDayCoverdByLabel(data, day)) {
             return null

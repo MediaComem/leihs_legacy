@@ -1,8 +1,8 @@
 window.TimelineRenderReservation = {
 
 
-  isStartReservationDay(rf, d) {
-    return d.isSame(rf.startMoment, 'day')
+  isStartReservationDay(rf, d, fromDay) {
+    return d.isSame(rf.startMoment, 'day') || rf.startMoment.isBefore(fromDay, 'day') && fromDay.isSame(d)
   },
 
   isNoneReservationDay(rf, d) {
@@ -34,7 +34,7 @@ window.TimelineRenderReservation = {
     })
   },
 
-  renderReservationFrameDay(rfs, d, endBoundaryMoment) {
+  renderReservationFrameDay(rfs, d, fromDay, endBoundaryMoment) {
 
 
     var rf = this.findReservationFrame(rfs, d)
@@ -51,7 +51,7 @@ window.TimelineRenderReservation = {
         <td key={'group_reservation_day_empty_' + this.momentIso(d)} style={{backgroundColor: backgroundColor, border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}>
         </td>
       )
-    } else if(this.isStartReservationDay(rf, d)) {
+    } else if(this.isStartReservationDay(rf, d, fromDay)) {
 
       var backgroundColor = '#adadad'
       if(rf.late) {
@@ -82,8 +82,8 @@ window.TimelineRenderReservation = {
 
 
   renderReservationFrameDays(data, visibleDaysToShow, rfs, endBoundaryMoment) {
-    return data.daysToShow.map((d) => {
-      return this.renderReservationFrameDay(rfs, d, endBoundaryMoment)
+    return visibleDaysToShow.map((d) => {
+      return this.renderReservationFrameDay(rfs, d, visibleDaysToShow[0], endBoundaryMoment)
     })
   }
 
