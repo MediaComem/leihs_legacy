@@ -144,9 +144,11 @@ window.TimelineReadProps = {
         return {
           reservationId: rr.id,
           startMoment: this.parseMoment(rr.start_date),
+          late: additionalInfo.late,
           endMoment: (additionalInfo.late ? endBoundaryMoment : this.parseMoment(rr.end_date)),
           groupId: additionalInfo.group_id,
-          username: username
+          username: username,
+          itemId: rr.item_id
         }
       }
     )
