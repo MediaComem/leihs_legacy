@@ -145,10 +145,16 @@ window.TimelineReadProps = {
           reservationId: rr.id,
           startMoment: this.parseMoment(rr.start_date),
           late: additionalInfo.late,
-          endMoment: (additionalInfo.late ? endBoundaryMoment : this.parseMoment(rr.end_date)),
+          endMoment: this.parseMoment(rr.end_date),
           groupId: additionalInfo.group_id,
           username: username,
-          itemId: rr.item_id
+          itemId: rr.item_id,
+          phone: additionalInfo.user.phone,
+          inventoryCode: additionalInfo.inventory_code,
+          userId: additionalInfo.user.id,
+          inventoryPoolId: this.XXXavailability().inventory_pool.id,
+          status: rr.status,
+          orderId: rr.order_id
         }
       }
     )
@@ -166,14 +172,14 @@ window.TimelineReadProps = {
           reservations,
           (r) => {
             var compare = ''
-            if(!r.endMoment) {
-              compare += '0000-00-00'
+            if(!r.endMoment || r.late) {
+              compare += '9999-99-99'
             } else {
               compare += this.momentIso(r.endMoment)
             }
             compare += '/'
             if(!r.startMoment) {
-              compare += '9999-99-99'
+              compare += '0000-00-00'
             } else {
               compare += this.momentIso(r.startMoment)
             }

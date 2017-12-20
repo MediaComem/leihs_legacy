@@ -6,13 +6,22 @@ window.TimelineRenderReservation = {
   },
 
   isNoneReservationDay(rf, d) {
-    return d.isBefore(rf.startMoment, 'day') || d.isAfter(rf.endMoment, 'day')
+    return d.isBefore(rf.startMoment, 'day') || d.isAfter(rf.endMoment, 'day') && !rf.late
   },
 
-  reservationColspan(rf, d) {
-    return moment.duration(
-      rf.endMoment.diff(rf.startMoment)
-    ).asDays() + 1
+  reservationColspan(rf, d, endBoundaryMoment) {
+
+    if(rf.late) {
+      return moment.duration(
+        endBoundaryMoment.diff(rf.startMoment)
+      ).asDays() + 1
+
+    } else {
+      return moment.duration(
+        rf.endMoment.diff(rf.startMoment)
+      ).asDays() + 1
+    }
+
   },
 
   momentIso(d) {
@@ -25,7 +34,7 @@ window.TimelineRenderReservation = {
     })
   },
 
-  renderReservationFrameDay(rfs, d) {
+  renderReservationFrameDay(rfs, d, endBoundaryMoment) {
 
 
     var rf = this.findReservationFrame(rfs, d)
@@ -55,12 +64,15 @@ window.TimelineRenderReservation = {
 
 
       return (
-        <td key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)} colSpan={this.reservationColspan(rf, d)} style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}>
-          <div style={{marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}>
-            {rf.username}
-          </div>
-        </td>
+        <TimelineReservationBar
+          key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)}
+          colSpan={this.reservationColspan(rf, d, endBoundaryMoment)}
+          style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}
+          innerStyle={{marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}
+          reservationFrame={rf}
+        />
       )
+
     } else {
       return (
         null
@@ -69,9 +81,9 @@ window.TimelineRenderReservation = {
   },
 
 
-  renderReservationFrameDays(data, rfs) {
+  renderReservationFrameDays(data, rfs, endBoundaryMoment) {
     return data.daysToShow.map((d) => {
-      return this.renderReservationFrameDay(rfs, d)
+      return this.renderReservationFrameDay(rfs, d, endBoundaryMoment)
     })
   }
 
