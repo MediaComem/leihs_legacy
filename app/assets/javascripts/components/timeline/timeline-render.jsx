@@ -56,7 +56,7 @@ window.TimelineRender = {
         {window.TimelineRenderHeader.renderEmpties(data)}
       </tr>,
       <tr key={'group_reservation_line_' + index}>
-        {window.TimelineRenderReservation.renderReservationFrameDays(data, rs)}
+        {window.TimelineRenderReservation.renderReservationFrameDays(data, rs, data.endBoundaryMoment)}
       </tr>
     ]
   },
@@ -67,10 +67,12 @@ window.TimelineRender = {
 
       var startA = rf.startMoment
       var endA = rf.endMoment
+      var lateA = rf.late
       var startB = rfi.startMoment
       var endB = rfi.endMoment
+      var lateB = rfi.late
 
-      if(startA.isAfter(endB) || startB.isAfter(endA)) {
+      if(!lateB && startA.isAfter(endB) || !lateA && startB.isAfter(endA)) {
         return false
       } else {
         return true
