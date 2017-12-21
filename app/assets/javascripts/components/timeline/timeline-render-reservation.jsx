@@ -9,16 +9,38 @@ window.TimelineRenderReservation = {
     return d.isBefore(rf.startMoment, 'day') || d.isAfter(rf.endMoment, 'day') && !rf.late
   },
 
-  reservationColspan(rf, d, endBoundaryMoment) {
+  reservationColspan(rf, d, fromDay, toDay, endBoundaryMoment) {
 
+    var start = moment(
+      moment.max(
+        fromDay,
+        rf.startMoment
+      )
+    )
+
+    var end = moment(
+      moment.min(
+        toDay,
+        rf.endMoment
+      )
+    )
+
+    var lateEnd = moment(
+      moment.min(
+        toDay,
+        endBoundaryMoment
+      )
+    )
+
+    // TODO only start from from day or start boundary moment
     if(rf.late) {
       return moment.duration(
-        endBoundaryMoment.diff(rf.startMoment)
+        lateEnd.diff(start)
       ).asDays() + 1
 
     } else {
       return moment.duration(
-        rf.endMoment.diff(rf.startMoment)
+        end.diff(start)
       ).asDays() + 1
     }
 
@@ -34,7 +56,7 @@ window.TimelineRenderReservation = {
     })
   },
 
-  renderReservationFrameDay(rfs, d, fromDay, endBoundaryMoment) {
+  renderReservationFrameDay(rfs, d, fromDay, toDay, endBoundaryMoment) {
 
 
     var rf = this.findReservationFrame(rfs, d)
@@ -66,7 +88,7 @@ window.TimelineRenderReservation = {
       return (
         <TimelineReservationBar
           key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)}
-          colSpan={this.reservationColspan(rf, d, endBoundaryMoment)}
+          colSpan={this.reservationColspan(rf, d, fromDay, toDay, endBoundaryMoment)}
           style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}
           innerStyle={{marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}
           reservationFrame={rf}
@@ -83,7 +105,7 @@ window.TimelineRenderReservation = {
 
   renderReservationFrameDays(data, visibleDaysToShow, rfs, endBoundaryMoment) {
     return visibleDaysToShow.map((d) => {
-      return this.renderReservationFrameDay(rfs, d, visibleDaysToShow[0], endBoundaryMoment)
+      return this.renderReservationFrameDay(rfs, d, _.first(visibleDaysToShow), _.last(visibleDaysToShow), endBoundaryMoment)
     })
   }
 
