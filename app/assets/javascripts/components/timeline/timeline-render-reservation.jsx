@@ -9,7 +9,7 @@ window.TimelineRenderReservation = {
     return d.isBefore(rf.startMoment, 'day') || d.isAfter(rf.endMoment, 'day') && !rf.late
   },
 
-  reservationColspan(rf, d, fromDay, toDay, endBoundaryMoment) {
+  reservationColspan(rf, d, fromDay, toDay) {
 
     var start = moment(
       moment.max(
@@ -25,12 +25,7 @@ window.TimelineRenderReservation = {
       )
     )
 
-    var lateEnd = moment(
-      moment.min(
-        toDay,
-        endBoundaryMoment
-      )
-    )
+    var lateEnd = moment(toDay)
 
     // TODO only start from from day or start boundary moment
     if(rf.late) {
@@ -56,7 +51,7 @@ window.TimelineRenderReservation = {
     })
   },
 
-  renderReservationFrameDay(rfs, d, fromDay, toDay, endBoundaryMoment) {
+  renderReservationFrameDay(rfs, d, fromDay, toDay) {
 
 
     var rf = this.findReservationFrame(rfs, d)
@@ -88,7 +83,7 @@ window.TimelineRenderReservation = {
       return (
         <TimelineReservationBar
           key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)}
-          colSpan={this.reservationColspan(rf, d, fromDay, toDay, endBoundaryMoment)}
+          colSpan={this.reservationColspan(rf, d, fromDay, toDay)}
           style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}
           innerStyle={{marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}
           reservationFrame={rf}
@@ -103,9 +98,9 @@ window.TimelineRenderReservation = {
   },
 
 
-  renderReservationFrameDays(data, visibleDaysToShow, rfs, endBoundaryMoment) {
+  renderReservationFrameDays(data, visibleDaysToShow, rfs) {
     return visibleDaysToShow.map((d) => {
-      return this.renderReservationFrameDay(rfs, d, _.first(visibleDaysToShow), _.last(visibleDaysToShow), endBoundaryMoment)
+      return this.renderReservationFrameDay(rfs, d, _.first(visibleDaysToShow), _.last(visibleDaysToShow))
     })
   }
 

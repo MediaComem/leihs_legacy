@@ -20,6 +20,19 @@
       }
     },
 
+
+    numberOfDaysToShow(start, end) {
+      return moment.duration(
+        end.diff(start)
+      ).asDays()
+    },
+
+    daysToShow(start, end) {
+      return _.range(0, this.numberOfDaysToShow(start, end)).map((d) => {
+        return moment(start).add(d, 'days')
+      })
+    },
+
     render () {
 
       var data = this.state.data
@@ -27,12 +40,7 @@
       var fromDay = moment(this.state.fromDay)
       var toDay = moment(this.state.toDay)
 
-      var visibleDaysToShow = _.filter(
-        data.daysToShow,
-        (d) => {
-          return !d.isBefore(fromDay, 'day') && !d.isAfter(toDay, 'day')
-        }
-      )
+      var visibleDaysToShow = this.daysToShow(fromDay, toDay)
 
       return window.TimelineRender.renderTimeline(data, visibleDaysToShow)
     }
