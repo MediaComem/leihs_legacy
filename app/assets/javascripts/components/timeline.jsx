@@ -669,47 +669,63 @@
 
     componentDidMount() {
 
-      function getCoords(elem) { // crossbrowser version
-        var box = elem.getBoundingClientRect();
 
-        var body = document.body;
-        var docEl = document.documentElement;
+    },
 
-        var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-        var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+    // onScroll() {
+    //   console.log('check scroll')
+    //   if(this._isLeft()) {
+    //     console.log('is left')
+    //
+    //
+    //     var newFromDay = moment(this.state.fromDay).add(- 1, 'month')
+    //     if(newFromDay.isBefore(this.state.data.startBoundaryMoment)) {
+    //       newFromDay = moment(this.state.data.startBoundaryMoment)
+    //     }
+    //
+    //     this.setState({
+    //       fromDay: newFromDay
+    //     })
+    //   }
+    // },
+    //
+    // _getDocWidth () {
+    //   D = document
+    //   return Math.max(
+    //       D.body.scrollWidth, D.documentElement.scrollWidth,
+    //       D.body.offsetWidth, D.documentElement.offsetWidth,
+    //       D.body.clientWidth, D.documentElement.clientWidth
+    //   )
+    // },
+    //
+    // _scrollLeft () {
+    //   return Math.max(
+    //     document.body.scrollLeft, document.documentElement.scrollLeft
+    //   )
+    // },
+    //
+    // _isLeft () {
+    //   return this._scrollLeft() + window.innerWidth <= window.innerWidth * 2// || window.innerHeight > this._getDocHeight() * 0.3
+    // },
+    // _isLeft () {
+    //   return this._scrollLeft() + window.innerWidth >= this._getDocWidth() - window.innerWidth * 2// || window.innerHeight > this._getDocHeight() * 0.3
+    // },
 
-        var clientTop = docEl.clientTop || body.clientTop || 0;
-        var clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-        var top  = box.top +  scrollTop - clientTop;
-        var left = box.left + scrollLeft - clientLeft;
-
-        return { top: Math.round(top), left: Math.round(left) };
-      }
-
-      var today = document.getElementById('timeline_today')
-      if(today) {
-        var topLeft = getCoords(today)
-        var top = 0
-        var left = topLeft.left - document.body.getBoundingClientRect().width * 0.5
-        if(left < 0) {
-          left = 0
-        }
-        document.body.scrollTop = top
-        document.body.scrollLeft = left
+    getInitialState() {
+      var data = this.processProps()
+      return {
+        data: this.processProps(),
+        fromDay: moment(data.firstChangeMoment).add(- 3, 'month'),
+        toDay: moment(data.lastChangeMoment).add(3, 'month')
       }
     },
 
-
     render () {
 
-      var data = this.processProps()
+      var data = this.state.data
 
-      var fromDay = moment(data.firstChangeMoment)
-      var toDay = moment(data.lastChangeMoment)
-
-      fromDay.add(- 1, 'month')
-      toDay.add(1, 'month')
+      var fromDay = moment(this.state.fromDay)
+      var toDay = moment(this.state.toDay)
 
       var visibleDaysToShow = _.filter(
         data.daysToShow,
