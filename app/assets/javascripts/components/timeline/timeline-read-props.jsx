@@ -85,24 +85,6 @@ window.TimelineReadProps = {
   },
 
 
-  startBoundaryMoment(firstChangeMoment, firstReservationMoment) {
-    return moment(
-      moment.min(
-        firstChangeMoment,
-        firstReservationMoment
-      )
-    ).add(- 1, 'month')
-  },
-
-  endBoundaryMoment(lastChangeMoment, lastReservationMoment) {
-    return moment(
-      moment.max(
-        lastChangeMoment,
-        lastReservationMoment
-      )
-    ).add(1, 'month')
-  },
-
 
 
 
@@ -119,7 +101,7 @@ window.TimelineReadProps = {
   },
 
 
-  flatReservationFrames(endBoundaryMoment) {
+  flatReservationFrames() {
 
     return _.map(
       this.XXXavailability().running_reservations,
@@ -160,13 +142,13 @@ window.TimelineReadProps = {
     )
   },
 
-  groupedReservationFrames(endBoundaryMoment) {
-    return _.groupBy(this.flatReservationFrames(endBoundaryMoment), 'groupId')
+  groupedReservationFrames() {
+    return _.groupBy(this.flatReservationFrames(), 'groupId')
   },
 
-  reservationFrames(endBoundaryMoment) {
+  reservationFrames() {
     return _.mapObject(
-      this.groupedReservationFrames(endBoundaryMoment),
+      this.groupedReservationFrames(),
       (reservations) => {
         return _.sortBy(
           reservations,
@@ -196,17 +178,7 @@ window.TimelineReadProps = {
 
 
 
-  numberOfDaysToShow(startBoundaryMoment, endBoundaryMoment) {
-    return moment.duration(
-      endBoundaryMoment.diff(startBoundaryMoment)
-    ).asDays()
-  },
 
-  daysToShow(startBoundaryMoment, numberOfDaysToShow) {
-    return _.range(0, numberOfDaysToShow).map((d) => {
-      return moment(startBoundaryMoment).add(d, 'days')
-    })
-  },
 
 
   readProps(props) {
@@ -218,11 +190,7 @@ window.TimelineReadProps = {
     var lastChangeMoment = this.lastChangeMoment(changesList)
     var firstReservationMoment = this.firstReservationMoment()
     var lastReservationMoment = this.lastReservationMoment()
-    var startBoundaryMoment = this.startBoundaryMoment(firstChangeMoment, firstReservationMoment)
-    var endBoundaryMoment = this.endBoundaryMoment(lastChangeMoment, lastReservationMoment)
-    var reservationFrames = this.reservationFrames(endBoundaryMoment)
-    var numberOfDaysToShow = this.numberOfDaysToShow(startBoundaryMoment, endBoundaryMoment)
-    var daysToShow = this.daysToShow(startBoundaryMoment, numberOfDaysToShow)
+    var reservationFrames = this.reservationFrames()
 
     return {
       props: props,
@@ -231,11 +199,7 @@ window.TimelineReadProps = {
       lastChangeMoment: lastChangeMoment,
       firstReservationMoment: firstReservationMoment,
       lastReservationMoment: lastReservationMoment,
-      startBoundaryMoment: startBoundaryMoment,
-      endBoundaryMoment: endBoundaryMoment,
-      reservationFrames: reservationFrames,
-      numberOfDaysToShow: numberOfDaysToShow,
-      daysToShow: daysToShow
+      reservationFrames: reservationFrames
     }
   }
 

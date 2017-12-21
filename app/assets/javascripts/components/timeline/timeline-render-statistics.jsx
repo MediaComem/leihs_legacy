@@ -10,7 +10,7 @@ window.TimelineRenderStatistics = {
   // },
 
   isLabelTd(data, day, fromDay) {
-    return day.isSame(fromDay)//data.startBoundaryMoment)
+    return day.isSame(fromDay)
   },
 
   isDayCoverdByLabel(data, day) {

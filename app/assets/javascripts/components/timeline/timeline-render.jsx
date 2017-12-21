@@ -57,7 +57,7 @@ window.TimelineRender = {
         {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow)}
       </tr>,
       <tr key={'group_reservation_line_' + index}>
-        {window.TimelineRenderReservation.renderReservationFrameDays(data, visibleDaysToShow, rs, data.endBoundaryMoment)}
+        {window.TimelineRenderReservation.renderReservationFrameDays(data, visibleDaysToShow, rs)}
       </tr>
     ]
   },
