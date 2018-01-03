@@ -71,10 +71,17 @@ window.TimelineRenderReservation = {
     } else if(this.isStartReservationDay(rf, d, fromDay)) {
 
       var backgroundColor = '#adadad'
-      if(rf.late) {
+      if(!rf.itemId) {
+        if(rf.available) {
+          backgroundColor = 'rgb(102, 224, 224)'
+        } else {
+          backgroundColor = '#c8b0c1'
+        }
+
+      } else if(rf.late) {
         backgroundColor = 'rgb(255, 100, 100)'
-      } else if(!rf.itemId) {
-        backgroundColor = 'rgb(102, 224, 224)'
+      } else if(rf.reserved) {
+        backgroundColor = 'chocolate'
       } else {
         backgroundColor = '#e3be1f'
       }
