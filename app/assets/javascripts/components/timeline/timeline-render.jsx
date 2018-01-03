@@ -170,20 +170,23 @@ window.TimelineRender = {
   renderTimeline(data, visibleDaysToShow) {
 
     return (
-      <table>
-        <tbody>
-          <tr>
-            {window.TimelineRenderHeader.renderMonths(data, visibleDaysToShow)}
-          </tr>
-          <tr>
-            {window.TimelineRenderHeader.renderDays(data, visibleDaysToShow)}
-          </tr>
-          <tr>
-            {this.renderTotals(data, visibleDaysToShow)}
-          </tr>
-          {this.renderGroups(data, visibleDaysToShow)}
-        </tbody>
-      </table>
+      <div>
+        <table>
+          <tbody>
+            <tr>
+              {window.TimelineRenderHeader.renderMonths(data, visibleDaysToShow)}
+            </tr>
+            <tr>
+              {window.TimelineRenderHeader.renderDays(data, visibleDaysToShow)}
+            </tr>
+            <tr>
+              {this.renderTotals(data, visibleDaysToShow)}
+            </tr>
+            {this.renderGroups(data, visibleDaysToShow)}
+          </tbody>
+        </table>
+        {window.TimelineRenderDescription.renderDescription()}
+      </div>
     )
   }
 

@@ -128,7 +128,9 @@ class Manage::ModelsController < Manage::ApplicationController
         user: rr.user,
         group_id: rr.allocated_group_id,
         inventory_code: rr.item.try(:inventory_code),
-        late: rr.late?
+        late: rr.late?,
+        available: rr.available?,
+        reserved: rr.reserved?
       }
     end
 
