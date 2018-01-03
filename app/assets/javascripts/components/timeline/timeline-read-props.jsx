@@ -136,7 +136,10 @@ window.TimelineReadProps = {
           userId: additionalInfo.user.id,
           inventoryPoolId: this.XXXavailability().inventory_pool.id,
           status: rr.status,
-          orderId: rr.order_id
+          orderId: rr.order_id,
+          returnedDate: rr.returned_date,
+          available: additionalInfo.available,
+          reserved: additionalInfo.reserved
         }
       }
     )
