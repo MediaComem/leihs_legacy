@@ -6,13 +6,16 @@ window.TimelineRender = {
 
   entitlementIds(data) {
 
-    return Object.keys(data.props.availability.entitlements).map((k) => {
+    var ids = _.sortBy(Object.keys(data.props.availability.entitlements)).map((k) => {
       if(k == '') {
         return null
       } else {
         return k
       }
     })
+
+    // null as the last one
+    return _.rest(ids).concat(_.first(ids))
   },
 
 
