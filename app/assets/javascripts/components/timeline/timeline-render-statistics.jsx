@@ -10,7 +10,7 @@ window.TimelineRenderStatistics = {
   // },
 
   isLabelTd(data, day, fromDay) {
-    return day.isSame(fromDay)
+    return day.isSame(moment(data.firstChangeMoment).add(- 1, 'days'))
   },
 
   isDayCoverdByLabel(data, day) {
@@ -33,20 +33,34 @@ window.TimelineRenderStatistics = {
       borderWidth: '0px 1px 0px 0px'
     }
 
+    var relStyle = {
+      position: 'relative',
+      top: '0px',
+      left: '0px',
+      width: '0px',
+      height: '0px'
+    }
+
     var divStyle = {
       fontSize: '14px',
       textAlign: 'right',
       height: '30px',
       paddingTop: '6px',
-      paddingRight: '20px'
+      paddingRight: '20px',
+      position: 'absolute',
+      right: '0px',
+      width: '500px'
+
     }
 
     var key = 'label_' + lineKey
 
     return (
       <td key={key} colSpan={colSpan} style={tdStyle}>
-        <div style={divStyle}>
-          {label}
+        <div style={relStyle}>
+          <div style={divStyle}>
+            {label}
+          </div>
         </div>
       </td>
     )
@@ -117,10 +131,10 @@ window.TimelineRenderStatistics = {
         (day) => {
 
           if(this.isLabelTd(data, day, visibleDaysToShow[0])) {
-            var colSpan = this.labelColspan(data, visibleDaysToShow[0])
-            return this.renderLabelTd(data, label, lineKey, colSpan)
+            // var colSpan = this.labelColspan(data, visibleDaysToShow[0])
+            return this.renderLabelTd(data, label, lineKey, 1)
           } else if(this.isDayCoverdByLabel(data, day)) {
-            return null
+            return window.TimelineRenderHeader.renderEmpty(day)
           } else {
             return this.renderQuantity(data, day, lineKey, calculateQuantity)
           }
