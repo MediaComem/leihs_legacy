@@ -27,12 +27,20 @@
     },
 
     preventMouseWheel(event) {
+      var maxX = document.body.scrollWidth / 50
+      if(maxX < 60) maxX = 60
+
+      var maxY = document.body.scrollHeight / 50
+      if(maxY < 30) maxY = 30
+
       var deltaX = event.deltaX
-      if(deltaX > 100) deltaX = 100
-      if(deltaX < -100) deltaX = -100
+      if(deltaX > maxX) deltaX = maxX
+      if(deltaX < - maxX) deltaX = - maxX
+
       var deltaY = event.deltaY
-      if(deltaY > 30) deltaY = 30
-      if(deltaY < -30) deltaY = -30
+      if(deltaY > maxY) deltaY = maxY
+      if(deltaY < - maxY) deltaY = - maxY
+
       document.body.scrollLeft += deltaX
       document.body.scrollTop += deltaY
       event.preventDefault()
