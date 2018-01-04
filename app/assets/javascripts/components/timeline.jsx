@@ -20,6 +20,29 @@
       }
     },
 
+    preventTouchMove(event) {
+    },
+
+    preventScroll(event) {
+    },
+
+    preventMouseWheel(event) {
+      var deltaX = event.deltaX
+      if(deltaX > 100) deltaX = 100
+      if(deltaX < -100) deltaX = -100
+      var deltaY = event.deltaY
+      if(deltaY > 30) deltaY = 30
+      if(deltaY < -30) deltaY = -30
+      document.body.scrollLeft += deltaX
+      document.body.scrollTop += deltaY
+      event.preventDefault()
+    },
+
+    componentDidMount() {
+      window.addEventListener('touchmove', this.preventTouchMove, false);
+      window.addEventListener('scroll', this.preventScroll, false);
+      window.addEventListener('mousewheel', this.preventMouseWheel, false);
+    },
 
     numberOfDaysToShow(start, end) {
       return moment.duration(
