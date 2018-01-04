@@ -113,14 +113,14 @@ class Manage::ModelsController < Manage::ApplicationController
     end
   end
 
-  def timeline
+  def old_timeline
     @model = fetch_model
     respond_to do |format|
       format.html { render layout: false }
     end
   end
 
-  def new_timeline
+  def timeline
     model = fetch_model
 
     availability = model.availability_in(current_inventory_pool)
