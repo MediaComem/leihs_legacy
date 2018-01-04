@@ -15,8 +15,8 @@
       var data = this.processProps()
       return {
         data: this.processProps(),
-        fromDay: moment(data.firstChangeMoment).add(- 3, 'month'),
-        toDay: moment(data.lastChangeMoment).add(3, 'month')
+        fromDay: moment(data.firstChangeMoment).add(- 15, 'days'),
+        toDay: moment(data.lastChangeMoment).add(1, 'month')
       }
     },
 
