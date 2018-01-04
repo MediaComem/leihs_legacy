@@ -148,6 +148,10 @@ class Manage::ModelsController < Manage::ApplicationController
       groups: groups,
       running_reservations: running_reservations
     }
+
+    respond_to do |format|
+      format.html { render layout: false }
+    end
   end
 
   private
