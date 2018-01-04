@@ -184,7 +184,7 @@ window.TimelineRender = {
             </tr>
             {this.renderGroups(data, visibleDaysToShow)}
             <tr>
-              {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow, 100)}
+              {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow, 200)}
             </tr>
           </tbody>
         </table>
