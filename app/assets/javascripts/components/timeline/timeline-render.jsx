@@ -54,7 +54,7 @@ window.TimelineRender = {
   renderGroupReservationTr(data, visibleDaysToShow, rs, index) {
     return [
       <tr key='a'>
-        {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow)}
+        {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow, 0)}
       </tr>,
       <tr key={'group_reservation_line_' + index}>
         {window.TimelineRenderReservation.renderReservationFrameDays(data, visibleDaysToShow, rs)}
@@ -183,6 +183,9 @@ window.TimelineRender = {
               {this.renderTotals(data, visibleDaysToShow)}
             </tr>
             {this.renderGroups(data, visibleDaysToShow)}
+            <tr>
+              {window.TimelineRenderHeader.renderEmpties(data, visibleDaysToShow, 100)}
+            </tr>
           </tbody>
         </table>
         {window.TimelineRenderDescription.renderDescription()}
