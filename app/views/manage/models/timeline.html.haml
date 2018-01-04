@@ -8,6 +8,6 @@
     = render :partial => "manage/global_javascript_injection"
     = render partial: "layouts/custom_head_tag"
 
-  %body
+  %body{ :style => "-moz-box-shadow: none; -webkit-box-shadow: none; box-shadow: none;" }
 
     .row= react_component('Timeline', @props)
