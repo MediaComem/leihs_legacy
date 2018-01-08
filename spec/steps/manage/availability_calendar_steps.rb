@@ -89,7 +89,9 @@ module Manage
         within('.modal.in') do
           within_frame 'timeline' do
             group_row = find('tr', text: "Ausleihbar für Gruppe '#{@group.name}")
-            expect(group_row.text).to include "Ausleihbar für Gruppe '#{@group.name}' #{num}"
+            expect(group_row.text).to include(
+              "Ausleihbar für Gruppe '#{@group.name}' #{num}"
+            )
           end
           click_on _('Close')
         end
