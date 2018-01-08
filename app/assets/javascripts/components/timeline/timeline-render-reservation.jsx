@@ -92,7 +92,7 @@ window.TimelineRenderReservation = {
           key={'group_reservation_day_' + rf.rid + '_' + this.momentIso(d)}
           colSpan={this.reservationColspan(rf, d, fromDay, toDay)}
           style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}
-          innerStyle={{marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}
+          innerStyle={{overflow: 'hidden', marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}
           reservationFrame={rf}
         />
       )
