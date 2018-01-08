@@ -202,7 +202,7 @@ window.TimelineReadProps = {
       lastChangeMoment: lastChangeMoment,
       firstReservationMoment: firstReservationMoment,
       lastReservationMoment: lastReservationMoment,
-      reservationFrames: reservationFrames
+      reservationFrames: reservationFrames,
     }
   }
 
