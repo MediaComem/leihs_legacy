@@ -2,11 +2,18 @@ window.TimelineRenderReservation = {
 
 
   isStartReservationDay(rf, d, fromDay) {
-    return d.isSame(rf.startMoment, 'day') || rf.startMoment.isBefore(fromDay, 'day') && fromDay.isSame(d)
+    if(rf.reserved) {
+      return d.isSame(moment(), 'day')
+    } else {
+      return d.isSame(rf.startMoment, 'day') || rf.startMoment.isBefore(fromDay, 'day') && fromDay.isSame(d)
+    }
+
   },
 
   isNoneReservationDay(rf, d) {
-    return d.isBefore(rf.startMoment, 'day') || d.isAfter(rf.endMoment, 'day') && !rf.late
+
+
+    return (!rf.reserved && d.isBefore(rf.startMoment, 'day')) || rf.reserved && d.isBefore(moment(), 'day') || d.isAfter(rf.endMoment, 'day') && !rf.late
   },
 
   reservationColspan(rf, d, fromDay, toDay) {
@@ -25,12 +32,18 @@ window.TimelineRenderReservation = {
       )
     )
 
-    var lateEnd = moment(toDay)
 
     // TODO only start from from day or start boundary moment
     if(rf.late) {
+      var lateEnd = moment(toDay)
       return moment.duration(
         lateEnd.diff(start)
+      ).asDays() + 1
+
+    } else if(rf.reserved) {
+      var reservedStart = moment()
+      return moment.duration(
+        end.diff(reservedStart)
       ).asDays() + 1
 
     } else {

@@ -72,11 +72,13 @@ window.TimelineRender = {
       var startA = rf.startMoment
       var endA = rf.endMoment
       var lateA = rf.late
+      var reservedA = rf.reserved
       var startB = rfi.startMoment
       var endB = rfi.endMoment
       var lateB = rfi.late
+      var reservedB = rfi.reserved
 
-      if(!lateB && startA.isAfter(endB) || !lateA && startB.isAfter(endA)) {
+      if(!lateB && !reservedA && startA.isAfter(endB) || !lateA && !reservedB && startB.isAfter(endA)) {
         return false
       } else {
         return true
