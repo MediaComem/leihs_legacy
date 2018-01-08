@@ -64,7 +64,7 @@ window.TimelineRenderReservation = {
     })
   },
 
-  renderReservationFrameDay(rfs, d, fromDay, toDay) {
+  renderReservationFrameDay(rfs, d, fromDay, toDay, isLendingManager) {
 
 
     var rf = this.findReservationFrame(rfs, d)
@@ -107,6 +107,7 @@ window.TimelineRenderReservation = {
           style={{border: 'dotted black', borderWidth: '0px 1px 0px 0px'}}
           innerStyle={{overflow: 'hidden', marginLeft: '2px', marginRight: '2px', backgroundColor: backgroundColor, fontSize: '12px', color: '#333', padding: '3px', borderRadius: '3px', /*overflow: 'hidden', width: ((40 * this.reservationColspan(rf, d)) + 'px'),*/ height: '20px', paddingLeft: '6px'}}
           reservationFrame={rf}
+          isLendingManager={isLendingManager}
         />
       )
 
@@ -120,7 +121,7 @@ window.TimelineRenderReservation = {
 
   renderReservationFrameDays(data, visibleDaysToShow, rfs) {
     return visibleDaysToShow.map((d) => {
-      return this.renderReservationFrameDay(rfs, d, _.first(visibleDaysToShow), _.last(visibleDaysToShow))
+      return this.renderReservationFrameDay(rfs, d, _.first(visibleDaysToShow), _.last(visibleDaysToShow), data.props.lending_manager)
     })
   }
 

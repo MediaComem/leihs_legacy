@@ -53,13 +53,14 @@ end
 
 When(/^I click on a user's name$/) do
   within_frame 'timeline' do
-    find('.timeline-band-events .timeline-event-label').click
+    # find('.timeline-band-events .timeline-event-label').click
+    find('td div', text: 'Destany Smith').click
   end
 end
 
 Then(/^there is no link to:$/) do |table|
   within_frame 'timeline' do
-    within '.simileAjax-bubble-container .simileAjax-bubble-contentContainer' do
+    within '.timeline-event-bubble-body' do
       table.raw.flatten.each do |s1|
         s2 = case s1
                when 'acknowledge'

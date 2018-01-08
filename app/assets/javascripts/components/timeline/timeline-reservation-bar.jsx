@@ -73,6 +73,11 @@
     },
 
     renderLink() {
+
+      if(!this.props.isLendingManager) {
+        return null
+      }
+
       if(this.status() == 'submitted') {
         return (
           <a target='_top' href={this.acknowledgeLink()}>{_jed('Acknowledge')}</a>

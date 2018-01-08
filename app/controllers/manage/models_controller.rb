@@ -6,7 +6,7 @@ class Manage::ModelsController < Manage::ApplicationController
 
   # NOTE overriding super controller
   def required_manager_role
-    open_actions = [:timeline]
+    open_actions = [:timeline, :old_timeline]
     if not open_actions.include?(action_name.to_sym) \
       and (request.post? or not request.format.json?)
       super
@@ -138,7 +138,8 @@ class Manage::ModelsController < Manage::ApplicationController
       model: model,
       availability: availability,
       groups: groups,
-      running_reservations: running_reservations
+      running_reservations: running_reservations,
+      lending_manager: lending_manager?
     }
 
     respond_to do |format|
