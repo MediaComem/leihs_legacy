@@ -51,10 +51,50 @@ def open_timeline(inventory_pool_name, product_name)
   binding.pry
 end
 
-def create_reservation(login, ip_name)
+def create_reservation(login, ip_name, product_name)
   u = user_by_login(login)
   ip = inventory_pool_by_name(ip_name)
-  FactoryGirl.create(:reservation, user: u, start_date: Date.today, end_date: Date.tomorrow, inventory_pool: ip)
+  m = model_by_product_name(product_name)
+  r = FactoryGirl.create(:reservation, user: u, start_date: Date.today, end_date: Date.tomorrow, inventory_pool: ip, model: m)
+end
+
+def create_overdue_reservation(login, ip_name, product_name, inventory_code)
+  u = user_by_login(login)
+  ip = inventory_pool_by_name(ip_name)
+  m = model_by_product_name(product_name)
+  i = Item.find_by(inventory_code: inventory_code)
+  r = FactoryGirl.create(:reservation, user: u, start_date: Date.yesterday - 1.day, end_date: Date.yesterday, inventory_pool: ip, model: m, returned_date: nil, item: i)
+
+  contract = Contract.new(
+    state: :open,
+    purpose: 'Any Purpose',
+    user: u,
+    inventory_pool: ip
+  )
+
+  r.status = :signed
+  r.contract = contract
+  r.user = u
+  r.handed_over_by_user_id = user_by_login('User1')
+
+  contract.reservations << r
+  contract.save!
+end
+
+def create_reservation_with_item(login, ip_name, product_name, inventory_code)
+  u = user_by_login(login)
+  ip = inventory_pool_by_name(ip_name)
+  m = model_by_product_name(product_name)
+  i = Item.find_by(inventory_code: inventory_code)
+  r = FactoryGirl.create(:reservation, user: u, start_date: Date.today, end_date: Date.tomorrow, inventory_pool: ip, model: m, item: i)
+end
+
+def create_future_reservation(login, ip_name, product_name, inventory_code)
+  u = user_by_login(login)
+  ip = inventory_pool_by_name(ip_name)
+  m = model_by_product_name(product_name)
+  i = Item.find_by(inventory_code: inventory_code)
+  r = FactoryGirl.create(:reservation, user: u, start_date: Date.today + 10.day, end_date: Date.tomorrow + 12.day, inventory_pool: ip, model: m, item: i)
 end
 
 def add_ip_manager(ip_name, login)
@@ -76,8 +116,14 @@ def execute_scenario
   add_ip_manager('Ip3', 'User1')
   add_ip_customer('Ip3', 'User2')
   create_model('Model1', 3)
+  create_item('Ip3', 'Model1', 'Any')
   create_item('Ip3', 'Model1', 'Inv1')
-  create_reservation('User2', 'Ip3')
+  create_item('Ip3', 'Model1', 'Inv2')
+  create_item('Ip3', 'Model1', 'Inv3')
+  create_reservation('User2', 'Ip3', 'Model1')
+  create_reservation_with_item('User2', 'Ip3', 'Model1', 'Inv1')
+  create_overdue_reservation('User2', 'Ip3', 'Model1', 'Inv2')
+  create_future_reservation('User2', 'Ip3', 'Model1', 'Inv3')
   do_login('User1', 'password') # Default password in user_factory.rb
   open_timeline('Ip3', 'Model1')
 end
