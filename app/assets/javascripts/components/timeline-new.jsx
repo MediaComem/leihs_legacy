@@ -94,6 +94,18 @@
       return this.daysDifference(moment(), firstMoment)
     },
 
+    renderTitle(firstMoment, relevantItemsCount) {
+
+      var offset = this.offset(firstMoment)
+
+
+      return (
+        <div style={{fontSize: '16px', position: 'absolute', top: '0px', left: (offset * 30) + 'px', textAlign: 'left', width: '1000px', height: '30px', border: '0px'}}>
+          {'Nutzbare Gegenstände: ' + relevantItemsCount}
+        </div>
+      )
+    },
+
     renderLabel(firstMoment, text) {
 
       var offset = this.offset(firstMoment)
@@ -101,6 +113,18 @@
 
       return (
         <div style={{fontSize: '16px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+          {text}
+        </div>
+      )
+    },
+
+    renderLabelSmall(firstMoment, text) {
+
+      var offset = this.offset(firstMoment)
+
+
+      return (
+        <div style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 10) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
           {text}
         </div>
       )
@@ -133,6 +157,17 @@
       return (
         <div key={prefix + index} style={{position: 'absolute', top: '0px', left: ((offset + index) * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
           <div style={{backgroundColor: backgroundColor, textAlign: 'center', fontSize: '16px', position: 'absolute', top: '0px', left: '0px', right: '0px', bottom: '0px', padding: '4px', margin: '2px', borderRadius: '5px'}}>
+            {value}
+          </div>
+        </div>
+      )
+
+    },
+
+    renderValueSmall(prefix, index, offset, value, backgroundColor) {
+      return (
+        <div key={prefix + index} style={{position: 'absolute', top: '0px', left: ((offset + index) * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
+          <div style={{textAlign: 'center', fontSize: '10px', position: 'absolute', top: '0px', left: '0px', right: '0px', bottom: '0px', padding: '4px', margin: '2px'}}>
             {value}
           </div>
         </div>
@@ -189,6 +224,33 @@
       )
     },
 
+    renderIndexedQuantitiesSmall(valueFunc, firstMoment, lastMoment, colorFunc) {
+
+      var offset = this.offset(firstMoment)
+
+      var range = _.range(
+        0,
+        this.numberOfDays(moment(), lastMoment)
+      )
+
+      return _.map(
+        range,
+        (i) => {
+
+          var value = valueFunc(i)
+
+          var color = colorFunc(i)
+
+          return this.renderValueSmall('handout_count_', i, offset, value, color)
+          // return (
+          //   <div key={'handout_count_' + i} style={{fontSize: '16px', position: 'absolute', top: '0px', left: ((offset + i) * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
+          //     {value}
+          //   </div>
+          // )
+        }
+      )
+    },
+
     renderBorrowableQuantities(handoutCounts, firstMoment, lastMoment, relevantItemsCount) {
 
       var offset = this.offset(firstMoment)
@@ -217,7 +279,7 @@
           var m = moment(firstMoment).add(i, 'days')
 
           return (
-            <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', height: '1030px', border: '0px'}}>
+            <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', bottom: '0px', border: '0px'}}>
               <div style={{position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '0px 1px 0px 0px'}}>
                 {m.format('DD')}
               </div>
@@ -366,6 +428,13 @@
           return rfi.start_date
         })
       })
+
+    },
+
+    calcReservationsHeight(reservations) {
+
+      var layouted = this.layoutReservationFrames(reservations)
+      return layouted.length * 20
 
     },
 
@@ -573,13 +642,13 @@
       var totalCounts = this.totalCounts(lastMoment, relevantItemsCount)
 
 
-      var handoutCounts = this.handoutCounts(this.props.timeline_availability, lastMoment).map((hc) => hc.length)
+      var handoutCounts = this.handoutCounts(this.props.timeline_availability, lastMoment).map((hc) => - hc.length)
 
-      var borrowableCounts = _.zip(totalCounts, handoutCounts).map((p) => _.first(p) - _.last(p))
+      var borrowableCounts = _.zip(totalCounts, handoutCounts).map((p) => _.first(p) + _.last(p))
 
-      var reservationCounts = this.reservationCounts(this.props.timeline_availability, lastMoment).map((rc) => rc.length)
+      var reservationCounts = this.reservationCounts(this.props.timeline_availability, lastMoment).map((rc) => - rc.length)
 
-      var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) - _.last(p))
+      var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) + _.last(p))
 
       var wholeWidth = dayWidth * numberOfDaysToShow
 
@@ -594,34 +663,56 @@
         }
       }
 
+      var topHandoutLines = 130
+
+      var topTitle = 40
+
+      var topTotal = 100
+
+      var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(this.signedReservations())
+
+      var topReservationLines = topAfterHandoutLines + 100
+
+      var topAfterReservationLines = topReservationLines + this.calcReservationsHeight(this.notSignedReservations())
+
+      var topFreeItems = topAfterReservationLines + 80
+
+      var wholeHeight = topFreeItems + 200
+
+      // <div style={{position: 'absolute', top: (topAfterHandoutLines + 55) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+      //   {this.renderLabelSmall(firstMoment, 'Ausleihbar')}
+      //   {this.renderIndexedQuantitiesSmall((i) => borrowableCounts[i], firstMoment, lastMoment, this.borrowableColors)}
+      // </div>
+
+
       return (
-        <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-          <div style={{position: 'absolute', top: '100px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderDays(firstMoment, numberOfDaysToShow)}
+        <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderDays(firstMoment, numberOfDaysToShow, wholeHeight)}
           </div>
-          <div style={{position: 'absolute', top: '140px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabel(firstMoment, 'Nutzbare Gegenstände')}
-            {this.renderIndexedQuantities((i) => totalCounts[i], firstMoment, lastMoment, this.usableColors)}
+          <div style={{position: 'absolute', top: topTitle + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
+            {this.renderTitle(firstMoment, relevantItemsCount)}
           </div>
-          <div style={{position: 'absolute', top: '200px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabel(firstMoment, 'Ausgehändigte Gegenstände')}
-            {this.renderIndexedQuantities((i) => handoutCounts[i], firstMoment, lastMoment, this.handoutColors)}
+          <div style={{position: 'absolute', top: topTotal + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabelSmall(firstMoment, 'Total')}
+            {this.renderIndexedQuantitiesSmall((i) => totalCounts[i], firstMoment, lastMoment, this.handoutColors)}
           </div>
-          <div style={{position: 'absolute', top: '240px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topAfterHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabelSmall(firstMoment, 'Ausgehändigt')}
+            {this.renderIndexedQuantitiesSmall((i) => handoutCounts[i], firstMoment, lastMoment, this.handoutColors)}
+          </div>
+          <div style={{position: 'absolute', top: topHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderReservations(firstMoment, lastMoment, this.signedReservations(), this.props.timeline_availability)}
           </div>
-          <div style={{position: 'absolute', top: '800px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabel(firstMoment, 'Ausleihbare Gegenstände')}
-            {this.renderIndexedQuantities((i) => borrowableCounts[i], firstMoment, lastMoment, this.borrowableColors)}
-          </div>
-          <div style={{position: 'absolute', top: '860px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabel(firstMoment, 'Reservierte Gegenstände')}
-            {this.renderIndexedQuantities((i) => reservationCounts[i], firstMoment, lastMoment, this.reservationColors)}
-          </div>
-          <div style={{position: 'absolute', top: '900px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topReservationLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderReservations(firstMoment, lastMoment, this.notSignedReservations(), this.props.timeline_availability)}
           </div>
-          <div style={{position: 'absolute', top: '1400px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topAfterReservationLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabelSmall(firstMoment, 'Reservationen')}
+            {this.renderIndexedQuantitiesSmall((i) => reservationCounts[i], firstMoment, lastMoment, this.reservationColors)}
+          </div>
+          <div style={{position: 'absolute', top: topFreeItems + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderLabel(firstMoment, 'Freie Gegenstände')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
