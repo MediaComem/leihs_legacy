@@ -336,7 +336,7 @@
 
           return (
             <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-              <div style={{backgroundColor: '#e3be1f', borderRadius: '5px', padding: '2px 5px'}}>
+              <div style={{backgroundColor: '#e3be1f', borderRadius: '5px', padding: '2px 5px', margin: '0px 3px'}}>
                 {this.username(timeline_availability, rr) /*+ ' ' + rr.id*/}
               </div>
             </div>
@@ -379,16 +379,16 @@
 
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-          <div>Timeline New</div>
-
           <div style={{position: 'absolute', top: '100px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow)}
           </div>
           <div style={{position: 'absolute', top: '140px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
             {this.renderLabel(firstMoment, 'Nutzbare Gegenstände')}
             {this.renderTotals(firstMoment, numberOfDaysToShow)}
           </div>
           <div style={{position: 'absolute', top: '200px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
             {this.renderLabel(firstMoment, 'Aushändigungen')}
             {this.renderHandoutQuantities(firstMoment, numberOfDaysToShow)}
           </div>
@@ -396,10 +396,12 @@
             {this.renderReservations(firstMoment, lastMoment, this.signedReservations(), this.props.timeline_availability)}
           </div>
           <div style={{position: 'absolute', top: '800px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
             {this.renderLabel(firstMoment, 'Ausleihbare Gegenstände')}
             {this.renderHandoutQuantities(firstMoment, numberOfDaysToShow)}
           </div>
           <div style={{position: 'absolute', top: '860px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
             {this.renderLabel(firstMoment, 'Reservationen')}
             {this.renderHandoutQuantities(firstMoment, numberOfDaysToShow)}
           </div>
