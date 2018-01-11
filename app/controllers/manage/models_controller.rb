@@ -113,11 +113,17 @@ class Manage::ModelsController < Manage::ApplicationController
   end
 
   include TimelineAvailability
+  def timeline_new
+    @props = {
+      timeline_availability: timeline_availability(fetch_model, current_inventory_pool.id)
+    }
+    respond_to do |format|
+      format.html { render layout: false }
+    end
+  end
+
   def timeline
     model = fetch_model
-
-
-    timeline_availability = timeline_availability(model.id, current_inventory_pool.id)
 
     availability = model.availability_in(current_inventory_pool)
 
@@ -143,8 +149,7 @@ class Manage::ModelsController < Manage::ApplicationController
       availability: availability,
       groups: groups,
       running_reservations: running_reservations,
-      lending_manager: lending_manager?,
-      timeline_availability: timeline_availability
+      lending_manager: lending_manager?
     }
 
     respond_to do |format|
