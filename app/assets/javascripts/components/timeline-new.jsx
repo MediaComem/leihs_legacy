@@ -89,6 +89,64 @@
       return this.daysDifference(lastMoment, firstMoment) + 1
     },
 
+    renderLabel(firstMoment, text) {
+
+      var offset = this.daysDifference(moment(), firstMoment)
+
+
+      return (
+        <div style={{fontSize: '16px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+          {text}
+        </div>
+      )
+    },
+
+    renderTotals(firstMoment, numberOfDaysToShow) {
+
+      return _.map(
+        _.range(0, numberOfDaysToShow),
+        (i) => {
+
+          var m = moment(firstMoment).add(i, 'days')
+
+          var value = ''
+
+          if(m.isSameOrAfter(moment(), 'day')) {
+            value = '0'
+          }
+
+          return (
+            <div key={'total_' + i} style={{fontSize: '16px', position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
+              {value}
+            </div>
+          )
+        }
+      )
+    },
+
+    renderHandoutQuantities(firstMoment, numberOfDaysToShow) {
+
+      return _.map(
+        _.range(0, numberOfDaysToShow),
+        (i) => {
+
+          var m = moment(firstMoment).add(i, 'days')
+
+          var value = ''
+
+          if(m.isSameOrAfter(moment(), 'day')) {
+            value = '0'
+          }
+
+          return (
+            <div key={'total_' + i} style={{fontSize: '16px', position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
+              {value}
+            </div>
+          )
+        }
+      )
+    },
+
     renderDays(firstMoment, numberOfDaysToShow) {
 
       return _.map(
@@ -98,8 +156,10 @@
           var m = moment(firstMoment).add(i, 'days')
 
           return (
-            <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
-              {m.format('DD')}
+            <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', height: '1030px', border: '0px'}}>
+              <div style={{position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '0px 1px 0px 0px'}}>
+                {m.format('DD')}
+              </div>
             </div>
           )
         }
@@ -125,9 +185,11 @@
     // },
 
     daysDifference(m1, m2) {
-      return moment.duration(
-        m1.diff(m2)
-      ).asDays()
+      return Math.floor(
+        moment.duration(
+          m1.diff(m2)
+        ).asDays()
+      )
     },
 
     findUser(timeline_availability, user_id) {
@@ -269,10 +331,12 @@
           console.log(start.format('DD-MM-YYYY')  + '   ' + end.format('DD-MM-YYYY') + '   ' + length)
 
           var height = 15
+          var padding = 5
+          var totalHeight = height + padding
 
           return (
-            <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * height) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '1px solid black'}}>
-              <div>
+            <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
+              <div style={{backgroundColor: '#e3be1f', borderRadius: '5px', padding: '2px 5px'}}>
                 {this.username(timeline_availability, rr) /*+ ' ' + rr.id*/}
               </div>
             </div>
@@ -320,10 +384,26 @@
           <div style={{position: 'absolute', top: '100px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow)}
           </div>
+          <div style={{position: 'absolute', top: '140px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabel(firstMoment, 'Nutzbare Gegenstände')}
+            {this.renderTotals(firstMoment, numberOfDaysToShow)}
+          </div>
           <div style={{position: 'absolute', top: '200px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabel(firstMoment, 'Aushändigungen')}
+            {this.renderHandoutQuantities(firstMoment, numberOfDaysToShow)}
+          </div>
+          <div style={{position: 'absolute', top: '240px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderReservations(firstMoment, lastMoment, this.signedReservations(), this.props.timeline_availability)}
           </div>
-          <div style={{position: 'absolute', top: '1500px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: '800px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabel(firstMoment, 'Ausleihbare Gegenstände')}
+            {this.renderHandoutQuantities(firstMoment, numberOfDaysToShow)}
+          </div>
+          <div style={{position: 'absolute', top: '860px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabel(firstMoment, 'Reservationen')}
+            {this.renderHandoutQuantities(firstMoment, numberOfDaysToShow)}
+          </div>
+          <div style={{position: 'absolute', top: '900px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderReservations(firstMoment, lastMoment, this.notSignedReservations(), this.props.timeline_availability)}
           </div>
         </div>
