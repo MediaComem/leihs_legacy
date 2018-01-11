@@ -25,7 +25,7 @@
             if(this.isAfter(m, memo)) {
               return m
             } else {
-              memo
+              return memo
             }
           }
         },
@@ -43,7 +43,7 @@
             if(this.isBefore(m, memo)) {
               return m
             } else {
-              memo
+              return memo
             }
           }
         },
@@ -148,26 +148,136 @@
       return name
     },
 
-
-    renderReservations(firstMoment, timeline_availability) {
-
-      return timeline_availability.running_reservations.map((rr, index) => {
-
-        var start = moment(rr.start_date)
-        var end = moment(rr.end_date)
-
-        var offset = this.daysDifference(start, firstMoment)
-        var length = this.daysDifference(end, start)
-        console.log(start.format('DD-MM-YYYY')  + '   ' + end.format('DD-MM-YYYY') + '   ' + length)
+    late(r) {
+      return !r.returned_date && this.isBefore(moment(r.end_date), moment())
+    },
 
 
-        return (
-          <div key={'reservation_' + index} style={{position: 'absolute', top: (index * 30) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: '30px', border: '1px solid black'}}>
-            <div>
-              {this.username(timeline_availability, rr)}
+    reserved(r) {
+      return this.isAfter(moment(r.start_date), moment()) && r.item_id
+    },
+
+
+    sortedReservations(timeline_availability) {
+
+      return _.sortBy(
+        timeline_availability.running_reservations,
+        (r) => {
+          var compare = ''
+          if(!r.end_date || this.late(r)) {
+            compare += '9999-99-99'
+          } else {
+            compare += r.end_date
+          }
+          compare += '/'
+          if(!r.start_date) {
+            compare += '0000-00-00'
+          } else {
+            compare += r.start_date
+          }
+          return compare
+        }
+      )
+    },
+
+
+    hasIntersection(rfs, rf) {
+
+      return _.find(rfs, (rfi) => {
+
+        var startA = moment(rf.start_date)
+        var endA = moment(rf.end_date)
+        var lateA = this.late(rf)//rf.late
+        var reservedA = this.reserved(rf)//rf.reserved
+        var startB = moment(rfi.start_date)
+        var endB = moment(rfi.end_date)
+        var lateB = this.late(rfi)//rfi.late
+        var reservedB = this.reserved(rfi)//rfi.reserved
+
+        if(!lateB && !reservedA && startA.isAfter(endB) || !lateA && !reservedB && startB.isAfter(endA)) {
+          return false
+        } else {
+          return true
+        }
+
+      })
+
+    },
+
+    findNoneIntersectionLine(lines, rf) {
+      return _.find(lines, (line) => {
+        return !this.hasIntersection(line, rf)
+      })
+    },
+
+    layoutReservationFrames(timeline_availability) {
+
+      var rfs = this.sortedReservations(timeline_availability)
+
+
+      return _.reduce(
+        rfs,
+        (memo, rf) => {
+
+          if(memo.length == 0) {
+            return memo.concat([[rf]])
+          } else {
+
+            var line = this.findNoneIntersectionLine(memo, rf)
+
+            if(!line) {
+              return memo.concat([[rf]])
+            } else {
+              line.push(rf)
+              return memo
+            }
+
+          }
+        },
+        []
+      ).map((line) => {
+        return _.sortBy(line, (rfi) => {
+          return rfi.start_date
+        })
+      })
+
+    },
+
+
+    renderReservations(firstMoment, lastMoment, timeline_availability) {
+
+      var layouted = this.layoutReservationFrames(timeline_availability)
+
+
+      return layouted.map((line, index) => {
+
+        return line.map((rr) => {
+
+          var start = moment(rr.start_date)
+          var end = moment(rr.end_date)
+
+          var offset = this.daysDifference(start, firstMoment)
+
+          var length = this.numberOfDays(start, end)
+          if(this.late(rr)) {
+            length = this.numberOfDays(start, lastMoment)
+          }
+
+          console.log(start.format('DD-MM-YYYY')  + '   ' + end.format('DD-MM-YYYY') + '   ' + length)
+
+          var height = 15
+
+          return (
+            <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * height) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '1px solid black'}}>
+              <div>
+                {this.username(timeline_availability, rr)}
+              </div>
             </div>
-          </div>
-        )
+          )
+
+
+
+        })
 
       })
     },
@@ -192,7 +302,7 @@
 
           <div style={{position: 'absolute', top: '100px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow)}
-            {this.renderReservations(firstMoment, this.props.timeline_availability)}
+            {this.renderReservations(firstMoment, lastMoment, this.props.timeline_availability)}
           </div>
         </div>
       )
