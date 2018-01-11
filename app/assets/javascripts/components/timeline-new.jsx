@@ -149,7 +149,10 @@
     },
 
     late(r) {
-      return !r.returned_date && this.isBefore(moment(r.end_date), moment())
+      return r.status == 'signed' &&
+
+
+        !r.returned_date && this.isBefore(moment(r.end_date), moment())
     },
 
 
@@ -158,10 +161,10 @@
     },
 
 
-    sortedReservations(timeline_availability) {
+    sortedReservations(reservations) {
 
       return _.sortBy(
-        timeline_availability.running_reservations,
+        reservations,
         (r) => {
           var compare = ''
           if(!r.end_date || this.late(r)) {
@@ -210,9 +213,9 @@
       })
     },
 
-    layoutReservationFrames(timeline_availability) {
+    layoutReservationFrames(reservations) {
 
-      var rfs = this.sortedReservations(timeline_availability)
+      var rfs = this.sortedReservations(reservations)
 
 
       return _.reduce(
@@ -244,9 +247,9 @@
     },
 
 
-    renderReservations(firstMoment, lastMoment, timeline_availability) {
+    renderReservations(firstMoment, lastMoment, reservations, timeline_availability) {
 
-      var layouted = this.layoutReservationFrames(timeline_availability)
+      var layouted = this.layoutReservationFrames(reservations)
 
 
       return layouted.map((line, index) => {
@@ -270,7 +273,7 @@
           return (
             <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * height) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '1px solid black'}}>
               <div>
-                {this.username(timeline_availability, rr)}
+                {this.username(timeline_availability, rr) /*+ ' ' + rr.id*/}
               </div>
             </div>
           )
@@ -280,6 +283,20 @@
         })
 
       })
+    },
+
+    signedReservations() {
+      return _.filter(
+        this.props.timeline_availability.running_reservations,
+        (rr) => rr.status == 'signed'
+      )
+    },
+
+    notSignedReservations() {
+      return _.filter(
+        this.props.timeline_availability.running_reservations,
+        (rr) => rr.status != 'signed'
+      )
     },
 
     render () {
@@ -302,7 +319,12 @@
 
           <div style={{position: 'absolute', top: '100px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow)}
-            {this.renderReservations(firstMoment, lastMoment, this.props.timeline_availability)}
+          </div>
+          <div style={{position: 'absolute', top: '200px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderReservations(firstMoment, lastMoment, this.signedReservations(), this.props.timeline_availability)}
+          </div>
+          <div style={{position: 'absolute', top: '1500px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderReservations(firstMoment, lastMoment, this.notSignedReservations(), this.props.timeline_availability)}
           </div>
         </div>
       )
