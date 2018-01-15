@@ -494,7 +494,7 @@
             // http://lea.verou.me/css3patterns/#diagonal-stripes
             return [
               <div key={'reservation_late_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30 + length * 30) + 'px', width: (lateLength * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', backgroundColor: 'red', borderRadius: '0px 5px 5px 0px', padding: '2px 5px', margin: '0px 3px 0px 0px', backgroundColor: '#ffeea6', backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 25px, #e3be1f 25px, #e3be1f 50px)'}}>
+                <div style={{position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', backgroundColor: 'red', borderRadius: '0px 5px 5px 0px', padding: '2px 5px', margin: '3px 3px 3px 0px', backgroundColor: 'rgba(227, 190, 31, 0.5)'}}>
                   {' '}
                 </div>
               </div>
