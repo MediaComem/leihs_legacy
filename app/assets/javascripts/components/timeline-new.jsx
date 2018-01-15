@@ -112,7 +112,7 @@
 
 
       return (
-        <div style={{fontSize: '16px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+        <div style={{margin: '2px', padding: '4px', fontSize: '16px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
           {text}
         </div>
       )
@@ -650,6 +650,39 @@
       // return 'rgb(170, 221, 170)'
     },
 
+    renderEntitlement(timeline_availability, entitlement, topEntitlement, wholeWidth, firstMoment, lastMoment) {
+
+
+      var entitlementGroup = _.find(
+        timeline_availability.entitlement_groups,
+        (eg) => {
+          return eg.id == entitlement.entitlement_group_id
+        }
+      )
+
+      var name = ''
+      if(entitlementGroup) {
+        name = entitlementGroup.name
+      }
+
+      return (
+        <div key={entitlement.id} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          {this.renderLabelSmall(firstMoment, 'Anspruch ' + name)}
+          {this.renderIndexedQuantitiesSmall((index) => entitlement.quantity, firstMoment, lastMoment, this.reservationColors)}
+        </div>
+      )
+
+    },
+
+    renderEntitlements(timeline_availability, topFreeItems, wholeWidth, firstMoment, lastMoment) {
+
+      var topEntitlements = topFreeItems + 30
+
+      return timeline_availability.entitlements.map((entitlement, index) => {
+        return this.renderEntitlement(timeline_availability, entitlement, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment)
+      })
+    },
+
     render () {
 
       var firstMoment = this.firstReservationMoment()
@@ -685,11 +718,11 @@
         }
       }
 
-      var topHandoutLines = 130
+      var topHandoutLines = 130 - 40
 
-      var topTitle = 40
+      // var topTitle = 40
 
-      var topTotal = 100
+      var topTotal = 100 - 40
 
       var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(this.signedReservations())
 
@@ -707,14 +740,15 @@
       // </div>
 
 
+      // {this.renderTitle(firstMoment, relevantItemsCount)}
+      // <div style={{position: 'absolute', top: topTitle + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+      //   <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
+      //   {this.renderLabel(firstMoment, 'Total Gegenstände: ' + relevantItemsCount)}
+      // </div>
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
           <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow, wholeHeight)}
-          </div>
-          <div style={{position: 'absolute', top: topTitle + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
-            {this.renderTitle(firstMoment, relevantItemsCount)}
           </div>
           <div style={{position: 'absolute', top: topTotal + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderLabelSmall(firstMoment, 'Total')}
@@ -738,6 +772,7 @@
             {this.renderLabel(firstMoment, 'Freie Gegenstände')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
+          {this.renderEntitlements(this.props.timeline_availability, topFreeItems, wholeWidth, firstMoment, lastMoment)}
         </div>
       )
     }
