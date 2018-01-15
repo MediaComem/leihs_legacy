@@ -53,8 +53,8 @@ module TimelineAvailability
       ActiveRecord::Base.connection.exec_query(query).to_hash
     end
 
-    def entitlement_groups(entitlement_groups_users)
-      group_ids = entitlement_groups_users.map { |r| r['entitlement_group_id'] }
+    def entitlement_groups(entitlements, entitlement_groups_users)
+      group_ids = entitlements.map { |e| e['entitlement_group_id']} + entitlement_groups_users.map { |r| r['entitlement_group_id'] }
 
       query = <<-SQL
         select
@@ -109,7 +109,7 @@ module TimelineAvailability
       entitlements = entitlements(inventory_pool.id, model.id)
       reservation_users = reservation_users(running_reservations)
       entitlement_groups_users = entitlement_groups_users(reservation_users)
-      entitlement_groups = entitlement_groups(entitlement_groups_users)
+      entitlement_groups = entitlement_groups(entitlements, entitlement_groups_users)
       items = items(inventory_pool.id, model.id)
 
       {
