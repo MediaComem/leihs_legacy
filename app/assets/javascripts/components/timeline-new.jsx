@@ -650,16 +650,16 @@
       // return 'rgb(170, 221, 170)'
     },
 
-    entitlementGroupIdsForUser(timeline_availability, reservation) {
+    entitlementGroupIdsForUser(timeline_availability, user_id) {
 
       var userGroupIds = _.filter(
         timeline_availability.entitlement_groups_users,
         (gu) =>  {
-          return gu.user_id == reservation.user_id
+          return gu.user_id == user_id
         }
       ).map((gu) => gu.entitlement_group_id)
 
-      var entitlementIds = timeline_availability.entitlements.map((e) => e.id)
+      var entitlementIds = timeline_availability.entitlements.map((e) => e.entitlement_group_id)
 
       return _.filter(
         userGroupIds,
@@ -668,6 +668,51 @@
         }
       )
 
+    },
+
+
+    calculateUserProblems(timeline_availability, dayIndex) {
+
+      var day = moment().add(dayIndex, 'days')
+
+
+      var reservations = this.reservationsForDay(timeline_availability, day)
+
+      return _.groupBy(
+        reservations,
+        (r) => r.user_id
+      )
+
+
+    },
+
+    calculateUserEntitlements(timeline_availability) {
+
+      var userIds = _.uniq(timeline_availability.running_reservations.map((r) => r.user_id))
+
+      var r =  userIds.map((uid) => {
+
+        var egus = _.filter(timeline_availability.entitlement_groups_users, (egu) => {
+          return egu.user_id == uid
+        }).map(
+
+          (egu) => {
+            return _.filter(timeline_availability.entitlements, (e) => {
+              return e.entitlement_group_id == egu.entitlement_group_id
+            })
+
+          }
+
+
+        )
+
+
+        return egus
+
+      })
+
+      debugger
+      return r
     },
 
     calculateEntitlements(timeline_availability, dayIndex) {
@@ -701,7 +746,7 @@
       var reservationsWithGroups = reservations.map((r) => {
         return {
           reservation: r,
-          groups: this.entitlementGroupIdsForUser(timeline_availability, r)
+          groups: this.entitlementGroupIdsForUser(timeline_availability, r.user_id)
         }
       })
 
@@ -732,7 +777,9 @@
 
     componentDidMount() {
       this.setState({
-        entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i))
+        // entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i)),
+        userProblems: [0, 1, 2, 3].map((i) => this.calculateUserProblems(this.props.timeline_availability, i)),
+        userEntitlements: this.calculateUserEntitlements(this.props.timeline_availability)
       })
     },
 
@@ -768,6 +815,7 @@
         return this.renderEntitlement(timeline_availability, entitlement, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment)
       })
     },
+
 
     render () {
 
