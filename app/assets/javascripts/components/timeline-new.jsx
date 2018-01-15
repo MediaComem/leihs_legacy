@@ -500,7 +500,7 @@
               </div>
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', backgroundColor: '#e3be1f', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                <div style={{display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', backgroundColor: '#e3be1f', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr) /*+ ' ' + rr.id*/}
                 </div>
               </div>
@@ -512,7 +512,7 @@
 
             return (
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{backgroundColor: '#e3be1f', borderRadius: '5px', padding: '2px 5px', margin: '0px 3px'}}>
+                <div style={{display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', backgroundColor: '#e3be1f', borderRadius: '5px', padding: '2px 5px', margin: '0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr) /*+ ' ' + rr.id*/}
                 </div>
               </div>
@@ -810,11 +810,11 @@
 
       var topTotal = 100 - 40
 
-      var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(this.signedReservations())
+      var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(this.props.timeline_availability.running_reservations)
 
       var topReservationLines = topAfterHandoutLines + 100
 
-      var topAfterReservationLines = topReservationLines + this.calcReservationsHeight(this.notSignedReservations())
+      var topAfterReservationLines = topAfterHandoutLines//topReservationLines + this.calcReservationsHeight(this.notSignedReservations())
 
       var topFreeItems = topAfterReservationLines + 80
 
@@ -831,31 +831,28 @@
       //   <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
       //   {this.renderLabel(firstMoment, 'Total Gegenstände: ' + relevantItemsCount)}
       // </div>
+      // <div style={{position: 'absolute', top: topTotal + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+      //   {this.renderLabelSmall(firstMoment, 'Total')}
+      //   {this.renderIndexedQuantitiesSmall((i) => totalCounts[i], firstMoment, lastMoment, this.handoutColors)}
+      // </div>
+      // <div style={{position: 'absolute', top: topAfterHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+      //   {this.renderLabelSmall(firstMoment, 'Ausgehändigt')}
+      //   {this.renderIndexedQuantitiesSmall((i) => handoutCounts[i], firstMoment, lastMoment, this.handoutColors)}
+      // </div>
+      // <div style={{position: 'absolute', top: topAfterReservationLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+      //   {this.renderLabelSmall(firstMoment, 'Reservationen')}
+      //   {this.renderIndexedQuantitiesSmall((i) => reservationCounts[i], firstMoment, lastMoment, this.reservationColors)}
+      // </div>
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
           <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow, wholeHeight)}
           </div>
-          <div style={{position: 'absolute', top: topTotal + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabelSmall(firstMoment, 'Total')}
-            {this.renderIndexedQuantitiesSmall((i) => totalCounts[i], firstMoment, lastMoment, this.handoutColors)}
-          </div>
-          <div style={{position: 'absolute', top: topAfterHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabelSmall(firstMoment, 'Ausgehändigt')}
-            {this.renderIndexedQuantitiesSmall((i) => handoutCounts[i], firstMoment, lastMoment, this.handoutColors)}
-          </div>
           <div style={{position: 'absolute', top: topHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderReservations(firstMoment, lastMoment, this.signedReservations(), this.props.timeline_availability)}
-          </div>
-          <div style={{position: 'absolute', top: topReservationLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderReservations(firstMoment, lastMoment, this.notSignedReservations(), this.props.timeline_availability)}
-          </div>
-          <div style={{position: 'absolute', top: topAfterReservationLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabelSmall(firstMoment, 'Reservationen')}
-            {this.renderIndexedQuantitiesSmall((i) => reservationCounts[i], firstMoment, lastMoment, this.reservationColors)}
+            {this.renderReservations(firstMoment, lastMoment, this.props.timeline_availability.running_reservations, this.props.timeline_availability)}
           </div>
           <div style={{position: 'absolute', top: topFreeItems + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabel(firstMoment, 'Freie Gegenstände')}
+            {this.renderLabel(firstMoment, 'Verfügbar')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
           {this.renderEntitlements(this.props.timeline_availability, topFreeItems, wholeWidth, firstMoment, lastMoment)}
