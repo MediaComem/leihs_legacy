@@ -650,6 +650,92 @@
       // return 'rgb(170, 221, 170)'
     },
 
+    entitlementGroupIdsForUser(timeline_availability, reservation) {
+
+      var userGroupIds = _.filter(
+        timeline_availability.entitlement_groups_users,
+        (gu) =>  {
+          return gu.user_id == reservation.user_id
+        }
+      ).map((gu) => gu.entitlement_group_id)
+
+      var entitlementIds = timeline_availability.entitlements.map((e) => e.id)
+
+      return _.filter(
+        userGroupIds,
+        (ugId) => {
+          return _.find(entitlementIds, (eId) => eId == ugId)
+        }
+      )
+
+    },
+
+    calculateEntitlements(timeline_availability, dayIndex) {
+
+      var entitlements = timeline_availability.entitlements
+
+      var generalSum = _.reduce(
+        entitlements,
+        (memo, e) => {
+          return memo + e.quantity
+        },
+        0
+      )
+
+      var entitlementSums = _.extend(
+        _.object(
+          entitlements.map((e) => {
+            return [
+              e.entitlement_group_id,
+              (e.quantity < 0 ? 0 : e.quantity)
+            ]
+          })
+        ),
+        {'': generalSum}
+      )
+
+      var day = moment().add(dayIndex, 'days')
+
+      var reservations = this.reservationsForDay(timeline_availability, day)
+
+      var reservationsWithGroups = reservations.map((r) => {
+        return {
+          reservation: r,
+          groups: this.entitlementGroupIdsForUser(timeline_availability, r)
+        }
+      })
+
+      var onlyGeneralReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 0)
+      var singleGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 1)
+      var multiGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length >= 2)
+
+      var sumsMinusGeneral = _.reduce(
+        onlyGeneralReservations,
+        (memo, rg) => {
+          memo['']--
+          return memo
+        },
+        _.clone(entitlementSums)
+      )
+
+      var sumsMinusSingle = _.reduce(
+        singleGroupReservations,
+        (memo, rg) => {
+          memo[_.first(rg.groups)]--
+          return memo
+        },
+        _.clone(sumsMinusGeneral)
+      )
+
+      return reservationsWithGroups
+    },
+
+    componentDidMount() {
+      this.setState({
+        entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i))
+      })
+    },
+
     renderEntitlement(timeline_availability, entitlement, topEntitlement, wholeWidth, firstMoment, lastMoment) {
 
 
