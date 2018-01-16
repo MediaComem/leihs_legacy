@@ -678,107 +678,186 @@
 
       var reservations = this.reservationsForDay(timeline_availability, day)
 
-      return _.groupBy(
-        reservations,
-        (r) => r.user_id
-      )
-
-
-    },
-
-    calculateUserEntitlements(timeline_availability) {
-
-      var userIds = _.uniq(timeline_availability.running_reservations.map((r) => r.user_id))
-
-      var r =  userIds.map((uid) => {
-
-        var egus = _.filter(timeline_availability.entitlement_groups_users, (egu) => {
-          return egu.user_id == uid
-        }).map(
-
-          (egu) => {
-            return _.filter(timeline_availability.entitlements, (e) => {
-              return e.entitlement_group_id == egu.entitlement_group_id
-            })
-
-          }
-
-
-        )
-
-
-        return egus
-
-      })
-
-      return r
-    },
-
-    calculateEntitlements(timeline_availability, dayIndex) {
-
-      var entitlements = timeline_availability.entitlements
-
-      var generalSum = _.reduce(
-        entitlements,
-        (memo, e) => {
-          return memo + e.quantity
-        },
-        0
-      )
-
-      var entitlementSums = _.extend(
-        _.object(
-          entitlements.map((e) => {
-            return [
-              e.entitlement_group_id,
-              (e.quantity < 0 ? 0 : e.quantity)
-            ]
-          })
+      return _.mapObject(
+        _.groupBy(
+          reservations,
+          (r) => r.user_id
         ),
-        {'': generalSum}
+        (value, key) => value.length
       )
 
-      var day = moment().add(dayIndex, 'days')
-
-      var reservations = this.reservationsForDay(timeline_availability, day)
-
-      var reservationsWithGroups = reservations.map((r) => {
-        return {
-          reservation: r,
-          groups: this.entitlementGroupIdsForUser(timeline_availability, r.user_id)
-        }
-      })
-
-      var onlyGeneralReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 0)
-      var singleGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 1)
-      var multiGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length >= 2)
-
-      var sumsMinusGeneral = _.reduce(
-        onlyGeneralReservations,
-        (memo, rg) => {
-          memo['']--
-          return memo
-        },
-        _.clone(entitlementSums)
-      )
-
-      var sumsMinusSingle = _.reduce(
-        singleGroupReservations,
-        (memo, rg) => {
-          memo[_.first(rg.groups)]--
-          return memo
-        },
-        _.clone(sumsMinusGeneral)
-      )
-
-      return reservationsWithGroups
     },
+
+    entitlementQuantityPerGroup(timeline_availability) {
+
+      return _.object(
+        timeline_availability.entitlements.map((e) => {
+          return [
+            e.entitlement_group_id,
+            e.quantity
+          ]
+        })
+      )
+
+    },
+
+    quantityGeneral(timeline_availability) {
+
+      var sumEntitlements = _.reduce(
+        this.entitlementQuantityPerGroup(timeline_availability),
+        (memo, q) => memo + q
+      )
+
+      return this.relevantItemsCount() - sumEntitlements
+    },
+
+    maxQuantityPerUser(timeline_availability) {
+
+      var userEntitlementGroups = this.calculateUserEntitlementGroups(timeline_availability)
+      var quantityPerGroup = this.entitlementQuantityPerGroup(timeline_availability)
+
+      return _.object(
+        timeline_availability.reservation_users.map((u) => {
+
+          var entitlementGroups = userEntitlementGroups[u.id]
+
+          var sum = _.reduce(
+            entitlementGroups,
+            (memo, eg) => {
+              if(quantityPerGroup[eg.id]) {
+                return memo + quantityPerGroup[eg.id]
+              } else {
+                return memo
+              }
+            },
+            0
+          )
+
+          return [
+            u.id,
+            sum
+          ]
+        })
+      )
+
+
+
+
+    },
+
+    calculateUserEntitlementGroups(timeline_availability) {
+
+      return _.object(
+        timeline_availability.reservation_users.map((u) => {
+          return [
+            u.id,
+
+            _.filter(timeline_availability.entitlement_groups_users, (egu) => {
+              return egu.user_id == u.id
+            }).map(
+              (egu) => {
+                return _.find(timeline_availability.entitlement_groups, (eg) => {
+                  return eg.id == egu.entitlement_group_id
+                })
+              }
+            )
+          ]
+        })
+      )
+
+      // var userIds = timeline_availability.reservation_users.map((u) => u.id)
+      //
+      // var r =  userIds.map((uid) => {
+      //
+      //   var egus = _.filter(timeline_availability.entitlement_groups_users, (egu) => {
+      //     return egu.user_id == uid
+      //   }).map(
+      //
+      //     (egu) => {
+      //       return _.find(timeline_availability.entitlement_groups, (eg) => {
+      //         return eg.id == egu.entitlement_group_id
+      //       })
+      //
+      //     }
+      //
+      //
+      //   )
+      //
+      //
+      //   return egus
+      //
+      // })
+      //
+      // return r
+    },
+
+    // calculateEntitlements(timeline_availability, dayIndex) {
+    //
+    //   var entitlements = timeline_availability.entitlements
+    //
+    //   var generalSum = _.reduce(
+    //     entitlements,
+    //     (memo, e) => {
+    //       return memo + e.quantity
+    //     },
+    //     0
+    //   )
+    //
+    //   var entitlementSums = _.extend(
+    //     _.object(
+    //       entitlements.map((e) => {
+    //         return [
+    //           e.entitlement_group_id,
+    //           (e.quantity < 0 ? 0 : e.quantity)
+    //         ]
+    //       })
+    //     ),
+    //     {'': generalSum}
+    //   )
+    //
+    //   var day = moment().add(dayIndex, 'days')
+    //
+    //   var reservations = this.reservationsForDay(timeline_availability, day)
+    //
+    //   var reservationsWithGroups = reservations.map((r) => {
+    //     return {
+    //       reservation: r,
+    //       groups: this.entitlementGroupIdsForUser(timeline_availability, r.user_id)
+    //     }
+    //   })
+    //
+    //   var onlyGeneralReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 0)
+    //   var singleGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 1)
+    //   var multiGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length >= 2)
+    //
+    //   var sumsMinusGeneral = _.reduce(
+    //     onlyGeneralReservations,
+    //     (memo, rg) => {
+    //       memo['']--
+    //       return memo
+    //     },
+    //     _.clone(entitlementSums)
+    //   )
+    //
+    //   var sumsMinusSingle = _.reduce(
+    //     singleGroupReservations,
+    //     (memo, rg) => {
+    //       memo[_.first(rg.groups)]--
+    //       return memo
+    //     },
+    //     _.clone(sumsMinusGeneral)
+    //   )
+    //
+    //   return reservationsWithGroups
+    // },
 
     componentDidMount() {
       this.setState({
         // entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i)),
         userProblems: [0, 1, 2, 3].map((i) => this.calculateUserProblems(this.props.timeline_availability, i)),
-        userEntitlements: this.calculateUserEntitlements(this.props.timeline_availability)
+        userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
+        maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
+        quantityGeneral: this.quantityGeneral(this.props.timeline_availability)
       })
     },
 
