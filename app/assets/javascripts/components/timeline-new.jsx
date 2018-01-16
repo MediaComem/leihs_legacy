@@ -500,7 +500,7 @@
               </div>
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', backgroundColor: '#e3be1f', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                <div style={{display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', backgroundColor: '#e3be1f', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr) /*+ ' ' + rr.id*/}
                 </div>
               </div>
@@ -711,7 +711,6 @@
 
       })
 
-      debugger
       return r
     },
 
