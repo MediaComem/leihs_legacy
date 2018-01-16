@@ -291,22 +291,6 @@
 
     },
 
-    // getInitialState() {
-    //   return {
-    //     position: 0
-    //   }
-    // },
-    //
-    // componentDidMount() {
-    //
-    //   setInterval(
-    //     () => {
-    //       this.setState({position: this.state.position + 1})
-    //     },
-    //     30
-    //   )
-    // },
-
     daysDifference(m1, m2) {
       return m1.startOf('day').diff(m2.startOf('day'), 'days')
     },
@@ -453,17 +437,15 @@
 
     },
 
-    calcReservationsHeight(reservations) {
+    calcReservationsHeight(layouted) {
 
-      var layouted = this.layoutReservationFrames(reservations)
       return layouted.length * 20
 
     },
 
 
-    renderReservations(firstMoment, lastMoment, reservations, timeline_availability) {
+    renderReservations(layouted, firstMoment, lastMoment, timeline_availability) {
 
-      var layouted = this.layoutReservationFrames(reservations)
 
 
       return layouted.map((line, index) => {
@@ -853,9 +835,27 @@
 
     getInitialState() {
       return {
+        position: 0,
         preprocessedData: this.preprocessData(this.props.timeline_availability)
       }
     },
+
+    // getInitialState() {
+    //   return {
+    //     position: 0
+    //   }
+    // },
+    //
+    // componentDidMount() {
+    //
+    //   setInterval(
+    //     () => {
+    //       this.setState({position: this.state.position + 1})
+    //     },
+    //     30
+    //   )
+    // },
+
 
     componentDidMount() {
       this.setState({
@@ -866,6 +866,14 @@
         quantityGeneral: this.quantityGeneral(this.props.timeline_availability),
         // preprocessedData: this.preprocessData(this.props.timeline_availability)
       })
+
+      setInterval(
+        () => {
+          this.setState({position: this.state.position + 1})
+        },
+        30
+      )
+
     },
 
     renderEntitlement(timeline_availability, entitlement, topEntitlement, wholeWidth, firstMoment, lastMoment) {
@@ -913,6 +921,7 @@
       var borrowableCounts = _.zip(totalCounts, handoutCounts).map((p) => _.first(p) + _.last(p))
       var reservationCounts = this.reservationCounts(this.props.timeline_availability, lastMoment).map((rc) => - rc.length)
       var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) + _.last(p))
+      var allLayoutedReservationFrames = this.layoutReservationFrames(this.props.timeline_availability.running_reservations)
 
       return {
         firstMoment: firstMoment,
@@ -923,7 +932,8 @@
         handoutCounts: handoutCounts,
         borrowableCounts: borrowableCounts,
         reservationCounts: reservationCounts,
-        unusedCounts: unusedCounts
+        unusedCounts: unusedCounts,
+        allLayoutedReservationFrames: allLayoutedReservationFrames
       }
 
 
@@ -953,6 +963,8 @@
 
       var unusedCounts = preprocessedData.unusedCounts
 
+      var allLayoutedReservationFrames = preprocessedData.allLayoutedReservationFrames
+
       var wholeWidth = dayWidth * numberOfDaysToShow
 
       var unusedColors = (index) => {
@@ -960,19 +972,20 @@
         if(delta > 0) {
           return 'rgb(170, 221, 170)'
         } else if(delta == 0) {
-          return 'rgb(232, 147, 37)'
+          return '#e4db5f'
+          // return 'rgb(232, 147, 37)'
         } else {
           return 'rgb(221, 170, 170)'
         }
       }
 
-      var topHandoutLines = 130 - 40
+      var topHandoutLines = 130 - 40 + this.state.position
 
       // var topTitle = 40
 
       var topTotal = 100 - 40
 
-      var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(this.props.timeline_availability.running_reservations)
+      var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(allLayoutedReservationFrames)
 
       var topReservationLines = topAfterHandoutLines + 100
 
@@ -1005,19 +1018,20 @@
       //   {this.renderLabelSmall(firstMoment, 'Reservationen')}
       //   {this.renderIndexedQuantitiesSmall((i) => reservationCounts[i], firstMoment, lastMoment, this.reservationColors)}
       // </div>
+      // {this.renderEntitlements(this.props.timeline_availability, topFreeItems, wholeWidth, firstMoment, lastMoment)}
+
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
           <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow, wholeHeight)}
           </div>
           <div style={{position: 'absolute', top: topHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderReservations(firstMoment, lastMoment, this.props.timeline_availability.running_reservations, this.props.timeline_availability)}
+            {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability)}
           </div>
           <div style={{position: 'absolute', top: topFreeItems + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderLabel(firstMoment, 'Verfügbar')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
-          {this.renderEntitlements(this.props.timeline_availability, topFreeItems, wholeWidth, firstMoment, lastMoment)}
         </div>
       )
     }
