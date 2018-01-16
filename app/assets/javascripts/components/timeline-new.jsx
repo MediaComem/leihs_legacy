@@ -851,13 +851,20 @@
     //   return reservationsWithGroups
     // },
 
+    getInitialState() {
+      return {
+        preprocessedData: this.preprocessData(this.props.timeline_availability)
+      }
+    },
+
     componentDidMount() {
       this.setState({
         // entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i)),
         userProblems: [0, 1, 2, 3].map((i) => this.calculateUserProblems(this.props.timeline_availability, i)),
         userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
         maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
-        quantityGeneral: this.quantityGeneral(this.props.timeline_availability)
+        quantityGeneral: this.quantityGeneral(this.props.timeline_availability),
+        // preprocessedData: this.preprocessData(this.props.timeline_availability)
       })
     },
 
@@ -895,27 +902,56 @@
     },
 
 
-    render () {
+    preprocessData(timeline_availability) {
 
       var firstMoment = this.firstReservationMoment()
       var lastMoment = this.lastReservationMoment()
+      var numberOfDays = this.numberOfDays(firstMoment, lastMoment)
+      var relevantItemsCount = this.relevantItemsCount()
+      var totalCounts = this.totalCounts(lastMoment, relevantItemsCount)
+      var handoutCounts = this.handoutCounts(this.props.timeline_availability, lastMoment).map((hc) => - hc.length)
+      var borrowableCounts = _.zip(totalCounts, handoutCounts).map((p) => _.first(p) + _.last(p))
+      var reservationCounts = this.reservationCounts(this.props.timeline_availability, lastMoment).map((rc) => - rc.length)
+      var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) + _.last(p))
 
-      var numberOfDaysToShow = this.numberOfDays(firstMoment, lastMoment)
+      return {
+        firstMoment: firstMoment,
+        lastMoment: lastMoment,
+        numberOfDays: numberOfDays,
+        relevantItemsCount: relevantItemsCount,
+        totalCounts: totalCounts,
+        handoutCounts: handoutCounts,
+        borrowableCounts: borrowableCounts,
+        reservationCounts: reservationCounts,
+        unusedCounts: unusedCounts
+      }
+
+
+    },
+
+    render () {
+
+      var preprocessedData = this.state.preprocessedData
+
+      var firstMoment = preprocessedData.firstMoment
+      var lastMoment = preprocessedData.lastMoment
+
+      var numberOfDaysToShow = preprocessedData.numberOfDays
 
       var dayWidth = 30
 
-      var relevantItemsCount = this.relevantItemsCount()
+      var relevantItemsCount = preprocessedData.relevantItemsCount
 
-      var totalCounts = this.totalCounts(lastMoment, relevantItemsCount)
+      var totalCounts = preprocessedData.totalCounts
 
 
-      var handoutCounts = this.handoutCounts(this.props.timeline_availability, lastMoment).map((hc) => - hc.length)
+      var handoutCounts = preprocessedData.handoutCounts
 
-      var borrowableCounts = _.zip(totalCounts, handoutCounts).map((p) => _.first(p) + _.last(p))
+      var borrowableCounts = preprocessedData.borrowableCounts
 
-      var reservationCounts = this.reservationCounts(this.props.timeline_availability, lastMoment).map((rc) => - rc.length)
+      var reservationCounts = preprocessedData.reservationCounts
 
-      var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) + _.last(p))
+      var unusedCounts = preprocessedData.unusedCounts
 
       var wholeWidth = dayWidth * numberOfDaysToShow
 
