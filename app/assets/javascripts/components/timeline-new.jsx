@@ -835,7 +835,7 @@
 
     getInitialState() {
       return {
-        position: 0,
+        // position: 0,
         preprocessedData: this.preprocessData(this.props.timeline_availability)
       }
     },
@@ -867,12 +867,12 @@
         // preprocessedData: this.preprocessData(this.props.timeline_availability)
       })
 
-      setInterval(
-        () => {
-          this.setState({position: this.state.position + 1})
-        },
-        30
-      )
+      // setInterval(
+      //   () => {
+      //     this.setState({position: this.state.position + 1})
+      //   },
+      //   30
+      // )
 
     },
 
@@ -979,7 +979,7 @@
         }
       }
 
-      var topHandoutLines = 130 - 40 + this.state.position
+      var topHandoutLines = 130 - 40 //+ this.state.position
 
       // var topTitle = 40
 
