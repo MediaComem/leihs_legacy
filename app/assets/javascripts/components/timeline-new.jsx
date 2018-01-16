@@ -270,6 +270,44 @@
       )
     },
 
+    renderMonth(firstMoment, monthFrom, monthTo) {
+
+      var offset = (m) => {
+        return this.daysDifference(m, firstMoment)
+      }
+
+      var offset = offset(monthFrom)
+      var length = this.numberOfDays(monthFrom, monthTo)
+
+      return (
+        <div key={'month_' + monthFrom.format('YYYY-MM')} style={{position: 'absolute', top: '0px', left: (offset * 30) + 'px', width: (length * 30) + 'px', bottom: '0px', border: '0px'}}>
+          <div style={{fontSize: '14px', paddingTop: '10px', textAlign: 'center', position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px solid black', borderWidth: '0px 1px 0px 0px'}}>
+            {monthFrom.format('MMMM')}
+          </div>
+        </div>
+      )
+    },
+
+    renderMonths(firstMoment, lastMoment) {
+
+      var result = []
+      var monthFrom = moment(firstMoment)
+      while(monthFrom.isSameOrBefore(lastMoment)) {
+
+        var monthTo = moment(monthFrom).endOf('month')
+        if(monthTo.isAfter(lastMoment)) {
+          monthTo = moment(lastMoment)
+        }
+
+        result.push(this.renderMonth(firstMoment, monthFrom, monthTo))
+
+        monthFrom = moment(monthTo).add(1, 'month').startOf('month')
+      }
+
+      return result
+
+    },
+
     renderDays(firstMoment, numberOfDaysToShow) {
 
       return _.map(
@@ -278,9 +316,14 @@
 
           var m = moment(firstMoment).add(i, 'days')
 
+          var backgroundColor = 'none'
+          if(m.isSame(moment(), 'days')) {
+            backgroundColor = '#dadada'
+          }
+
           return (
             <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', bottom: '0px', border: '0px'}}>
-              <div style={{position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '0px 1px 0px 0px'}}>
+              <div style={{textAlign: 'center', paddingTop: '5px', backgroundColor: backgroundColor, position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '0px 1px 0px 0px'}}>
                 {m.format('DD')}
               </div>
             </div>
@@ -1023,7 +1066,10 @@
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
           <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderDays(firstMoment, numberOfDaysToShow, wholeHeight)}
+            {this.renderMonths(firstMoment, lastMoment)}
+          </div>
+          <div style={{position: 'absolute', top: '40px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderDays(firstMoment, numberOfDaysToShow)}
           </div>
           <div style={{position: 'absolute', top: topHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability)}
