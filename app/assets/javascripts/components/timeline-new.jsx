@@ -323,7 +323,7 @@
 
           return (
             <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', bottom: '0px', border: '0px'}}>
-              <div style={{textAlign: 'center', paddingTop: '5px', backgroundColor: backgroundColor, position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '0px 1px 0px 0px'}}>
+              <div style={{textAlign: 'center', paddingTop: '5px', backgroundColor: backgroundColor, position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '1px 1px 0px 0px'}}>
                 {m.format('DD')}
               </div>
             </div>
