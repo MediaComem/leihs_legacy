@@ -721,25 +721,201 @@
 
       var entitlements = userEntitlementGroupsForModel[userId]
 
-      return entitlements
+      return entitlements.map((e) => e.id)
 
 
 
     },
 
 
-    findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel) {
+    algorithmTrial(trial, candidates, constraints) {
 
+      var values = trial.map((t, i) => {
+        return candidates[i].entitlementCandidates[t]
+      })
+
+
+      var counts = _.object(
+        constraints.map((entitlement) => {
+          return [
+            entitlement.group,
+            {
+              expectedMax: entitlement.quantity,
+              trialCount: _.filter(values, (v) => v == entitlement.group).length
+            }
+          ]
+        })
+      )
+
+
+      return counts
+    },
+
+    nextTrial(trial, reservationsWithCandidates) {
+
+      var next = _.clone(trial)
+
+      var pos = 0
+
+      next[pos]++
+
+      // if(!reservationsWithCandidates[pos]){
+      //   debugger
+      // }
+
+      while(next[pos] == reservationsWithCandidates[pos].entitlementCandidates.length) {
+        next[pos] = 0
+        pos++
+
+        if(pos == next.length) {
+          return null
+        }
+
+        // if(!reservationsWithCandidates[pos]){
+        //   debugger
+        // }
+
+        next[pos]++
+      }
+
+
+      return next
+
+    },
+
+    algorithm(reservationsWithCandidates, constraints, relevantItemsCount, onlyGeneralCount) {
+
+      var valid = false
+      var counts = null
+      var trial = reservationsWithCandidates.map((r) => 0)
+      var finished = false
+
+      var trialCounts = 0
+      var suggestion = null//_.clone(trial)
+      var suggestionNeededFromGeneral = 0
+      // debugger
+      while(!valid && trial) {
+
+        counts = this.algorithmTrial(trial, reservationsWithCandidates, constraints)
+
+        onGroups = _.reduce(
+          counts,
+          (memo, c) => {
+
+            if(c.trialCount <= c.expectedMax) {
+              return memo + c.trialCount
+            } else {
+              return memo + c.expectedMax
+            }
+          },
+          0
+        )
+
+        availableForGeneral = relevantItemsCount - _.reduce(
+          constraints,
+          (memo, c) => {
+            return memo + c.quantity
+          },
+          0
+        )
+
+        neededFromGeneral = _.reduce(
+          counts,
+          (memo, c) => {
+            if(c.trialCount <= c.expectedMax) {
+              return memo
+            } else {
+              return memo + c.trialCount - c.expectedMax
+            }
+          },
+          0
+        )
+
+
+        if(suggestion == null || neededFromGeneral < suggestionNeededFromGeneral) {
+          suggestion = _.clone(trial)
+          suggestionNeededFromGeneral = neededFromGeneral
+        }
+
+        trialCounts++
+
+        if(neededFromGeneral <= availableForGeneral) {
+          console.log('trial counts = ' + trialCounts)
+          return {
+            result: 'success',
+            assignments: trial
+          }
+        }
+
+        if(trialCounts == 100) {
+          return {
+            result: 'timeout',
+            suggestion: suggestion
+          }
+        }
+
+        trial = this.nextTrial(trial, reservationsWithCandidates)
+      }
+
+      console.log('trial counts = ' + trialCounts)
+
+      return {
+        result: 'impossible',
+        suggestion: suggestion
+      }
+      // return {
+      //   candidates: reservationsWithCandidates,
+      //   constraints: constraints
+      // }
+
+    },
+
+
+    findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel, relevantItemsCount) {
+
+      var before = performance.now()
       var day = moment().add(dayIndex, 'days')
 
       var reservations = this.reservationsForDay(timeline_availability, day)
 
-      return reservations.map((r) => {
+      var candidates = reservations.map((r) => {
         return {
           reservation: r,
           entitlementCandidates: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel)
         }
       })
+
+      var constraints =  timeline_availability.entitlements.map((e) => {
+        return {
+          group: e.entitlement_group_id,
+          quantity: e.quantity
+        }
+      })
+
+      var candidates2 = _.filter(candidates, (c) => c.entitlementCandidates.length > 0)
+
+      var onlyGeneralCount = candidates.length - candidates2.length
+
+      var result = true
+      if(candidates2.length > 0) {
+        result = this.algorithm(candidates2, constraints, relevantItemsCount, onlyGeneralCount)
+      } else {
+
+        // if(onlyGeneralCount)
+        result = {
+          result: 'all-from-general'
+
+        }
+      }
+      // else {
+      //   return true
+      // }
+
+      var after = performance.now();
+
+      console.log('delta = ' + (after - before))
+
+      return result
 
 
     },
@@ -966,10 +1142,11 @@
         userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
         maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
         quantityGeneral: this.quantityGeneral(this.props.timeline_availability),
-        test: [0, 1, 2, 3].map((i) => this.findEntitlementCombination(
+        findEntitlementCombination: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => this.findEntitlementCombination(
           this.props.timeline_availability,
           i,
-          this.state.preprocessedData.userEntitlementGroupsForModel
+          this.state.preprocessedData.userEntitlementGroupsForModel,
+          this.state.preprocessedData.relevantItemsCount
         ))
         // preprocessedData: this.preprocessData(this.props.timeline_availability)
       })

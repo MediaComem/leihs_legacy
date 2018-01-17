@@ -23,7 +23,10 @@ module TimelineAvailability
     end
 
     def reservation_users(reservations)
+
       user_ids = reservations.map { |r| r['user_id'] }
+
+      return [] if user_ids.empty?
 
       query = <<-SQL
         select
@@ -41,6 +44,8 @@ module TimelineAvailability
 
       user_ids = users.map { |r| r['id'] }
 
+      return [] if user_ids.empty?
+
       query = <<-SQL
         select
         	entitlement_groups_users.*
@@ -55,6 +60,8 @@ module TimelineAvailability
 
     def entitlement_groups(entitlements, entitlement_groups_users, inventory_pool_id)
       group_ids = entitlements.map { |e| e['entitlement_group_id']} + entitlement_groups_users.map { |r| r['entitlement_group_id'] }
+
+      return [] if group_ids.empty?
 
       query = <<-SQL
         select
