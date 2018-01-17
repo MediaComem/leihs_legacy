@@ -713,6 +713,65 @@
 
     },
 
+
+    reservationEntitlements(timeline_availability, reservation, userEntitlementGroupsForModel) {
+
+
+      var userId = reservation.user_id
+
+      var entitlements = userEntitlementGroupsForModel[userId]
+
+      return entitlements
+
+
+
+    },
+
+
+    findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel) {
+
+      var day = moment().add(dayIndex, 'days')
+
+      var reservations = this.reservationsForDay(timeline_availability, day)
+
+      return reservations.map((r) => {
+        return {
+          reservation: r,
+          entitlementCandidates: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel)
+        }
+      })
+
+
+    },
+
+    userEntitlementGroupsForModel(timeline_availability) {
+
+      var userEntitlementGroups = this.calculateUserEntitlementGroups(timeline_availability)
+
+      var entitlementGroupIds = timeline_availability.entitlements.map((e) => e.entitlement_group_id)
+
+      // debugger
+      return _.object(
+        _.map(
+          userEntitlementGroups,
+          (uegs, uid) => {
+
+            return [
+              uid,
+              _.filter(
+                uegs,
+                (ueg) => {
+                  return _.contains(entitlementGroupIds, ueg.id)
+                }
+              )
+            ]
+          }
+        )
+      )
+    },
+
+
+
     entitlementQuantityPerGroup(timeline_availability) {
 
       return _.object(
@@ -907,6 +966,11 @@
         userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
         maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
         quantityGeneral: this.quantityGeneral(this.props.timeline_availability),
+        test: [0, 1, 2, 3].map((i) => this.findEntitlementCombination(
+          this.props.timeline_availability,
+          i,
+          this.state.preprocessedData.userEntitlementGroupsForModel
+        ))
         // preprocessedData: this.preprocessData(this.props.timeline_availability)
       })
 
@@ -965,6 +1029,7 @@
       var reservationCounts = this.reservationCounts(this.props.timeline_availability, lastMoment).map((rc) => - rc.length)
       var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) + _.last(p))
       var allLayoutedReservationFrames = this.layoutReservationFrames(this.props.timeline_availability.running_reservations)
+      var userEntitlementGroupsForModel = this.userEntitlementGroupsForModel(this.props.timeline_availability)
 
       return {
         firstMoment: firstMoment,
@@ -976,7 +1041,8 @@
         borrowableCounts: borrowableCounts,
         reservationCounts: reservationCounts,
         unusedCounts: unusedCounts,
-        allLayoutedReservationFrames: allLayoutedReservationFrames
+        allLayoutedReservationFrames: allLayoutedReservationFrames,
+        userEntitlementGroupsForModel: userEntitlementGroupsForModel
       }
 
 
@@ -1007,6 +1073,8 @@
       var unusedCounts = preprocessedData.unusedCounts
 
       var allLayoutedReservationFrames = preprocessedData.allLayoutedReservationFrames
+
+      var userEntitlementGroupsForModel = preprocessedData.userEntitlementGroupsForModel
 
       var wholeWidth = dayWidth * numberOfDaysToShow
 
