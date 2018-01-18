@@ -880,18 +880,20 @@
       var candidates = reservations.map((r) => {
         return {
           reservation: r,
-          entitlements: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel)
+          entitlements: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel).concat('')
         }
       })
 
-      var constraints = timeline_availability.entitlements.map((e) => {
-        return {
-          group: e.entitlement_group_id,
-          quantity: e.quantity
-        }
-      })
+      var constraints = _.object(timeline_availability.entitlements.map((e) => {
+        return [
+          e.entitlement_group_id,
+          e.quantity
+        ]
+      }))
 
-      var groupsGrouping = _.object(_.reduce(
+      constraints[''] = _.reduce(constraints, (m, q) => m - q, relevantItemsCount)
+
+      var groupedCounts = _.object(_.reduce(
         candidates,
         (m, c) => {
           var i = _.findIndex(m, (mi) => _.intersection(mi.key, c.entitlements).length == c.entitlements.length && c.entitlements.length == mi.key.length)
@@ -904,6 +906,14 @@
         },
         []
       ).map((gg, i) => [i, gg]))
+
+      var matrix = _.object(_.map(groupedCounts, (v, k) => {
+        return [
+          k,
+          _.mapObject(constraints, v => 0)
+        ]
+
+      }))
 
       debugger
 
