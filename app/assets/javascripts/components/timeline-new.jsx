@@ -763,7 +763,7 @@
       //   debugger
       // }
 
-      while(next[pos] == reservationsWithCandidates[pos].entitlementCandidates.length) {
+      while(next[pos] == reservationsWithCandidates[pos].entitlements.length) {
         next[pos] = 0
         pos++
 
@@ -870,7 +870,6 @@
 
     },
 
-
     findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel, relevantItemsCount) {
 
       var before = performance.now()
@@ -881,42 +880,59 @@
       var candidates = reservations.map((r) => {
         return {
           reservation: r,
-          entitlementCandidates: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel)
+          entitlements: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel)
         }
       })
 
-      var constraints =  timeline_availability.entitlements.map((e) => {
+      var constraints = timeline_availability.entitlements.map((e) => {
         return {
           group: e.entitlement_group_id,
           quantity: e.quantity
         }
       })
 
-      var candidates2 = _.filter(candidates, (c) => c.entitlementCandidates.length > 0)
+      var groupsGrouping = _.object(_.reduce(
+        candidates,
+        (m, c) => {
+          var i = _.findIndex(m, (mi) => _.intersection(mi.key, c.entitlements).length == c.entitlements.length && c.entitlements.length == mi.key.length)
+          if(i == - 1) {
+            return m.concat({key: c.entitlements, count: 1})
+          } else {
+            m[i].count++
+            return m
+          }
+        },
+        []
+      ).map((gg, i) => [i, gg]))
 
-      var onlyGeneralCount = candidates.length - candidates2.length
+      debugger
 
-      var result = true
-      if(candidates2.length > 0) {
-        result = this.algorithm(candidates2, constraints, relevantItemsCount, onlyGeneralCount)
-      } else {
-
-        // if(onlyGeneralCount)
-        result = {
-          result: 'all-from-general'
-
-        }
-      }
-      // else {
-      //   return true
+      // var candidates2 = _.filter(candidates, (c) => c.entitlements.length > 0)
+      //
+      // var onlyGeneralCount = candidates.length - candidates2.length
+      //
+      // var result = true
+      // if(candidates2.length > 0) {
+      //   result = this.algorithm(candidates2, constraints, relevantItemsCount, onlyGeneralCount)
+      // } else {
+      //
+      //   // if(onlyGeneralCount)
+      //   result = {
+      //     result: 'all-from-general'
+      //
+      //   }
       // }
+      // // else {
+      // //   return true
+      // // }
+      //
+      // var after = performance.now();
+      //
+      // console.log('delta = ' + (after - before))
+      //
+      // return result
 
-      var after = performance.now();
-
-      console.log('delta = ' + (after - before))
-
-      return result
-
+      return null
 
     },
 
