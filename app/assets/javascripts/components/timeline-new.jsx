@@ -907,15 +907,132 @@
         []
       ).map((gg, i) => [i, gg]))
 
-      var matrix = _.object(_.map(groupedCounts, (v, k) => {
-        return [
-          k,
-          _.mapObject(constraints, v => 0)
-        ]
+      var initialMatrix = {
+        colHeader: {
+          initialCounts: _.clone(constraints),
+          reducedCounts: _.clone(constraints)
+        },
+        rows: _.object(_.map(groupedCounts, (v, k) => {
+          return [
+            k,
+            {
+              rowHeader: {
+                initialCount: v.count,
+                reducedCount: v.count,
+                entitlements: _.clone(v.key)
 
-      }))
+              },
+              values: _.mapObject(constraints, v => 0),
+            }
+          ]
 
-      debugger
+        }))
+      }
+
+      var cloneMatrix = matrix => {
+
+        return {
+          colHeader: {
+            initialCounts: _.clone(matrix.colHeader.initialCounts),
+            reducedCounts: _.clone(matrix.colHeader.reducedCounts)
+          },
+          rows: _.mapObject(matrix.rows, row => {
+            return {
+              rowHeader: {
+                initialCount: row.rowHeader.initialCount,
+                reducedCount: row.rowHeader.reducedCount,
+                entitlements: _.clone(row.rowHeader.entitlements)
+              },
+              values: _.clone(row.values)
+            }
+          })
+        }
+      }
+
+
+      var isValidRow = (matrix, row) => {
+
+        var amountToDistribute = _.reduce(
+          _.map(row.rowHeader.entitlements, e => matrix.colHeader.reducedCounts[e]),
+          (memo, val) => memo + val,
+          0
+        )
+
+        var amountAllocated = _.reduce(
+          _.map(row.values, v => v),
+          (memo, val) => memo + val,
+          0
+        )
+
+        return amountToDistribute + amountAllocated > row.rowHeader.reducedCount && row.rowHeader.reducedCount >= 0
+
+      }
+
+      var isValidMatrix = matrix => {
+
+        return _.reduce(
+          matrix.rows,
+          (memo, row) => {
+            return memo && isValidRow(matrix, row)
+          },
+          true
+        ) && _.reduce(
+          matrix.colHeader.reducedCounts,
+          (memo, c) => memo && c >= 0,
+          true
+        )
+
+      }
+
+
+      var step = matrix => {
+        var before = cloneMatrix(matrix);
+
+        var afters = _.mapObject(before.rows, (row, rowKey) => {
+          return row.rowHeader.entitlements.map(ent => {
+
+            var after = cloneMatrix(before)
+            var afterRow = after.rows[rowKey]
+            afterRow.values[ent]++
+            afterRow.rowHeader.reducedCount--
+            after.colHeader.reducedCounts[ent]--
+
+            return after
+          })
+
+        })
+
+        var next = _.find(
+          _.flatten(_.map(afters, a => a)),
+          a => {
+            return isValidMatrix(a)
+          }
+        )
+
+        return next
+      }
+
+      var matrixFinished = matrix => {
+
+        return _.reduce(
+          matrix.rows,
+          (matrixMemo, row) => {
+            return matrixMemo + _.reduce(
+              row.rowHeader.entitlements.map(ent => row.values[ent]),
+              (rowMemo, cell) => rowMemo + cell,
+              0
+            )
+          },
+          0
+        ) == reservations.length//relevantItemsCount
+
+      }
+
+      var current = cloneMatrix(initialMatrix)
+      while(current && !matrixFinished(current)) {
+        current = step(current)
+      }
+
 
       // var candidates2 = _.filter(candidates, (c) => c.entitlements.length > 0)
       //
@@ -942,7 +1059,7 @@
       //
       // return result
 
-      return null
+      return current
 
     },
 
