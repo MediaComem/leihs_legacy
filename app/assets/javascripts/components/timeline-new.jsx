@@ -595,6 +595,56 @@
 
     },
 
+    entitlementQuantities(timeline_availability, relevantItemsCount) {
+
+      return _.object(timeline_availability.entitlements.map((e) => {
+        return [
+          e.entitlement_group_id,
+          e.quantity
+        ]
+      }).concat([
+        [
+          '',
+          relevantItemsCount - _.reduce(
+            timeline_availability.entitlements,
+            (memo, e) => memo + e.quantity,
+            0
+          )
+        ]
+      ]))
+
+    },
+
+
+    reservationsInGroups(timeline_availability, entitlementQuantities, lastMoment, relevantItemsCount) {
+
+
+      return _.range(
+        0,
+        this.numberOfDays(moment(), lastMoment)
+      ).map((i) => {
+
+        var day = moment().add(i, 'days')
+
+        var dayReservations = this.reservationsForDay(timeline_availability, day)
+
+        return _.mapObject(entitlementQuantities, (q, g) => {
+
+          return _.filter(
+            dayReservations,
+            (r) => {
+              return this.isReservationInGroup(r, g, timeline_availability)
+            }
+          )
+
+        })
+
+
+
+
+      })
+    },
+
 
     reservationCounts(timeline_availability, lastMoment) {
 
@@ -969,6 +1019,28 @@
 
     },
 
+    groupsForUser(user_id, timeline_availability) {
+
+      return _.filter(timeline_availability.entitlement_groups_users, (egu) => {
+        return egu.user_id == user_id
+      }).map((egu) => egu.entitlement_group_id)
+
+    },
+
+    groupsForUsers(timeline_availability) {
+
+      return _.object(timeline_availability.reservation_users.map((u) => {
+        return [
+          u.id,
+          this.groupsForUser(u.id, timeline_availability)
+        ]
+      }))
+    },
+
+    isReservationInGroup(reservation, groupId, timeline_availability) {
+      return _.contains(this.groupsForUsers(timeline_availability)[reservation.user_id], groupId)
+    },
+
     calculateUserEntitlementGroups(timeline_availability) {
 
       return _.object(
@@ -1171,6 +1243,9 @@
       var unusedCounts = _.zip(borrowableCounts, reservationCounts).map((p) => _.first(p) + _.last(p))
       var allLayoutedReservationFrames = this.layoutReservationFrames(this.props.timeline_availability.running_reservations)
       var userEntitlementGroupsForModel = this.userEntitlementGroupsForModel(this.props.timeline_availability)
+      var entitlementQuantities = this.entitlementQuantities(this.props.timeline_availability, relevantItemsCount)
+      var reservationsInGroups = this.reservationsInGroups(this.props.timeline_availability, entitlementQuantities, lastMoment, relevantItemsCount)
+      var groupsForUsers = this.groupsForUsers(this.props.timeline_availability)
 
       return {
         firstMoment: firstMoment,
@@ -1183,7 +1258,9 @@
         reservationCounts: reservationCounts,
         unusedCounts: unusedCounts,
         allLayoutedReservationFrames: allLayoutedReservationFrames,
-        userEntitlementGroupsForModel: userEntitlementGroupsForModel
+        userEntitlementGroupsForModel: userEntitlementGroupsForModel,
+        reservationsInGroups: reservationsInGroups,
+        groupsForUsers: groupsForUsers
       }
 
 
