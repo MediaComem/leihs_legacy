@@ -790,20 +790,39 @@
 
     algorithm(reservations, constraints) {
 
+      if(_.size(reservations) > _.reduce(constraints, (m, q) => m + q, 0)) {
+        return {
+          result: 'not-enough-items'
+        }
+      }
+
       var trial = _.map(reservations, (reservation, reservationId) => {
         return {reservationId: reservationId, index: 0}
       })
 
-      while(trial) {
+      var count = 0
+
+      while(trial && count < 100000) {
         var groupAssignements = this.groupAssignements(trial, reservations)
         if(this.validateGroupAssignments(groupAssignements, constraints)) {
-          return groupAssignements
+          return {
+            result: 'valid-assignment-found',
+            groupAssignements: groupAssignements
+          }
         } else {
           trial = this.incrementTrial(trial, reservations)
+          count++
+          if(count == 10000) {
+            return {
+              result: 'algorithm-timeout'
+            }
+          }
         }
       }
 
-      return null
+      return {
+        result: 'no-valid-assignment-found'
+      }
     },
 
 
