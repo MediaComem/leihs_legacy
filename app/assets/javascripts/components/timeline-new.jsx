@@ -727,147 +727,83 @@
 
     },
 
-
-    algorithmTrial(trial, candidates, constraints) {
-
-      var values = trial.map((t, i) => {
-        return candidates[i].entitlementCandidates[t]
-      })
-
-
-      var counts = _.object(
-        constraints.map((entitlement) => {
-          return [
-            entitlement.group,
-            {
-              expectedMax: entitlement.quantity,
-              trialCount: _.filter(values, (v) => v == entitlement.group).length
-            }
-          ]
-        })
-      )
-
-
-      return counts
-    },
-
-    nextTrial(trial, reservationsWithCandidates) {
-
+    incrementTrial(trial, reservations) {
+      // This works like incrementing any number. You increment the rightmost
+      // number. If it is greater then the maximum base number, then set it to
+      // zero and increment the one to the left.
+      // For binary: 0000, 0001, 0010, 0011, 0100, ...
       var next = _.clone(trial)
-
       var pos = 0
-
-      next[pos]++
-
-      // if(!reservationsWithCandidates[pos]){
-      //   debugger
-      // }
-
-      while(next[pos] == reservationsWithCandidates[pos].entitlementCandidates.length) {
-        next[pos] = 0
+      next[pos].index++
+      while(next[pos].index == reservations[next[pos].reservationId].length) {
+        next[pos].index = 0
         pos++
-
         if(pos == next.length) {
           return null
         }
-
-        // if(!reservationsWithCandidates[pos]){
-        //   debugger
-        // }
-
-        next[pos]++
+        next[pos].index++
       }
-
-
       return next
+    },
+
+    groupAssignements(trial, reservations) {
+
+      return _.map(
+        trial,
+        (t) => {
+          return {
+            reservationId: t.reservationId,
+            groupId: reservations[t.reservationId][t.index]
+          }
+        }
+      )
 
     },
 
-    algorithm(reservationsWithCandidates, constraints, relevantItemsCount, onlyGeneralCount) {
+    validateGroupAssignments(groupAssignements, constraints) {
 
-      var valid = false
-      var counts = null
-      var trial = reservationsWithCandidates.map((r) => 0)
-      var finished = false
-
-      var trialCounts = 0
-      var suggestion = null//_.clone(trial)
-      var suggestionNeededFromGeneral = 0
-      // debugger
-      while(!valid && trial) {
-
-        counts = this.algorithmTrial(trial, reservationsWithCandidates, constraints)
-
-        onGroups = _.reduce(
-          counts,
-          (memo, c) => {
-
-            if(c.trialCount <= c.expectedMax) {
-              return memo + c.trialCount
-            } else {
-              return memo + c.expectedMax
-            }
-          },
-          0
-        )
-
-        availableForGeneral = relevantItemsCount - _.reduce(
-          constraints,
-          (memo, c) => {
-            return memo + c.quantity
-          },
-          0
-        )
-
-        neededFromGeneral = _.reduce(
-          counts,
-          (memo, c) => {
-            if(c.trialCount <= c.expectedMax) {
-              return memo
-            } else {
-              return memo + c.trialCount - c.expectedMax
-            }
-          },
-          0
-        )
-
-
-        if(suggestion == null || neededFromGeneral < suggestionNeededFromGeneral) {
-          suggestion = _.clone(trial)
-          suggestionNeededFromGeneral = neededFromGeneral
+      var reducedConstraints = _.mapObject(
+        constraints,
+        (quantity, groupId) => {
+          return quantity - _.filter(
+            groupAssignements,
+            (tg) => tg.groupId == groupId
+          ).length
         }
+      )
 
-        trialCounts++
+      reducedConstraints[''] += _.reduce(
+        _.filter(
+          reducedConstraints,
+          (q, k) => k != ''
+        ),
+        (memo, q) => (q >= 0 ? memo + q : memo),
+        0
+      )
 
-        if(neededFromGeneral <= availableForGeneral) {
-          console.log('trial counts = ' + trialCounts)
-          return {
-            result: 'success',
-            assignments: trial
-          }
+      return _.reduce(
+        reducedConstraints,
+        (memo, q) => memo && q >= 0,
+        true
+      )
+    },
+
+    algorithm(reservations, constraints) {
+
+      var trial = _.map(reservations, (reservation, reservationId) => {
+        return {reservationId: reservationId, index: 0}
+      })
+
+      while(trial) {
+        var groupAssignements = this.groupAssignements(trial, reservations)
+        if(this.validateGroupAssignments(groupAssignements, constraints)) {
+          return groupAssignements
+        } else {
+          trial = this.incrementTrial(trial, reservations)
         }
-
-        if(trialCounts == 100) {
-          return {
-            result: 'timeout',
-            suggestion: suggestion
-          }
-        }
-
-        trial = this.nextTrial(trial, reservationsWithCandidates)
       }
 
-      console.log('trial counts = ' + trialCounts)
-
-      return {
-        result: 'impossible',
-        suggestion: suggestion
-      }
-      // return {
-      //   candidates: reservationsWithCandidates,
-      //   constraints: constraints
-      // }
-
+      return null
     },
 
 
@@ -876,37 +812,46 @@
       var before = performance.now()
       var day = moment().add(dayIndex, 'days')
 
-      var reservations = this.reservationsForDay(timeline_availability, day)
+      var dayReservations = this.reservationsForDay(timeline_availability, day)
 
-      var candidates = reservations.map((r) => {
-        return {
-          reservation: r,
-          entitlementCandidates: this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel)
-        }
-      })
+      var reservations = _.object(dayReservations.map((r) => {
+        return [
+          r.id,
+          this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel).concat([''])
+        ]
+      }))
 
-      var constraints =  timeline_availability.entitlements.map((e) => {
-        return {
-          group: e.entitlement_group_id,
-          quantity: e.quantity
-        }
-      })
+      var constraints = _.object(
+        timeline_availability.entitlements.map((e) => {
+          return [
+            e.entitlement_group_id,
+            e.quantity
+          ]
+        }).concat([
+          [
+            '',
+            relevantItemsCount - _.reduce(
+              timeline_availability.entitlements,
+              (memo, e) => memo + e.quantity,
+              0
+            )
+          ]
+        ])
+      )
 
-      var candidates2 = _.filter(candidates, (c) => c.entitlementCandidates.length > 0)
-
-      var onlyGeneralCount = candidates.length - candidates2.length
-
-      var result = true
-      if(candidates2.length > 0) {
-        result = this.algorithm(candidates2, constraints, relevantItemsCount, onlyGeneralCount)
-      } else {
-
-        // if(onlyGeneralCount)
-        result = {
-          result: 'all-from-general'
-
-        }
-      }
+      // var onlyGeneralCount = candidates.length - candidates2.length
+      //
+      // var result = true
+      // if(candidates2.length > 0) {
+      result = this.algorithm(reservations, constraints)
+      // } else {
+      //
+      //   // if(onlyGeneralCount)
+      //   result = {
+      //     result: 'all-from-general'
+      //
+      //   }
+      // }
       // else {
       //   return true
       // }
