@@ -1106,7 +1106,7 @@
         userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
         maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
         quantityGeneral: this.quantityGeneral(this.props.timeline_availability),
-        findEntitlementCombination: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => this.findEntitlementCombination(
+        findEntitlementCombination: _.range(0, this.numberOfDays(moment(), this.state.preprocessedData.lastMoment)).map((i) => this.findEntitlementCombination(
           this.props.timeline_availability,
           i,
           this.state.preprocessedData.userEntitlementGroupsForModel,
