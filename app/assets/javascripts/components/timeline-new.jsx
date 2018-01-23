@@ -1257,7 +1257,8 @@
     },
 
 
-    calculateChanges(timeline_availability) {
+
+    changesDates(timeline_availability) {
 
       return _.sortBy(
         _.map(
@@ -1266,44 +1267,102 @@
             (memo, r) => {
 
               var ds = []
-              ds.push(r.start_date)
+              memo[r.start_date] = r.start_date
               if(!this.late(r)) {
-                ds.push(r.end_date)
+                memo[r.end_date] = r.end_date
               }
-
-              _.each(ds, (d) => {
-                if(!memo[d]) {
-                  memo[d] = []
-                }
-
-                memo[d].push(r)
-
-              })
 
               return memo
             },
             {}
           ),
-          (v, k) => {
-            return {
-              date: k,
-              reservations: v
-            }
-          }
+          (v) => v
         ),
-        (e) => e.date
+        (v) => v
       )
+
 
     },
 
+    calculateChangesReservations(timeline_availability, change) {
+      var m = moment(change)
+      return _.filter(
+        timeline_availability.running_reservations,
+        (r) => {
+          var start = moment(r.start_date)
+          var end = moment(r.end_date)
+          return start.isSameOrBefore(m) && (end.isSameOrAfter(m) || this.late(r))
+        }
+      )
+      // return _.sortBy(
+      //   _.map(
+      //     _.reduce(
+      //       timeline_availability.running_reservations,
+      //       (memo, r) => {
+      //
+      //         var ds = []
+      //         ds.push(r.start_date)
+      //         if(!this.late(r)) {
+      //           ds.push(r.end_date)
+      //         }
+      //
+      //         _.each(ds, (d) => {
+      //           if(!memo[d]) {
+      //             memo[d] = []
+      //           }
+      //
+      //           memo[d].push(r)
+      //
+      //         })
+      //
+      //         return memo
+      //       },
+      //       {}
+      //     ),
+      //     (v, k) => {
+      //       return {
+      //         date: k,
+      //         reservations: v
+      //       }
+      //     }
+      //   ),
+      //   (e) => e.date
+      // )
+
+    },
+
+
     changesAlgorithm(timeline_availability, changes, userEntitlementGroupsForModel, relevantItemsCount) {
       return changes.map((c) => {
+        var reservations = this.calculateChangesReservations(timeline_availability, c)
         return {
-          date: c.date,
-          reservations: c.reservations,
-          algorithm: this.algorithmForReservations(timeline_availability, c.reservations, userEntitlementGroupsForModel, relevantItemsCount)
+          date: c,
+          reservations: reservations,
+          algorithm: this.algorithmForReservations(timeline_availability, reservations, userEntitlementGroupsForModel, relevantItemsCount)
         }
       })
+    },
+
+    changesForDays(timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount) {
+
+      return _.range(
+        0,
+        this.numberOfDays(moment(), lastMoment)
+      ).map((i) => {
+
+        var day = moment().add(i, 'days')
+
+        return _.last(_.filter(
+          changesAlgorithm,
+          (c) => {
+            var cm = moment(c.date)
+
+            return day.isSameOrAfter(cm, 'day')
+          }
+        ))
+
+      })
+
     },
 
     preprocessData(timeline_availability) {
@@ -1322,8 +1381,9 @@
       var entitlementQuantities = this.entitlementQuantities(this.props.timeline_availability, relevantItemsCount)
       var reservationsInGroups = this.reservationsInGroups(this.props.timeline_availability, entitlementQuantities, lastMoment, relevantItemsCount)
       var groupsForUsers = this.groupsForUsers(this.props.timeline_availability)
-      var calculateChanges = this.calculateChanges(this.props.timeline_availability)
+      var calculateChanges = this.changesDates(this.props.timeline_availability)
       var changesAlgorithm = this.changesAlgorithm(this.props.timeline_availability, calculateChanges, userEntitlementGroupsForModel, relevantItemsCount)
+      var changesForDays = this.changesForDays(this.props.timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount)
 
       var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
         this.props.timeline_availability,
@@ -1350,7 +1410,8 @@
         groupsForUsers: groupsForUsers,
         calculateChanges: calculateChanges,
         findEntitlementCombination: findEntitlementCombination,
-        changesAlgorithm: changesAlgorithm
+        changesAlgorithm: changesAlgorithm,
+        changesForDays: changesForDays
       }
 
 
