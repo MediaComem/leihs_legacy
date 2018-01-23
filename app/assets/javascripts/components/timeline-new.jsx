@@ -827,50 +827,52 @@
 
     },
 
-    validateGroupAssignments(groupAssignements, constraints) {
-
-      var reducedConstraints = _.mapObject(
-        constraints,
-        (quantity, groupId) => {
-          return quantity - _.filter(
-            groupAssignements,
-            (tg) => tg.groupId == groupId
-          ).length
-        }
-      )
-
-      reducedConstraints[''] += _.reduce(
-        _.filter(
-          reducedConstraints,
-          (q, k) => k != ''
-        ),
-        (memo, q) => (q >= 0 ? memo + q : memo),
-        0
-      )
-
-      return _.reduce(
-        reducedConstraints,
-        (memo, q) => memo && q >= 0,
-        true
-      )
-    },
+    // validateGroupAssignments(groupAssignements, constraints) {
+    //
+    //   var reducedConstraints = _.mapObject(
+    //     constraints,
+    //     (quantity, groupId) => {
+    //       return quantity - _.filter(
+    //         groupAssignements,
+    //         (tg) => tg.groupId == groupId
+    //       ).length
+    //     }
+    //   )
+    //
+    //   reducedConstraints[''] += _.reduce(
+    //     _.filter(
+    //       reducedConstraints,
+    //       (q, k) => k != ''
+    //     ),
+    //     (memo, q) => (q >= 0 ? memo + q : memo),
+    //     0
+    //   )
+    //
+    //   return _.reduce(
+    //     reducedConstraints,
+    //     (memo, q) => memo && q >= 0,
+    //     true
+    //   )
+    // },
 
     // betterAssignments(current, best) {
     //   return true
     // },
 
-    betterEntitlementAssignments(entitlement, current, best) {
+    betterEntitlementAssignments(entitlement, current, best, constraints) {
 
-      if(!this.validateGroupAssignments(current) && this.validateGroupAssignments(best)) {
-        return false
-      }
+      return true
 
-
-      if(_.filter(current, (v) => v.groupId == entitlement).length < _.filter(best, (v) => v.groupId == entitlement).length) {
-        return true
-      }
-
-      return false
+      // if(!this.validateGroupAssignments(current) && this.validateGroupAssignments(best)) {
+      //   return false
+      // }
+      //
+      //
+      // if(_.filter(current, (v) => v.groupId == entitlement).length < _.filter(best, (v) => v.groupId == entitlement).length) {
+      //   return true
+      // }
+      //
+      // return false
     },
 
     algorithm(reservations, constraints) {
@@ -893,7 +895,7 @@
           if(!max) {
             return groupAssignements
           } else {
-            if(this.betterEntitlementAssignments(entitlement, groupAssignements, max)) {
+            if(this.betterEntitlementAssignments(entitlement, groupAssignements, max, constraints)) {
               return groupAssignements
             } else {
               return max
