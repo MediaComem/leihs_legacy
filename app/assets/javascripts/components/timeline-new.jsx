@@ -876,14 +876,11 @@
     },
 
 
-    findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel, relevantItemsCount) {
+    algorithmForReservations(timeline_availability, reservationsList, userEntitlementGroupsForModel, relevantItemsCount) {
 
       var before = performance.now()
-      var day = moment().add(dayIndex, 'days')
 
-      var dayReservations = this.reservationsForDay(timeline_availability, day)
-
-      var reservations = _.object(dayReservations.map((r) => {
+      var reservations = _.object(reservationsList.map((r) => {
         return [
           r.id,
           this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel).concat([''])
@@ -931,6 +928,15 @@
 
       return result
 
+    },
+
+    findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel, relevantItemsCount) {
+
+      var day = moment().add(dayIndex, 'days')
+
+      var dayReservations = this.reservationsForDay(timeline_availability, day)
+
+      return this.algorithmForReservations(timeline_availability, dayReservations, userEntitlementGroupsForModel, relevantItemsCount)
 
     },
 
@@ -1290,6 +1296,16 @@
 
     },
 
+    changesAlgorithm(timeline_availability, changes, userEntitlementGroupsForModel, relevantItemsCount) {
+      return changes.map((c) => {
+        return {
+          date: c.date,
+          reservations: c.reservations,
+          algorithm: this.algorithmForReservations(timeline_availability, c.reservations, userEntitlementGroupsForModel, relevantItemsCount)
+        }
+      })
+    },
+
     preprocessData(timeline_availability) {
 
       var firstMoment = this.firstReservationMoment()
@@ -1307,6 +1323,7 @@
       var reservationsInGroups = this.reservationsInGroups(this.props.timeline_availability, entitlementQuantities, lastMoment, relevantItemsCount)
       var groupsForUsers = this.groupsForUsers(this.props.timeline_availability)
       var calculateChanges = this.calculateChanges(this.props.timeline_availability)
+      var changesAlgorithm = this.changesAlgorithm(this.props.timeline_availability, calculateChanges, userEntitlementGroupsForModel, relevantItemsCount)
 
       var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
         this.props.timeline_availability,
@@ -1332,7 +1349,8 @@
         reservationsInGroups: reservationsInGroups,
         groupsForUsers: groupsForUsers,
         calculateChanges: calculateChanges,
-        findEntitlementCombination: findEntitlementCombination
+        findEntitlementCombination: findEntitlementCombination,
+        changesAlgorithm: changesAlgorithm
       }
 
 
