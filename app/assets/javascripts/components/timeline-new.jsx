@@ -292,7 +292,7 @@
 
       var result = []
       var monthFrom = moment(firstMoment)
-      while(monthFrom.isSameOrBefore(lastMoment)) {
+      while(monthFrom.isSameOrBefore(lastMoment, 'day')) {
 
         var monthTo = moment(monthFrom).endOf('month')
         if(monthTo.isAfter(lastMoment)) {
@@ -317,7 +317,7 @@
           var m = moment(firstMoment).add(i, 'days')
 
           var backgroundColor = 'none'
-          if(m.isSame(moment(), 'days')) {
+          if(m.isSame(moment(), 'day')) {
             backgroundColor = '#dadada'
           }
 
@@ -1174,16 +1174,17 @@
     componentDidMount() {
       this.setState({
         // entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i)),
-        userProblems: [0, 1, 2, 3].map((i) => this.calculateUserProblems(this.props.timeline_availability, i)),
-        userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
-        maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
-        quantityGeneral: this.quantityGeneral(this.props.timeline_availability),
-        findEntitlementCombination: _.range(0, this.numberOfDays(moment(), this.state.preprocessedData.lastMoment)).map((i) => this.findEntitlementCombination(
-          this.props.timeline_availability,
-          i,
-          this.state.preprocessedData.userEntitlementGroupsForModel,
-          this.state.preprocessedData.relevantItemsCount
-        ))
+        // userProblems: [0, 1, 2, 3].map((i) => this.calculateUserProblems(this.props.timeline_availability, i)),
+        // userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
+        // maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
+        // quantityGeneral: this.quantityGeneral(this.props.timeline_availability)
+        // ,
+        // findEntitlementCombination: _.range(0, this.numberOfDays(moment(), this.state.preprocessedData.lastMoment)).map((i) => this.findEntitlementCombination(
+        //   this.props.timeline_availability,
+        //   i,
+        //   this.state.preprocessedData.userEntitlementGroupsForModel,
+        //   this.state.preprocessedData.relevantItemsCount
+        // ))
         // preprocessedData: this.preprocessData(this.props.timeline_availability)
       })
 
@@ -1250,6 +1251,45 @@
     },
 
 
+    calculateChanges(timeline_availability) {
+
+      return _.sortBy(
+        _.map(
+          _.reduce(
+            timeline_availability.running_reservations,
+            (memo, r) => {
+
+              var ds = []
+              ds.push(r.start_date)
+              if(!this.late(r)) {
+                ds.push(r.end_date)
+              }
+
+              _.each(ds, (d) => {
+                if(!memo[d]) {
+                  memo[d] = []
+                }
+
+                memo[d].push(r)
+
+              })
+
+              return memo
+            },
+            {}
+          ),
+          (v, k) => {
+            return {
+              date: k,
+              reservations: v
+            }
+          }
+        ),
+        (e) => e.date
+      )
+
+    },
+
     preprocessData(timeline_availability) {
 
       var firstMoment = this.firstReservationMoment()
@@ -1266,6 +1306,15 @@
       var entitlementQuantities = this.entitlementQuantities(this.props.timeline_availability, relevantItemsCount)
       var reservationsInGroups = this.reservationsInGroups(this.props.timeline_availability, entitlementQuantities, lastMoment, relevantItemsCount)
       var groupsForUsers = this.groupsForUsers(this.props.timeline_availability)
+      var calculateChanges = this.calculateChanges(this.props.timeline_availability)
+
+      var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
+        this.props.timeline_availability,
+        i,
+        userEntitlementGroupsForModel,
+        relevantItemsCount
+      ))
+
 
       return {
         firstMoment: firstMoment,
@@ -1281,7 +1330,9 @@
         userEntitlementGroupsForModel: userEntitlementGroupsForModel,
         entitlementQuantities: entitlementQuantities,
         reservationsInGroups: reservationsInGroups,
-        groupsForUsers: groupsForUsers
+        groupsForUsers: groupsForUsers,
+        calculateChanges: calculateChanges,
+        findEntitlementCombination: findEntitlementCombination
       }
 
 
