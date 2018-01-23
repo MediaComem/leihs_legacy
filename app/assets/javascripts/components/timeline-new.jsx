@@ -352,13 +352,13 @@
       var label = this.username(timeline_availability, rr)
 
       var elements = [
-        <span>{label}</span>
+        <span key='label'>{label}</span>
       ]
 
       var inventoryCode = this.inventoryCode(timeline_availability, rr)
       if(inventoryCode) {
         elements.push(
-          <span style={{color: color, backgroundColor: '#383838', marginLeft: '10px', padding: '0px 3px 0px 3px'}}>{inventoryCode}</span>
+          <span key='inventory_code' style={{color: color, backgroundColor: '#383838', marginLeft: '10px', padding: '0px 3px 0px 3px'}}>{inventoryCode}</span>
         )
       }
 
