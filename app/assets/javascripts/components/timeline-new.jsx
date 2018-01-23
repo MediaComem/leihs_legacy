@@ -855,9 +855,9 @@
       )
     },
 
-    betterAssignments(current, best) {
-      return true
-    },
+    // betterAssignments(current, best) {
+    //   return true
+    // },
 
     betterEntitlementAssignments(entitlement, current, best) {
 
@@ -906,6 +906,23 @@
         // }
         trial = this.incrementTrial(trial, reservations)
       }
+
+      // _.each(result.maxPerEntitlement, (v1, k1) => {
+      //   _.each(result.maxPerEntitlement, (v2, k2) => {
+      //     if(k1 != k2) {
+      //
+      //       _.each(
+      //         _.zip(v1, v2),
+      //         (v1v2) => {
+      //           if(!_.isEqual(v1v2[0], v1v2[1])) {
+      //             debugger
+      //           }
+      //
+      //         }
+      //       )
+      //     }
+      //   })
+      // })
 
       return result
     },
