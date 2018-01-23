@@ -347,16 +347,22 @@
       )
     },
 
-    reservationLabel(timeline_availability, rr) {
+    reservationLabel(timeline_availability, rr, color) {
 
       var label = this.username(timeline_availability, rr)
 
+      var elements = [
+        <span>{label}</span>
+      ]
+
       var inventoryCode = this.inventoryCode(timeline_availability, rr)
       if(inventoryCode) {
-        label += ' ' + inventoryCode
+        elements.push(
+          <span style={{color: color, backgroundColor: '#383838', marginLeft: '10px', padding: '0px 3px 0px 3px'}}>{inventoryCode}</span>
+        )
       }
 
-      return label
+      return elements
     },
 
     username(timeline_availability, rr) {
@@ -487,7 +493,7 @@
     },
 
 
-    renderReservations(layouted, firstMoment, lastMoment, timeline_availability) {
+    renderReservations(layouted, firstMoment, lastMoment, timeline_availability, invalidReservations) {
 
 
 
@@ -526,7 +532,7 @@
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
                 <div style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
-                  {this.reservationLabel(timeline_availability, rr) /*+ ' ' + rr.id*/}
+                  {this.reservationLabel(timeline_availability, rr, '#eee') /*+ ' ' + rr.id*/}
                 </div>
               </div>
             ]
@@ -535,10 +541,21 @@
 
             var length = this.numberOfDays(start, end)
 
+            var backgroundColor = '#e3be1f'
+            var margin = '0px 3px'
+            var border = 'none'
+            var padding = '2px 5px'
+            if(invalidReservations[rr.id]) {
+              // backgroundColor = '#e37b1f'
+              margin = '0px 3px'
+              border = '2px solid red'
+              padding = '0px 5px'
+            }
+
             return (
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', backgroundColor: '#e3be1f', borderRadius: '5px', padding: '2px 5px', margin: '0px 3px'}}>
-                  {this.reservationLabel(timeline_availability, rr) /*+ ' ' + rr.id*/}
+                <div style={{backgroundColor: backgroundColor, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', borderRadius: '5px', padding: padding, margin: margin, border: border}}>
+                  {this.reservationLabel(timeline_availability, rr, '#e3be1f') /*+ ' ' + rr.id*/}
                 </div>
               </div>
             )
@@ -1336,11 +1353,32 @@
       return changes.map((c) => {
         var reservations = this.calculateChangesReservations(timeline_availability, c)
         return {
+          change: c,
           date: c,
           reservations: reservations,
-          algorithm: this.algorithmForReservations(timeline_availability, reservations, userEntitlementGroupsForModel, relevantItemsCount)
+          algorithm: this.algorithmForReservations(timeline_availability, reservations, userEntitlementGroupsForModel, relevantItemsCount),
+          available: relevantItemsCount - _.size(reservations)
         }
       })
+    },
+
+    invalidReservations(timeline_availability, changesAlgorithm, relevantItemsCount) {
+
+      var invalids = _.filter(
+        changesAlgorithm,
+        (c) => relevantItemsCount - _.size(c.reservations) < 0
+      ).map((c) => c.change)
+
+      var rids = _.uniq(_.flatten(invalids.map((c) => {
+        return _.filter(
+          this.calculateChangesReservations(timeline_availability, c),
+          (r) => !r.item_id
+        ).map(
+          (r) => r.id
+        )
+      })))
+
+      return _.object(rids.map((rid) => [rid, rid]))
     },
 
     changesForDays(timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount) {
@@ -1384,6 +1422,7 @@
       var calculateChanges = this.changesDates(this.props.timeline_availability)
       var changesAlgorithm = this.changesAlgorithm(this.props.timeline_availability, calculateChanges, userEntitlementGroupsForModel, relevantItemsCount)
       var changesForDays = this.changesForDays(this.props.timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount)
+      var invalidReservations = this.invalidReservations(this.props.timeline_availability, changesAlgorithm, relevantItemsCount)
 
       var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
         this.props.timeline_availability,
@@ -1411,7 +1450,8 @@
         calculateChanges: calculateChanges,
         findEntitlementCombination: findEntitlementCombination,
         changesAlgorithm: changesAlgorithm,
-        changesForDays: changesForDays
+        changesForDays: changesForDays,
+        invalidReservations: invalidReservations
       }
 
 
@@ -1513,7 +1553,7 @@
             {this.renderDays(firstMoment, numberOfDaysToShow)}
           </div>
           <div style={{position: 'absolute', top: topHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability)}
+            {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
           <div style={{position: 'absolute', top: topFreeItems + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderLabel(firstMoment, 'Verfügbar')}
