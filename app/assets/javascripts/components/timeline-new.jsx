@@ -855,41 +855,59 @@
       )
     },
 
-    algorithm(reservations, constraints) {
+    betterAssignments(current, best) {
+      return true
+    },
 
-      if(_.size(reservations) > _.reduce(constraints, (m, q) => m + q, 0)) {
-        return {
-          result: 'not-enough-items'
-        }
+    betterEntitlementAssignments(entitlement, current, best) {
+
+      if(!this.validateGroupAssignments(current) && this.validateGroupAssignments(best)) {
+        return false
       }
+
+
+      if(_.filter(current, (v) => v.groupId == entitlement).length < _.filter(best, (v) => v.groupId == entitlement).length) {
+        return true
+      }
+
+      return false
+    },
+
+    algorithm(reservations, constraints) {
 
       var trial = _.map(reservations, (reservation, reservationId) => {
         return {reservationId: reservationId, index: 0}
       })
 
-      var count = 0
+      var result = {
+        maxPerEntitlement: _.mapObject(constraints, (c) => null)
+      }
 
-      while(trial && count < 100000) {
+      while(trial) {
         var groupAssignements = this.groupAssignements(trial, reservations)
-        if(this.validateGroupAssignments(groupAssignements, constraints)) {
-          return {
-            result: 'valid-assignment-found',
-            groupAssignements: groupAssignements
-          }
-        } else {
-          trial = this.incrementTrial(trial, reservations)
-          count++
-          if(count == 10000) {
-            return {
-              result: 'algorithm-timeout'
+        // if(this.validateGroupAssignments(groupAssignements, constraints)) {
+        //   result.bestGroupAssignements = groupAssignements
+        // }
+
+        result.maxPerEntitlement = _.mapObject(result.maxPerEntitlement, (max, entitlement) => {
+          if(!max) {
+            return groupAssignements
+          } else {
+            if(this.betterEntitlementAssignments(entitlement, groupAssignements, max)) {
+              return groupAssignements
+            } else {
+              return max
             }
           }
-        }
+        })
+
+        // if(!result.bestGroupAssignements || this.betterAssignments(groupAssignements, result.bestGroupAssignements)) {
+        //   result.bestGroupAssignements = groupAssignements
+        // }
+        trial = this.incrementTrial(trial, reservations)
       }
 
-      return {
-        result: 'no-valid-assignment-found'
-      }
+      return result
     },
 
 
