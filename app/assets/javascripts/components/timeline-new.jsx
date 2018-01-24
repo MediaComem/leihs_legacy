@@ -1315,13 +1315,13 @@
 
       var topDays = topMonths + 40
 
-      var topReservations = topDays + 50
-
-      var topTotalQuantities = topReservations + this.calcReservationsHeight(allLayoutedReservationFrames) + 80
+      var topTotalQuantities = topDays + 50
 
       var topEntitlementQuantities = topTotalQuantities + 40
 
-      var wholeHeight = topEntitlementQuantities + this.heightEntitlementQuantities(entitlementQuantities) + 200
+      var topReservations = topEntitlementQuantities + this.heightEntitlementQuantities(entitlementQuantities) + 40
+
+      var wholeHeight = topReservations + this.calcReservationsHeight(allLayoutedReservationFrames) + 200
 
 
 
