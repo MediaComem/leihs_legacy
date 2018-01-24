@@ -1046,6 +1046,9 @@
       )
 
       if(candidate) {
+        current.assignment = assignedBooking.assignment
+        leftovers[assignedBooking.assignment]--
+
         leftovers[assignedBooking.assignment]++
         leftovers[candidate]--
         assignedBooking.assignment = candidate
@@ -1455,43 +1458,93 @@
 
     renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
-      if(groupId == '') {
-        return null
-      }
+      // if(groupId == '') {
+      //   return null
+      // }
 
       if(groupId == '') {
         label = 'Frei für alle'
       } else {
         var name = this.entitlementGroupNameForId(timeline_availability, groupId)
-        label = 'in Gruppe ' + name + ':'
+        label = 'Reserviert für Gruppe ' + name + ':'
       }
 
-      var mapping = (index) => {
+
+
+
+      var mappingReservation = (index) => {
         // (index) => reservationsInGroups[index][groupId].length + '/' + quantity
+
+        return quantity
+        // return available + '/' + quantity
+      }
+
+      var mappingAssigned = (index) => {
 
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
-        var available = quantity - count
+        // var available = quantity - count
+        //
+        // var total = changesForDays[index].available
+        // if(total < available) {
+        //   available = total
+        // }
+        //
+        // if(available < 0) {
+        //   available = 0
+        // }
 
-        var total = changesForDays[index].available
-        if(total < available) {
-          available = total
+        // return count
+
+        if(count > quantity) {
+          return quantity
+        } else {
+          return count
         }
 
-        if(available < 0) {
-          available = 0
-        }
-
-        return available + '/' + quantity
       }
 
-      return (
-        <div key={groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+      var mappingUnassigned = (index) => {
+
+        var algo = changesForDays[index].algorithm
+        var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
+
+        if(count > quantity) {
+          return (
+            <span style={{color: 'red'}}>{count - quantity}</span>
+          )
+        } else {
+          return 0
+        }
+
+      }
+
+      var reservedDiv = (
+        <div key={'reserved_' + groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
           {this.renderLabelSmall(firstMoment, label)}
-          {this.renderIndexedQuantitiesSmall(mapping, firstMoment, lastMoment, this.reservationColors)}
+          {this.renderIndexedQuantitiesSmall(mappingReservation, firstMoment, lastMoment, this.reservationColors)}
         </div>
       )
+
+      var assignedDiv = (
+        <div key={'assigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 20) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          {this.renderLabelSmall(firstMoment, 'davon verwendet:')}
+          {this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors)}
+        </div>
+      )
+
+      var unassignedDiv = null
+      if(groupId == '') {
+        unassignedDiv = (
+          <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabelSmall(firstMoment, 'nicht zuweisbar:')}
+            {this.renderIndexedQuantitiesSmall(mappingUnassigned, firstMoment, lastMoment, this.reservationColors)}
+          </div>
+        )
+      }
+
+      return _.compact([reservedDiv, assignedDiv, unassignedDiv])
 
     },
 
@@ -1505,7 +1558,7 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment, relevantItemsCount)
+        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30 * 2, wholeWidth, firstMoment, lastMoment, relevantItemsCount)
       })
     },
 
@@ -1593,7 +1646,7 @@
     changesAlgorithm(timeline_availability, changes, userEntitlementGroupsForModel, relevantItemsCount) {
       return changes.map((c) => {
         var reservations = this.calculateChangesReservations(timeline_availability, c)
-        // if(c == '2018-01-27') debugger;
+        if(c == '2018-02-06') debugger;
         return {
           change: c,
           date: c,
