@@ -214,7 +214,7 @@
     },
 
 
-    renderMonth(firstMoment, monthFrom, monthTo) {
+    renderMonth(firstMoment, monthFrom, monthTo, isLast) {
 
       var offset = (m) => {
         return this.daysDifference(m, firstMoment)
@@ -223,9 +223,14 @@
       var offset = offset(monthFrom)
       var length = this.numberOfDays(monthFrom, monthTo)
 
+      var border = '1px solid black'
+      if(isLast) {
+        border = 'none'
+      }
+
       return (
         <div key={'month_' + monthFrom.format('YYYY-MM')} style={{position: 'absolute', top: '0px', left: (offset * 30) + 'px', width: (length * 30) + 'px', bottom: '0px', border: '0px'}}>
-          <div style={{fontSize: '14px', paddingTop: '10px', textAlign: 'center', position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px solid black', borderWidth: '0px 1px 0px 0px'}}>
+          <div style={{fontSize: '14px', paddingTop: '10px', textAlign: 'center', position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: border, borderWidth: '0px 1px 0px 0px'}}>
             {monthFrom.format('MMMM')}
           </div>
         </div>
@@ -234,7 +239,7 @@
 
     renderMonths(firstMoment, lastMoment) {
 
-      var result = []
+      var months = []
       var monthFrom = moment(firstMoment)
       while(monthFrom.isSameOrBefore(lastMoment, 'day')) {
 
@@ -243,12 +248,18 @@
           monthTo = moment(lastMoment)
         }
 
-        result.push(this.renderMonth(firstMoment, monthFrom, monthTo))
+        months.push({
+          from: monthFrom,
+          to: monthTo
+        })
+
 
         monthFrom = moment(monthTo).add(1, 'month').startOf('month')
       }
 
-      return result
+      return months.map((month, index) => {
+        return this.renderMonth(firstMoment, month.from, month.to, index == months.length - 1)
+      })
 
     },
 
