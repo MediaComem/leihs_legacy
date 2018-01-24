@@ -110,17 +110,6 @@
       return this.daysDifference(moment(), firstMoment)
     },
 
-    renderTitle(firstMoment, relevantItemsCount) {
-
-      var offset = this.offset(firstMoment)
-
-
-      return (
-        <div style={{fontSize: '16px', position: 'absolute', top: '0px', left: (offset * 30) + 'px', textAlign: 'left', width: '1000px', height: '30px', border: '0px'}}>
-          {'Nutzbare Gegenstände: ' + relevantItemsCount}
-        </div>
-      )
-    },
 
     renderLabel(firstMoment, text) {
 
@@ -146,28 +135,6 @@
       )
     },
 
-    renderTotals(firstMoment, numberOfDaysToShow, relevantItemsCount) {
-
-      return _.map(
-        _.range(0, numberOfDaysToShow),
-        (i) => {
-
-          var m = moment(firstMoment).add(i, 'days')
-
-          var value = ''
-
-          if(m.isSameOrAfter(moment(), 'day')) {
-            value = '' + relevantItemsCount
-          }
-
-          return (
-            <div key={'total_count_' + i} style={{fontSize: '16px', position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
-              {value}
-            </div>
-          )
-        }
-      )
-    },
 
     renderValue(prefix, index, offset, value, backgroundColor) {
       return (
@@ -191,27 +158,6 @@
 
     },
 
-    renderQuantities(handoutCounts, firstMoment, lastMoment, colors) {
-
-      var offset = this.offset(firstMoment)
-
-      return _.map(
-        handoutCounts,
-        (hc, i) => {
-
-          var value = hc
-
-          var color = colors(value)
-
-          return this.renderValue('handout_count_', i, offset, value, color)
-          // return (
-          //   <div key={'handout_count_' + i} style={{fontSize: '16px', position: 'absolute', top: '0px', left: ((offset + i) * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
-          //     {value}
-          //   </div>
-          // )
-        }
-      )
-    },
 
     renderIndexedQuantities(valueFunc, firstMoment, lastMoment, colorFunc) {
 
@@ -267,24 +213,6 @@
       )
     },
 
-    renderBorrowableQuantities(handoutCounts, firstMoment, lastMoment, relevantItemsCount) {
-
-      var offset = this.offset(firstMoment)
-
-      return _.map(
-        handoutCounts,
-        (hc, i) => {
-
-          var value = relevantItemsCount - hc
-
-          return (
-            <div key={'handout_count_' + i} style={{fontSize: '16px', position: 'absolute', top: '0px', left: ((offset + i) * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
-              {value}
-            </div>
-          )
-        }
-      )
-    },
 
     renderMonth(firstMoment, monthFrom, monthTo) {
 
