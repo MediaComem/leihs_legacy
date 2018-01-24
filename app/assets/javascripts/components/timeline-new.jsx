@@ -1091,9 +1091,19 @@
 
     },
 
-    renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
-      var topEntitlements = topFreeItems + 40
+    heightEntitlementQuantities(entitlementQuantities) {
+
+      return _.reduce(
+        entitlementQuantities,
+        (memo, quantity) => memo + 60,
+        0
+      ) + 30
+
+
+    },
+
+    renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       return _.map(entitlementQuantities, (quantity, groupId) => {
         return {
@@ -1300,39 +1310,37 @@
         }
       }
 
-      var topHandoutLines = 130 - 40 //+ this.state.position
 
-      // var topTitle = 40
+      var topMonths = 0
 
-      var topTotal = 100 - 40
+      var topDays = topMonths + 40
 
-      var topAfterHandoutLines = topHandoutLines + this.calcReservationsHeight(allLayoutedReservationFrames)
+      var topReservations = topDays + 50
 
-      var topReservationLines = topAfterHandoutLines + 100
+      var topTotalQuantities = topReservations + this.calcReservationsHeight(allLayoutedReservationFrames) + 80
 
-      var topAfterReservationLines = topAfterHandoutLines//topReservationLines + this.calcReservationsHeight(this.notSignedReservations())
+      var topEntitlementQuantities = topTotalQuantities + 40
 
-      var topFreeItems = topAfterReservationLines + 80
+      var wholeHeight = topEntitlementQuantities + this.heightEntitlementQuantities(entitlementQuantities) + 200
 
-      var wholeHeight = topFreeItems + 200
 
 
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
-          <div style={{position: 'absolute', top: '0px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topMonths + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderMonths(firstMoment, lastMoment)}
           </div>
-          <div style={{position: 'absolute', top: '40px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topDays + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow)}
           </div>
-          <div style={{position: 'absolute', top: topHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topReservations + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
-          <div style={{position: 'absolute', top: topFreeItems + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topTotalQuantities + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderLabel(firstMoment, 'Verfügbar:')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
-          {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
+          {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
         </div>
       )
     }
