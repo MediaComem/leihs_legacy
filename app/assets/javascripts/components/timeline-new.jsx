@@ -1498,6 +1498,8 @@
         // return count
 
         if(count > quantity) {
+
+
           return quantity
         } else {
           return count
@@ -1510,9 +1512,16 @@
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
+
+
         if(count > quantity) {
+          var value = count - quantity
+          var total = changesForDays[index].available
+          if(total < 0) {
+            value += total
+          }
           return (
-            <span style={{color: 'red'}}>{count - quantity}</span>
+            <span style={{color: 'red'}}>{value}</span>
           )
         } else {
           return 0
@@ -1538,7 +1547,7 @@
       if(groupId == '') {
         unassignedDiv = (
           <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabelSmall(firstMoment, 'nicht zuweisbar:')}
+            {this.renderLabelSmall(firstMoment, 'Ansprüche nicht erfüllbar:')}
             {this.renderIndexedQuantitiesSmall(mappingUnassigned, firstMoment, lastMoment, this.reservationColors)}
           </div>
         )
