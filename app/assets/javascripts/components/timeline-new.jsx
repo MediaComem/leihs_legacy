@@ -1031,7 +1031,7 @@
       var currentAssignment = assignedBooking.assignment
       var candidates = _.difference(
         assignedBooking.entitlementGroupIds,
-        currentAssignment
+        [currentAssignment]
       )
       candidates = _.difference(
         candidates,
@@ -1041,8 +1041,7 @@
       var candidate = _.find(
         candidates,
         (egid) => {
-          if(leftovers[egid] != undefined && leftovers[egid] > 0) {
-          }
+          return leftovers[egid] != undefined && leftovers[egid] > 0
         }
       )
 
@@ -1594,6 +1593,7 @@
     changesAlgorithm(timeline_availability, changes, userEntitlementGroupsForModel, relevantItemsCount) {
       return changes.map((c) => {
         var reservations = this.calculateChangesReservations(timeline_availability, c)
+        // if(c == '2018-01-27') debugger;
         return {
           change: c,
           date: c,
