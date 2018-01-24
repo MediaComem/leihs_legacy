@@ -1014,10 +1014,10 @@
     renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       if(groupId == '') {
-        label = 'Frei für alle'
+        label = 'Für alle reservierbar:'
       } else {
         var name = this.entitlementGroupNameForId(timeline_availability, groupId)
-        label = 'Reserviert für Gruppe ' + name + ':'
+        label = 'Reserviert für Gruppe \'' + name + '\':'
       }
 
 
@@ -1052,7 +1052,7 @@
           var value = count - quantity
           var total = changesForDays[index].available
           if(total < 0) {
-            value += total
+            // value += total
           }
           return (
             <span style={{color: 'red'}}>{value}</span>
@@ -1061,6 +1061,10 @@
           return 0
         }
 
+      }
+
+      var mappingReservations = (index) => {
+        return _.size(changesForDays[index].reservations)
       }
 
       var reservedDiv = (
@@ -1077,17 +1081,28 @@
         </div>
       )
 
+      var reservationsDiv = null
+      if(groupId == '') {
+        // debugger
+        reservationsDiv = (
+          <div key={'reservations_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+            {this.renderLabelSmall(firstMoment, 'Anzahl Reservationen:')}
+            {this.renderIndexedQuantitiesSmall(mappingReservations, firstMoment, lastMoment, this.reservationColors)}
+          </div>
+        )
+      }
+
       var unassignedDiv = null
       if(groupId == '') {
         unassignedDiv = (
-          <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 80) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderLabelSmall(firstMoment, 'Ansprüche nicht erfüllbar:')}
             {this.renderIndexedQuantitiesSmall(mappingUnassigned, firstMoment, lastMoment, this.reservationColors)}
           </div>
         )
       }
 
-      return _.compact([reservedDiv, assignedDiv, unassignedDiv])
+      return _.compact([reservedDiv, assignedDiv, reservationsDiv, unassignedDiv])
 
     },
 
@@ -1098,7 +1113,7 @@
         entitlementQuantities,
         (memo, quantity) => memo + 60,
         0
-      ) + 30
+      ) + 30 + 20
 
 
     },
@@ -1166,7 +1181,7 @@
     changesAlgorithm(timeline_availability, changes, userEntitlementGroupsForModel, relevantItemsCount) {
       return changes.map((c) => {
         var reservations = this.calculateChangesReservations(timeline_availability, c)
-        if(c == '2018-02-06') debugger;
+        // if(c == '2018-02-06') debugger;
         return {
           change: c,
           date: c,
