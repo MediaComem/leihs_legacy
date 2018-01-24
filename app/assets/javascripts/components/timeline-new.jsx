@@ -1090,7 +1090,7 @@
         return {
           reservationId: reservationId,
           assignment: null,
-          entitlementGroupIds: entitlementGroupIds
+          entitlementGroupIds: _.sortBy(entitlementGroupIds, (v) => v) // general group '' first
         }
       })
 
@@ -1454,7 +1454,7 @@
 
     },
 
-    renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment) {
+    renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       if(groupId == '') {
         return null
@@ -1473,7 +1473,18 @@
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
-        return (quantity - count) + '/' + quantity
+        var available = quantity - count
+
+        var total = changesForDays[index].available
+        if(total < available) {
+          available = total
+        }
+
+        if(available < 0) {
+          available = 0
+        }
+
+        return available + '/' + quantity
       }
 
       return (
@@ -1485,7 +1496,7 @@
 
     },
 
-    renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment) {
+    renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       var topEntitlements = topFreeItems + 40
 
@@ -1495,7 +1506,7 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment)
+        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment, relevantItemsCount)
       })
     },
 
@@ -1511,8 +1522,13 @@
 
               var ds = []
               memo[r.start_date] = r.start_date
+              var before_start_date = moment(r.start_date).add(- 1, 'days').format('YYYY-MM-DD')
+              memo[before_start_date] = before_start_date
               if(!this.late(r)) {
                 memo[r.end_date] = r.end_date
+                var after_end_date = moment(r.end_date).add(+ 1, 'days').format('YYYY-MM-DD')
+                memo[after_end_date] = after_end_date
+
               }
 
               return memo
@@ -1785,7 +1801,7 @@
             {this.renderLabel(firstMoment, 'Verfügbar:')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
-          {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment)}
+          {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
         </div>
       )
     }
