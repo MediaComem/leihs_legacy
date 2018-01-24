@@ -113,7 +113,7 @@ class Manage::ModelsController < Manage::ApplicationController
   end
 
   include TimelineAvailability
-  def timeline_new
+  def timeline
     @props = {
       timeline_availability: timeline_availability(fetch_model, current_inventory_pool.id)
     }
@@ -122,7 +122,7 @@ class Manage::ModelsController < Manage::ApplicationController
     end
   end
 
-  def timeline
+  def timeline_new
     model = fetch_model
 
     availability = model.availability_in(current_inventory_pool)
