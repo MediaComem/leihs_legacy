@@ -758,43 +758,6 @@
       // return 'rgb(170, 221, 170)'
     },
 
-    entitlementGroupIdsForUser(timeline_availability, user_id) {
-
-      var userGroupIds = _.filter(
-        timeline_availability.entitlement_groups_users,
-        (gu) =>  {
-          return gu.user_id == user_id
-        }
-      ).map((gu) => gu.entitlement_group_id)
-
-      var entitlementIds = timeline_availability.entitlements.map((e) => e.entitlement_group_id)
-
-      return _.filter(
-        userGroupIds,
-        (ugId) => {
-          return _.find(entitlementIds, (eId) => eId == ugId)
-        }
-      )
-
-    },
-
-
-    calculateUserProblems(timeline_availability, dayIndex) {
-
-      var day = moment().add(dayIndex, 'days')
-
-
-      var reservations = this.reservationsForDay(timeline_availability, day)
-
-      return _.mapObject(
-        _.groupBy(
-          reservations,
-          (r) => r.user_id
-        ),
-        (value, key) => value.length
-      )
-
-    },
 
 
     reservationEntitlements(timeline_availability, reservation, userEntitlementGroupsForModel) {
@@ -807,196 +770,6 @@
       return entitlements.map((e) => e.id)
 
 
-
-    },
-
-    incrementTrial(trial, reservations) {
-      // This works like incrementing any number. You increment the rightmost
-      // number. If it is greater then the maximum base number, then set it to
-      // zero and increment the one to the left.
-      // For binary: 0000, 0001, 0010, 0011, 0100, ...
-      var next = _.clone(trial)
-      var pos = 0
-      next[pos].index++
-      while(next[pos].index == reservations[next[pos].reservationId].length) {
-        next[pos].index = 0
-        pos++
-        if(pos == next.length) {
-          return null
-        }
-        next[pos].index++
-      }
-      return next
-    },
-
-    groupAssignements(trial, reservations) {
-
-      return _.map(
-        trial,
-        (t) => {
-          return {
-            reservationId: t.reservationId,
-            groupId: reservations[t.reservationId][t.index]
-          }
-        }
-      )
-
-    },
-
-    // validateGroupAssignments(groupAssignements, constraints) {
-    //
-    //   var reducedConstraints = _.mapObject(
-    //     constraints,
-    //     (quantity, groupId) => {
-    //       return quantity - _.filter(
-    //         groupAssignements,
-    //         (tg) => tg.groupId == groupId
-    //       ).length
-    //     }
-    //   )
-    //
-    //   reducedConstraints[''] += _.reduce(
-    //     _.filter(
-    //       reducedConstraints,
-    //       (q, k) => k != ''
-    //     ),
-    //     (memo, q) => (q >= 0 ? memo + q : memo),
-    //     0
-    //   )
-    //
-    //   return _.reduce(
-    //     reducedConstraints,
-    //     (memo, q) => memo && q >= 0,
-    //     true
-    //   )
-    // },
-
-    // betterAssignments(current, best) {
-    //   return true
-    // },
-
-    betterEntitlementAssignments(entitlement, current, best, constraints) {
-
-      return true
-
-      // if(!this.validateGroupAssignments(current) && this.validateGroupAssignments(best)) {
-      //   return false
-      // }
-      //
-      //
-      // if(_.filter(current, (v) => v.groupId == entitlement).length < _.filter(best, (v) => v.groupId == entitlement).length) {
-      //   return true
-      // }
-      //
-      // return false
-    },
-
-    algorithm(reservations, constraints) {
-
-      var trial = _.map(reservations, (reservation, reservationId) => {
-        return {reservationId: reservationId, index: 0}
-      })
-
-      var result = {
-        maxPerEntitlement: _.mapObject(constraints, (c) => null)
-      }
-
-      while(trial) {
-        var groupAssignements = this.groupAssignements(trial, reservations)
-        // if(this.validateGroupAssignments(groupAssignements, constraints)) {
-        //   result.bestGroupAssignements = groupAssignements
-        // }
-
-        result.maxPerEntitlement = _.mapObject(result.maxPerEntitlement, (max, entitlement) => {
-          if(!max) {
-            return groupAssignements
-          } else {
-            if(this.betterEntitlementAssignments(entitlement, groupAssignements, max, constraints)) {
-              return groupAssignements
-            } else {
-              return max
-            }
-          }
-        })
-
-        // if(!result.bestGroupAssignements || this.betterAssignments(groupAssignements, result.bestGroupAssignements)) {
-        //   result.bestGroupAssignements = groupAssignements
-        // }
-        trial = this.incrementTrial(trial, reservations)
-      }
-
-      // _.each(result.maxPerEntitlement, (v1, k1) => {
-      //   _.each(result.maxPerEntitlement, (v2, k2) => {
-      //     if(k1 != k2) {
-      //
-      //       _.each(
-      //         _.zip(v1, v2),
-      //         (v1v2) => {
-      //           if(!_.isEqual(v1v2[0], v1v2[1])) {
-      //             debugger
-      //           }
-      //
-      //         }
-      //       )
-      //     }
-      //   })
-      // })
-
-      return result
-    },
-
-
-    algorithmForReservations(timeline_availability, reservationsList, userEntitlementGroupsForModel, relevantItemsCount) {
-
-      var before = performance.now()
-
-      var reservations = _.object(reservationsList.map((r) => {
-        return [
-          r.id,
-          this.reservationEntitlements(timeline_availability, r, userEntitlementGroupsForModel).concat([''])
-        ]
-      }))
-
-      var constraints = _.object(
-        timeline_availability.entitlements.map((e) => {
-          return [
-            e.entitlement_group_id,
-            e.quantity
-          ]
-        }).concat([
-          [
-            '',
-            relevantItemsCount - _.reduce(
-              timeline_availability.entitlements,
-              (memo, e) => memo + e.quantity,
-              0
-            )
-          ]
-        ])
-      )
-
-      // var onlyGeneralCount = candidates.length - candidates2.length
-      //
-      // var result = true
-      // if(candidates2.length > 0) {
-      result = this.algorithm(reservations, constraints)
-      // } else {
-      //
-      //   // if(onlyGeneralCount)
-      //   result = {
-      //     result: 'all-from-general'
-      //
-      //   }
-      // }
-      // else {
-      //   return true
-      // }
-
-      var after = performance.now();
-
-      console.log('delta = ' + (after - before))
-
-      return result
 
     },
 
@@ -1114,8 +887,6 @@
 
     newAlgorithmForReservations(timeline_availability, reservationsList, userEntitlementGroupsForModel, relevantItemsCount) {
 
-      var before = performance.now()
-
       var reservations = _.object(reservationsList.map((r) => {
         return [
           r.id,
@@ -1141,38 +912,8 @@
         ])
       )
 
-      // var onlyGeneralCount = candidates.length - candidates2.length
-      //
-      // var result = true
-      // if(candidates2.length > 0) {
-      result = this.newAlgorithm(reservations, constraints)
-      // } else {
-      //
-      //   // if(onlyGeneralCount)
-      //   result = {
-      //     result: 'all-from-general'
-      //
-      //   }
-      // }
-      // else {
-      //   return true
-      // }
+      return this.newAlgorithm(reservations, constraints)
 
-      var after = performance.now();
-
-      console.log('delta = ' + (after - before))
-
-      return result
-
-    },
-
-    findEntitlementCombination(timeline_availability, dayIndex, userEntitlementGroupsForModel, relevantItemsCount) {
-
-      var day = moment().add(dayIndex, 'days')
-
-      var dayReservations = this.reservationsForDay(timeline_availability, day)
-
-      return this.algorithmForReservations(timeline_availability, dayReservations, userEntitlementGroupsForModel, relevantItemsCount)
 
     },
 
@@ -1303,91 +1044,7 @@
         })
       )
 
-      // var userIds = timeline_availability.reservation_users.map((u) => u.id)
-      //
-      // var r =  userIds.map((uid) => {
-      //
-      //   var egus = _.filter(timeline_availability.entitlement_groups_users, (egu) => {
-      //     return egu.user_id == uid
-      //   }).map(
-      //
-      //     (egu) => {
-      //       return _.find(timeline_availability.entitlement_groups, (eg) => {
-      //         return eg.id == egu.entitlement_group_id
-      //       })
-      //
-      //     }
-      //
-      //
-      //   )
-      //
-      //
-      //   return egus
-      //
-      // })
-      //
-      // return r
     },
-
-    // calculateEntitlements(timeline_availability, dayIndex) {
-    //
-    //   var entitlements = timeline_availability.entitlements
-    //
-    //   var generalSum = _.reduce(
-    //     entitlements,
-    //     (memo, e) => {
-    //       return memo + e.quantity
-    //     },
-    //     0
-    //   )
-    //
-    //   var entitlementSums = _.extend(
-    //     _.object(
-    //       entitlements.map((e) => {
-    //         return [
-    //           e.entitlement_group_id,
-    //           (e.quantity < 0 ? 0 : e.quantity)
-    //         ]
-    //       })
-    //     ),
-    //     {'': generalSum}
-    //   )
-    //
-    //   var day = moment().add(dayIndex, 'days')
-    //
-    //   var reservations = this.reservationsForDay(timeline_availability, day)
-    //
-    //   var reservationsWithGroups = reservations.map((r) => {
-    //     return {
-    //       reservation: r,
-    //       groups: this.entitlementGroupIdsForUser(timeline_availability, r.user_id)
-    //     }
-    //   })
-    //
-    //   var onlyGeneralReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 0)
-    //   var singleGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length == 1)
-    //   var multiGroupReservations = reservationsWithGroups.filter((rg) => rg.groups.length >= 2)
-    //
-    //   var sumsMinusGeneral = _.reduce(
-    //     onlyGeneralReservations,
-    //     (memo, rg) => {
-    //       memo['']--
-    //       return memo
-    //     },
-    //     _.clone(entitlementSums)
-    //   )
-    //
-    //   var sumsMinusSingle = _.reduce(
-    //     singleGroupReservations,
-    //     (memo, rg) => {
-    //       memo[_.first(rg.groups)]--
-    //       return memo
-    //     },
-    //     _.clone(sumsMinusGeneral)
-    //   )
-    //
-    //   return reservationsWithGroups
-    // },
 
     getInitialState() {
       return {
@@ -1396,48 +1053,7 @@
       }
     },
 
-    // getInitialState() {
-    //   return {
-    //     position: 0
-    //   }
-    // },
-    //
-    // componentDidMount() {
-    //
-    //   setInterval(
-    //     () => {
-    //       this.setState({position: this.state.position + 1})
-    //     },
-    //     30
-    //   )
-    // },
 
-
-    componentDidMount() {
-      this.setState({
-        // entitlementCalculation: [0, 1, 2, 3].map((i) => this.calculateEntitlements(this.props.timeline_availability, i)),
-        // userProblems: [0, 1, 2, 3].map((i) => this.calculateUserProblems(this.props.timeline_availability, i)),
-        // userEntitlements: this.calculateUserEntitlementGroups(this.props.timeline_availability),
-        // maxQuantityPerUser: this.maxQuantityPerUser(this.props.timeline_availability),
-        // quantityGeneral: this.quantityGeneral(this.props.timeline_availability)
-        // ,
-        // findEntitlementCombination: _.range(0, this.numberOfDays(moment(), this.state.preprocessedData.lastMoment)).map((i) => this.findEntitlementCombination(
-        //   this.props.timeline_availability,
-        //   i,
-        //   this.state.preprocessedData.userEntitlementGroupsForModel,
-        //   this.state.preprocessedData.relevantItemsCount
-        // ))
-        // preprocessedData: this.preprocessData(this.props.timeline_availability)
-      })
-
-      // setInterval(
-      //   () => {
-      //     this.setState({position: this.state.position + 1})
-      //   },
-      //   30
-      // )
-
-    },
 
     entitlementGroupNameForId(timeline_availability, groupId) {
       var entitlementGroup = _.find(
@@ -1458,10 +1074,6 @@
 
     renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
-      // if(groupId == '') {
-      //   return null
-      // }
-
       if(groupId == '') {
         label = 'Frei für alle'
       } else {
@@ -1470,32 +1082,15 @@
       }
 
 
-
-
       var mappingReservation = (index) => {
-        // (index) => reservationsInGroups[index][groupId].length + '/' + quantity
 
         return quantity
-        // return available + '/' + quantity
       }
 
       var mappingAssigned = (index) => {
 
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
-
-        // var available = quantity - count
-        //
-        // var total = changesForDays[index].available
-        // if(total < available) {
-        //   available = total
-        // }
-        //
-        // if(available < 0) {
-        //   available = 0
-        // }
-
-        // return count
 
         if(count > quantity) {
 
@@ -1614,40 +1209,7 @@
           return start.isSameOrBefore(m) && (end.isSameOrAfter(m) || this.late(r))
         }
       )
-      // return _.sortBy(
-      //   _.map(
-      //     _.reduce(
-      //       timeline_availability.running_reservations,
-      //       (memo, r) => {
-      //
-      //         var ds = []
-      //         ds.push(r.start_date)
-      //         if(!this.late(r)) {
-      //           ds.push(r.end_date)
-      //         }
-      //
-      //         _.each(ds, (d) => {
-      //           if(!memo[d]) {
-      //             memo[d] = []
-      //           }
-      //
-      //           memo[d].push(r)
-      //
-      //         })
-      //
-      //         return memo
-      //       },
-      //       {}
-      //     ),
-      //     (v, k) => {
-      //       return {
-      //         date: k,
-      //         reservations: v
-      //       }
-      //     }
-      //   ),
-      //   (e) => e.date
-      // )
+
 
     },
 
@@ -1727,14 +1289,6 @@
       var changesAlgorithm = this.changesAlgorithm(this.props.timeline_availability, calculateChanges, userEntitlementGroupsForModel, relevantItemsCount)
       var changesForDays = this.changesForDays(this.props.timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount)
       var invalidReservations = this.invalidReservations(this.props.timeline_availability, changesAlgorithm, relevantItemsCount)
-
-      // var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
-      //   this.props.timeline_availability,
-      //   i,
-      //   userEntitlementGroupsForModel,
-      //   relevantItemsCount
-      // ))
-
 
       return {
         firstMoment: firstMoment,
@@ -1823,30 +1377,6 @@
 
       var wholeHeight = topFreeItems + 200
 
-      // <div style={{position: 'absolute', top: (topAfterHandoutLines + 55) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-      //   {this.renderLabelSmall(firstMoment, 'Ausleihbar')}
-      //   {this.renderIndexedQuantitiesSmall((i) => borrowableCounts[i], firstMoment, lastMoment, this.borrowableColors)}
-      // </div>
-
-
-      // {this.renderTitle(firstMoment, relevantItemsCount)}
-      // <div style={{position: 'absolute', top: topTitle + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-      //   <div style={{position: 'absolute', top: '0px', left: '0px', right: '0px', height: '40px', backgroundColor: 'rgba(255, 255, 255, 0.7)'}} />
-      //   {this.renderLabel(firstMoment, 'Total Gegenstände: ' + relevantItemsCount)}
-      // </div>
-      // <div style={{position: 'absolute', top: topTotal + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-      //   {this.renderLabelSmall(firstMoment, 'Total')}
-      //   {this.renderIndexedQuantitiesSmall((i) => totalCounts[i], firstMoment, lastMoment, this.handoutColors)}
-      // </div>
-      // <div style={{position: 'absolute', top: topAfterHandoutLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-      //   {this.renderLabelSmall(firstMoment, 'Ausgehändigt')}
-      //   {this.renderIndexedQuantitiesSmall((i) => handoutCounts[i], firstMoment, lastMoment, this.handoutColors)}
-      // </div>
-      // <div style={{position: 'absolute', top: topAfterReservationLines + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-      //   {this.renderLabelSmall(firstMoment, 'Reservationen')}
-      //   {this.renderIndexedQuantitiesSmall((i) => reservationCounts[i], firstMoment, lastMoment, this.reservationColors)}
-      // </div>
-      // {this.renderEntitlements(this.props.timeline_availability, topFreeItems, wholeWidth, firstMoment, lastMoment)}
 
       return (
         <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
