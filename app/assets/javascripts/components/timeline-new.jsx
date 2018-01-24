@@ -70,19 +70,35 @@
     },
 
     firstReservationMoment() {
-      return this.findMinimumMoment(
-        this.mapToMoments(
-          this.reservationStartDates()
-        )
-      )
+
+      return moment().add(- 14, 'days').startOf('month')
+
+      // var m = this.findMinimumMoment(
+      //   this.mapToMoments(
+      //     this.reservationStartDates()
+      //   )
+      // )
+      //
+      // if(m.isSameOrAfter(moment(), 'day')) {
+      //   return moment().add(- 1, 'month')
+      // } else {
+      //   return m
+      // }
     },
 
     lastReservationMoment() {
-      return this.findMaximumMoment(
+      var m = this.findMaximumMoment(
         this.mapToMoments(
           this.reservationEndDates()
         )
       )
+
+      if(m.isSameOrBefore(moment(), 'day')) {
+        return moment().add(+ 1, 'month').endOf('month')
+      } else {
+        return m.endOf('month')
+      }
+
     },
 
     numberOfDays(firstMoment, lastMoment) {
@@ -124,7 +140,7 @@
 
 
       return (
-        <div style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 10) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+        <div style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
           {text}
         </div>
       )
@@ -1438,7 +1454,7 @@
 
     },
 
-    renderEntitlementQuantity(timeline_availability, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment) {
+    renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment) {
 
       if(groupId == '') {
         return null
@@ -1448,21 +1464,30 @@
         label = 'Frei für alle'
       } else {
         var name = this.entitlementGroupNameForId(timeline_availability, groupId)
-        label = name + ': '
+        label = 'in Gruppe ' + name + ':'
+      }
+
+      var mapping = (index) => {
+        // (index) => reservationsInGroups[index][groupId].length + '/' + quantity
+
+        var algo = changesForDays[index].algorithm
+        var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
+
+        return (quantity - count) + '/' + quantity
       }
 
       return (
         <div key={groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
           {this.renderLabelSmall(firstMoment, label)}
-          {this.renderIndexedQuantitiesSmall((index) => reservationsInGroups[index][groupId].length + '/' + quantity, firstMoment, lastMoment, this.reservationColors)}
+          {this.renderIndexedQuantitiesSmall(mapping, firstMoment, lastMoment, this.reservationColors)}
         </div>
       )
 
     },
 
-    renderEntitlementQuantities(timeline_availability, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment) {
+    renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment) {
 
-      var topEntitlements = topFreeItems + 30
+      var topEntitlements = topFreeItems + 40
 
       return _.map(entitlementQuantities, (quantity, groupId) => {
         return {
@@ -1470,7 +1495,7 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantity(timeline_availability, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment)
+        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30, wholeWidth, firstMoment, lastMoment)
       })
     },
 
@@ -1625,12 +1650,12 @@
       var changesForDays = this.changesForDays(this.props.timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount)
       var invalidReservations = this.invalidReservations(this.props.timeline_availability, changesAlgorithm, relevantItemsCount)
 
-      var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
-        this.props.timeline_availability,
-        i,
-        userEntitlementGroupsForModel,
-        relevantItemsCount
-      ))
+      // var findEntitlementCombination = _.range(0, this.numberOfDays(moment(), lastMoment)).map((i) => this.findEntitlementCombination(
+      //   this.props.timeline_availability,
+      //   i,
+      //   userEntitlementGroupsForModel,
+      //   relevantItemsCount
+      // ))
 
 
       return {
@@ -1649,7 +1674,7 @@
         reservationsInGroups: reservationsInGroups,
         groupsForUsers: groupsForUsers,
         calculateChanges: calculateChanges,
-        findEntitlementCombination: findEntitlementCombination,
+        // findEntitlementCombination: findEntitlementCombination,
         changesAlgorithm: changesAlgorithm,
         changesForDays: changesForDays,
         invalidReservations: invalidReservations
@@ -1757,10 +1782,10 @@
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
           <div style={{position: 'absolute', top: topFreeItems + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
-            {this.renderLabel(firstMoment, 'Verfügbar')}
+            {this.renderLabel(firstMoment, 'Verfügbar:')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
-          {this.renderEntitlementQuantities(this.props.timeline_availability, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment)}
+          {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topFreeItems, wholeWidth, firstMoment, lastMoment)}
         </div>
       )
     }
