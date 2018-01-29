@@ -87,6 +87,11 @@
     },
 
     lastReservationMoment() {
+
+      if(this.props.timeline_availability.running_reservations.length == 0) {
+        return moment().add(3, 'months')
+      }
+
       var m = this.findMaximumMoment(
         this.mapToMoments(
           this.reservationEndDates()
@@ -1178,6 +1183,10 @@
 
       var mappingAssigned = (index) => {
 
+        if(!changesForDays[index]) {
+          return 0
+        }
+
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
@@ -1192,6 +1201,10 @@
       }
 
       var mappingUnassigned = (index) => {
+
+        if(!changesForDays[index]) {
+          return 0
+        }
 
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
@@ -1214,6 +1227,11 @@
       }
 
       var mappingReservations = (index) => {
+
+        if(!changesForDays[index]) {
+          return 0
+        }
+
         return _.size(changesForDays[index].reservations)
       }
 
@@ -1384,6 +1402,7 @@
     },
 
     preprocessData(timeline_availability) {
+      debugger
       var firstMoment = this.firstReservationMoment()
       var lastMoment = this.lastReservationMoment()
       var numberOfDays = this.numberOfDays(firstMoment, lastMoment)
