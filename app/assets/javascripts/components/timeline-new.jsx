@@ -486,9 +486,10 @@
               </div>
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                <div onClick={this._onToggle} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr, '#eee') /*+ ' ' + rr.id*/}
                 </div>
+                {this.renderPopup()}
               </div>
             ]
 
@@ -509,9 +510,10 @@
 
             return (
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{backgroundColor: backgroundColor, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', borderRadius: '5px', padding: padding, margin: margin, border: border}}>
+                <div onClick={this._onToggle} ref={(ref) => this.barReference = ref} style={{backgroundColor: backgroundColor, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', borderRadius: '5px', padding: padding, margin: margin, border: border}}>
                   {this.reservationLabel(timeline_availability, rr, '#e3be1f') /*+ ' ' + rr.id*/}
                 </div>
+                {this.renderPopup()}
               </div>
             )
           }
@@ -988,11 +990,71 @@
     getInitialState() {
       return {
         // position: 0,
-        preprocessedData: this.preprocessData(this.props.timeline_availability)
+        preprocessedData: this.preprocessData(this.props.timeline_availability),
+        showPopup: false,
+        popupPosition: null
       }
     },
 
 
+
+    componentDidMount() {
+      document.addEventListener('mousedown', this._handleClickOutside);
+    },
+
+    componentWillUnmount() {
+      document.removeEventListener('mousedown', this._handleClickOutside);
+    },
+
+    _onToggle(event) {
+      event.preventDefault()
+
+      if(this.state.showPopup) {
+        this.setState({
+          popupPosition: {
+            x: event.nativeEvent.offsetX
+          }
+        })
+      } else {
+        this.setState({
+          showPopup: true,
+          popupPosition: {
+            x: event.nativeEvent.offsetX
+          }
+        })
+      }
+    },
+
+    _onClose() {
+      this.setState({showPopup: false})
+    },
+
+    _handleClickOutside(event) {
+      if (this.barReference && !this.barReference.contains(event.target)
+        && this.popup && !this.popup.contains(event.target)) {
+        this._onClose()
+      }
+    },
+
+
+    renderPopup() {
+      if(!this.state.showPopup) {
+        return null
+      }
+
+      return (
+
+        <div style={{position: 'relative', top: '0px', left: '0px'}}>
+          <div ref={(ref) => this.popup = ref} style={{position: 'absolute', top: '7px', left: this.state.popupPosition.x, width: '260px', border: '1px solid black', borderRadius: '5px', margin: '0px', backgroundColor: '#fff', padding: '10px'}}>
+            <div style={{fontSize: '16px', position: 'static', widthj: '260px'}}>
+              <div className='timeline-event-bubble-title'>Test</div>
+            </div>
+          </div>
+        </div>
+      )
+
+
+    },
 
     entitlementGroupNameForId(timeline_availability, groupId) {
       var entitlementGroup = _.find(
@@ -1068,14 +1130,14 @@
       }
 
       var reservedDiv = (
-        <div key={'reserved_' + groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+        <div key={'reserved_' + groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px'}}>
           {this.renderLabelSmall(firstMoment, label)}
           {this.renderIndexedQuantitiesSmall(mappingReservation, firstMoment, lastMoment, this.reservationColors)}
         </div>
       )
 
       var assignedDiv = (
-        <div key={'assigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 20) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+        <div key={'assigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 20) + 'px', left: '0px', width: wholeWidth + 'px'}}>
           {this.renderLabelSmall(firstMoment, 'davon verwendet:')}
           {this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors)}
         </div>
@@ -1085,7 +1147,7 @@
       if(groupId == '') {
         // debugger
         reservationsDiv = (
-          <div key={'reservations_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div key={'reservations_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px'}}>
             {this.renderLabelSmall(firstMoment, 'Anzahl Reservationen:')}
             {this.renderIndexedQuantitiesSmall(mappingReservations, firstMoment, lastMoment, this.reservationColors)}
           </div>
@@ -1095,7 +1157,7 @@
       var unassignedDiv = null
       if(groupId == '') {
         unassignedDiv = (
-          <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 80) + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 80) + 'px', left: '0px', width: wholeWidth + 'px'}}>
             {this.renderLabelSmall(firstMoment, 'Ansprüche nicht erfüllbar:')}
             {this.renderIndexedQuantitiesSmall(mappingUnassigned, firstMoment, lastMoment, this.reservationColors)}
           </div>
@@ -1348,10 +1410,10 @@
           <div style={{position: 'absolute', top: topDays + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
             {this.renderDays(firstMoment, numberOfDaysToShow)}
           </div>
-          <div style={{position: 'absolute', top: topReservations + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topReservations + 'px', left: '0px', width: wholeWidth + 'px'}}>
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
-          <div style={{position: 'absolute', top: topTotalQuantities + 'px', left: '0px', width: wholeWidth + 'px', bottom: '0px'}}>
+          <div style={{position: 'absolute', top: topTotalQuantities + 'px', left: '0px', width: wholeWidth + 'px'}}>
             {this.renderLabel(firstMoment, 'Verfügbar:')}
             {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
           </div>
