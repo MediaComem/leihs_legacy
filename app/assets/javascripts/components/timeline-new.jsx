@@ -874,7 +874,6 @@
 
       var entitlementGroupIds = timeline_availability.entitlements.map((e) => e.entitlement_group_id)
 
-      // debugger
       return _.object(
         _.map(
           userEntitlementGroups,
@@ -1251,7 +1250,6 @@
 
       var reservationsDiv = null
       if(groupId == '') {
-        // debugger
         reservationsDiv = (
           <div key={'reservations_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px'}}>
             {this.renderLabelSmall(firstMoment, 'Anzahl Reservationen:')}
@@ -1349,7 +1347,6 @@
     changesAlgorithm(timeline_availability, changes, userEntitlementGroupsForModel, relevantItemsCount) {
       return changes.map((c) => {
         var reservations = this.calculateChangesReservations(timeline_availability, c)
-        // if(c == '2018-02-06') debugger;
         return {
           change: c,
           date: c,
@@ -1402,7 +1399,6 @@
     },
 
     preprocessData(timeline_availability) {
-      debugger
       var firstMoment = this.firstReservationMoment()
       var lastMoment = this.lastReservationMoment()
       var numberOfDays = this.numberOfDays(firstMoment, lastMoment)
