@@ -486,10 +486,10 @@
               </div>
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div onClick={this._onToggle} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                {this.renderPopup(timeline_availability, rr)}
+                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr, '#eee') /*+ ' ' + rr.id*/}
                 </div>
-                {this.renderPopup()}
               </div>
             ]
 
@@ -510,10 +510,10 @@
 
             return (
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div onClick={this._onToggle} ref={(ref) => this.barReference = ref} style={{backgroundColor: backgroundColor, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', borderRadius: '5px', padding: padding, margin: margin, border: border}}>
+                {this.renderPopup(timeline_availability, rr)}
+                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: backgroundColor, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', borderRadius: '5px', padding: padding, margin: margin, border: border}}>
                   {this.reservationLabel(timeline_availability, rr, '#e3be1f') /*+ ' ' + rr.id*/}
                 </div>
-                {this.renderPopup()}
               </div>
             )
           }
@@ -991,7 +991,7 @@
       return {
         // position: 0,
         preprocessedData: this.preprocessData(this.props.timeline_availability),
-        showPopup: false,
+        showPopup: null,
         popupPosition: null
       }
     },
@@ -1006,7 +1006,7 @@
       document.removeEventListener('mousedown', this._handleClickOutside);
     },
 
-    _onToggle(event) {
+    _onToggle(event, rr) {
       event.preventDefault()
 
       if(this.state.showPopup) {
@@ -1017,7 +1017,7 @@
         })
       } else {
         this.setState({
-          showPopup: true,
+          showPopup: rr.id,
           popupPosition: {
             x: event.nativeEvent.offsetX
           }
@@ -1026,7 +1026,7 @@
     },
 
     _onClose() {
-      this.setState({showPopup: false})
+      this.setState({showPopup: null})
     },
 
     _handleClickOutside(event) {
@@ -1036,24 +1036,107 @@
       }
     },
 
+    renderPopupPhone(timeline_availability, rr) {
+      var user = this.findUser(timeline_availability, rr.user_id)
+      return _jed('Phone') + ': ' + (user.phone ? user.phone : '')
+    },
 
-    renderPopup() {
-      if(!this.state.showPopup) {
+    renderPopupTakeBackLink(rr) {
+      return '/manage/' + rr.inventory_pool_id + '/users/' + rr.user_id + '/take_back'
+    },
+
+    renderPopupHandOverLink(rr) {
+      return '/manage/' + rr.inventory_pool_id + '/users/' + rr.user_id + '/take_back'
+    },
+
+    renderPopupAcknowledgeLink(rr) {
+      return '/manage/' + rr.inventory_pool_id + '/orders/' + rr.order_id + '/edit'
+    },
+
+    renderPopupLink(timeline_availability, rr) {
+
+      if(!timeline_availability.is_lending_manager) {
+        return null
+      }
+
+      if(rr.status == 'submitted') {
+        return (
+          <a target='_top' href={this.renderPopupAcknowledgeLink(rr)}>{_jed('Acknowledge')}</a>
+        )
+      } else if(rr.status == 'approved') {
+        return (
+          <a target='_top' href={this.renderPopupTakeBackLink(rr)}>{_jed('Hand Over')}</a>
+        )
+      } else if(rr.status == 'signed') {
+        return (
+          <a target='_top' href={this.renderPopupHandOverLink(rr)}>{_jed('Take Back')}</a>
+        )
+      } else {
+        return null
+      }
+    },
+
+
+    renderPopupLateInfo(rr) {
+
+      if(!this.late(rr)) {
         return null
       }
 
       return (
+        <b>{_jed('Item is overdue and therefore unavailable!')}</b>
+      )
+    },
 
+    renderPopupLabel(timeline_availability, rr) {
+
+      var username = this.username(timeline_availability, rr)
+      var inventoryCode = this.inventoryCode(timeline_availability, rr)
+
+      return username + (inventoryCode ? ' (' + inventoryCode  + ')' : '')
+    },
+
+    startDateString(rr) {
+      return moment(rr.start_date).format('DD.MM.YYYY')
+    },
+
+    endDateString(rr) {
+      return moment(rr.end_date).format('DD.MM.YYYY')
+    },
+
+    renderPopupReservationDates(rr) {
+      return _jed('Reservation') + ': ' + this.startDateString(rr) + ' ' + _jed('until') + ' ' + this.endDateString(rr)
+    },
+
+    renderPopup(timeline_availability, rr) {
+      if(!this.state.showPopup) {
+        return null
+      }
+
+      if(this.state.showPopup != rr.id) {
+        return null
+      }
+
+      return (
         <div style={{position: 'relative', top: '0px', left: '0px'}}>
-          <div ref={(ref) => this.popup = ref} style={{position: 'absolute', top: '7px', left: this.state.popupPosition.x, width: '260px', border: '1px solid black', borderRadius: '5px', margin: '0px', backgroundColor: '#fff', padding: '10px'}}>
+          <div ref={(ref) => this.popup = ref} style={{zIndex: '1000', position: 'absolute', top: '7px', left: this.state.popupPosition.x, width: '260px', border: '1px solid black', borderRadius: '5px', margin: '0px', backgroundColor: '#fff', padding: '10px'}}>
             <div style={{fontSize: '16px', position: 'static', widthj: '260px'}}>
-              <div className='timeline-event-bubble-title'>Test</div>
+              <div className='timeline-event-bubble-title'>{this.renderPopupLabel(timeline_availability, rr)}</div>
+              <div className='timeline-event-bubble-body'>
+                {this.renderPopupPhone(timeline_availability, rr)}
+                <br />
+                {this.renderPopupReservationDates(rr)}
+                <br />
+                {this.renderPopupLateInfo(rr)}
+                <br />
+                <div className='buttons' style={{margin: '1.5em99'}}>
+                  {this.renderPopupLink(timeline_availability, rr)}
+                </div>
+              </div>
             </div>
           </div>
         </div>
       )
-
-
     },
 
     entitlementGroupNameForId(timeline_availability, groupId) {
