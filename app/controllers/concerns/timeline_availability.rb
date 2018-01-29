@@ -109,7 +109,7 @@ module TimelineAvailability
 
     end
 
-    def timeline_availability(model_id, inventory_pool_id)
+    def timeline_availability(model_id, inventory_pool_id, is_lending_manager)
       inventory_pool = InventoryPool.find(inventory_pool_id)
       model = Model.find(model_id)
 
@@ -127,7 +127,8 @@ module TimelineAvailability
         reservation_users: reservation_users,
         entitlement_groups_users: entitlement_groups_users,
         entitlement_groups: entitlement_groups,
-        items: items
+        items: items,
+        is_lending_manager: is_lending_manager
       }
     end
   end
