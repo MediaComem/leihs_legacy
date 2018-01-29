@@ -96,7 +96,12 @@
       if(m.isSameOrBefore(moment(), 'day')) {
         return moment().add(+ 1, 'month').endOf('month')
       } else {
-        return m.endOf('month')
+        var inOneYear = moment().add(1, 'year')
+        if(m.endOf('month').isAfter(inOneYear)) {
+          return inOneYear
+        } else {
+          return m.endOf('month')
+        }
       }
 
     },
@@ -1379,7 +1384,6 @@
     },
 
     preprocessData(timeline_availability) {
-
       var firstMoment = this.firstReservationMoment()
       var lastMoment = this.lastReservationMoment()
       var numberOfDays = this.numberOfDays(firstMoment, lastMoment)
@@ -1486,7 +1490,7 @@
 
 
       return (
-        <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px'}}>
+        <div style={{position: 'absolute', top: '0px', left: '0px', height: wholeHeight + 'px', width: wholeWidth + 'px', bottom: '0px', overflow: 'hidden'}}>
           <div style={{position: 'fixed', zIndex: '1000000000', left: '0px', right: '0px', bottom: '0px', height: '40px', backgroundColor: 'white'}}>
             <a href={window.location.href.replace('/timeline', '/old_timeline')}>
               <div style={{borderRadius: '5px', color: '#eee', textAlign: 'center', fontSize: '12px', padding: '6px', backgroundColor: '#4e4e4e', width: '200px', margin: '5px auto 5px auto'}}>
