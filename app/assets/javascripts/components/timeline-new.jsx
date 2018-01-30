@@ -1190,11 +1190,11 @@
     },
 
 
-    heightEntitlementQuantities(entitlementQuantities) {
+    numberOfEntitlementQuantities(entitlementQuantities) {
 
       return _.reduce(
         entitlementQuantities,
-        (memo, quantity) => memo + 40,
+        (memo, quantity) => memo + 1,
         0
       )
 
@@ -1415,7 +1415,7 @@
 
       var topEntitlementQuantities = topTotalQuantities + 50
 
-      var topAvailabilities = topEntitlementQuantities + this.heightEntitlementQuantities(entitlementQuantities) + 10
+      var topAvailabilities = topEntitlementQuantities + this.numberOfEntitlementQuantities(entitlementQuantities) * 40 + 10
 
       var topReservations = topAvailabilities + 70
 
