@@ -1087,24 +1087,97 @@
 
     },
 
-    renderEntitlementQuantityLabel(timeline_availability, groupId, topEntitlement, wholeWidth, quantity, firstMoment) {
-
-      if(groupId == '') {
-        label = 'Übrig für alle:'
-      } else {
-        var name = this.entitlementGroupNameForId(timeline_availability, groupId)
-        label = 'Anspruch für Gruppe \'' + name + '\':'
-      }
+    renderBoldLabel(top, wholeWidth, label, key, firstMoment) {
 
       var offset = this.offset(firstMoment)
 
       return (
-        <div key={'label_' + groupId} style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: topEntitlement + 'px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+        <div key={key} style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (offset * 30) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
           {label}
         </div>
       )
 
     },
+
+    renderEntitlementQuantityLabel(timeline_availability, groupId, top, wholeWidth, quantity, firstMoment) {
+
+      if(groupId == '') {
+        label = 'von den gemeinsamen'
+      } else {
+        var name = this.entitlementGroupNameForId(timeline_availability, groupId)
+        label = 'aus Gruppe' + name
+      }
+
+      return this.renderBoldLabel(top, wholeWidth, label, 'label_' + groupId, firstMoment)
+
+    },
+
+    renderNotEnough(lineHeight, timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, top, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts) {
+
+      var quantity = entitlementQuantities['']
+
+      var mappingAssigned = (index) => {
+
+        if(!changesForDays[index]) {
+          return 0
+        }
+
+        var algo = changesForDays[index].algorithm
+        var count = _.size(_.filter(algo, (a) => a.assignment == ''))
+
+        if(unusedCounts[index] < 0) {
+          return (
+            <span style={{color: 'red'}}>{- unusedCounts[index]}</span>
+          )
+
+
+        } else {
+          return 0
+        }
+
+      }
+
+      return this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors,  top, wholeWidth, 'test')
+    },
+
+    renderNotAssignable(lineHeight, timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, top, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts) {
+
+      var quantity = entitlementQuantities['']
+
+      var mappingAssigned = (index) => {
+
+        if(!changesForDays[index]) {
+          return 0
+        }
+
+        var algo = changesForDays[index].algorithm
+        var count = _.size(_.filter(algo, (a) => a.assignment == ''))
+
+        if(count > quantity) {
+
+          if(unusedCounts[index] < 0) {
+            return (
+              <span style={{color: 'red'}}>{count - quantity + unusedCounts[index]}</span>
+            )
+
+
+          } else {
+
+            return (
+              <span style={{color: 'red'}}>{count - quantity}</span>
+            )
+          }
+
+
+        } else {
+          return 0
+        }
+
+      }
+
+      return this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors,  top, wholeWidth, 'test')
+    },
+
 
     renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
@@ -1118,9 +1191,10 @@
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
         if(count > quantity) {
-          return (
-            <span style={{color: 'red'}}>{count + '/' + quantity}</span>
-          )
+          return quantity + '/' + quantity
+          // return (
+          //   <span style={{color: 'red'}}>{count + '/' + quantity}</span>
+          // )
         } else {
           return count + '/' + quantity
         }
@@ -1141,7 +1215,7 @@
       )
     },
 
-    renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
+    renderEntitlementQuantities(lineHeight, timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       return _.map(entitlementQuantities, (quantity, groupId) => {
         return {
@@ -1149,12 +1223,12 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * (30 + 10), wholeWidth, firstMoment, lastMoment, relevantItemsCount)
+        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * lineHeight, wholeWidth, firstMoment, lastMoment, relevantItemsCount)
       })
     },
 
 
-    renderEntitlementQuantityLabels(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
+    renderEntitlementQuantityLabels(lineHeight, timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       return _.map(entitlementQuantities, (quantity, groupId) => {
         return {
@@ -1162,7 +1236,7 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantityLabel(timeline_availability, v.groupId, topEntitlements + index * (30 + 10), wholeWidth, v.quantity, firstMoment)
+        return this.renderEntitlementQuantityLabel(timeline_availability, v.groupId, topEntitlements + index * lineHeight, wholeWidth, v.quantity, firstMoment)
       })
     },
 
@@ -1367,7 +1441,15 @@
 
       var topEntitlementQuantities = topTotalQuantities + 50
 
-      var topAvailabilities = topEntitlementQuantities + this.numberOfEntitlementQuantities(entitlementQuantities) * 40 + 10
+      var entitlementLineHeight = 60
+
+      var entitlementsHeight = this.numberOfEntitlementQuantities(entitlementQuantities) * entitlementLineHeight
+
+      var topTest = topEntitlementQuantities + entitlementsHeight
+
+      var topTest2 = topTest + entitlementLineHeight
+
+      var topAvailabilities = topTest2 + entitlementLineHeight
 
       var topReservations = topAvailabilities + 70
 
@@ -1395,8 +1477,16 @@
           </div>
           {this.renderLabelSmall(firstMoment, 'Total:', topTotalQuantities)}
           {this.renderIndexedQuantitiesSmall((i) => relevantItemsCount, firstMoment, lastMoment, unusedColors, topTotalQuantities, wholeWidth, null)}
-          {this.renderEntitlementQuantityLabels(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
-          {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
+
+          {this.renderEntitlementQuantityLabels(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
+          {this.renderEntitlementQuantities(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
+
+          {this.renderBoldLabel(topTest, wholeWidth, 'müssen aus fremden Gruppen genommen werden', null, firstMoment)}
+          {this.renderNotAssignable(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topTest + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts)}
+
+          {this.renderBoldLabel(topTest2, wholeWidth, 'zuwenig Gegenstände vorhanden', null, firstMoment)}
+          {this.renderNotEnough(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topTest2 + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts)}
+
           {this.renderLabelSmall(firstMoment, 'Verfügbar:', topAvailabilities)}
           {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors, topAvailabilities, wholeWidth, null)}
         </div>
