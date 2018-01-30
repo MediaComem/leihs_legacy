@@ -146,6 +146,26 @@
     },
 
 
+    renderLabelEntitlement(firstMoment, text, quantity) {
+
+      var offset = this.offset(firstMoment)
+
+
+      return [
+
+        <div key='quantity' style={{position: 'absolute', top: '0px', left: ((offset + 0) * 30 - 20 - 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
+          <div style={{backgroundColor: '#bbb', textAlign: 'center', fontSize: '16px', position: 'absolute', top: '0px', left: '0px', right: '0px', bottom: '0px', padding: '4px', margin: '2px', borderRadius: '5px'}}>
+            {quantity}
+          </div>
+        </div>
+        ,
+
+        <div key='label' style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20 - 30 - 10) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+          {text}
+        </div>
+      ]
+    },
+
     renderValue(prefix, index, offset, value, backgroundColor) {
       return (
         <div key={prefix + index} style={{position: 'absolute', top: '0px', left: ((offset + index) * 30) + 'px', width: '30px', height: '30px', border: '0px'}}>
@@ -288,8 +308,8 @@
 
           return (
             <div key={'day_' + i} style={{position: 'absolute', top: '0px', left: (i * 30) + 'px', width: '30px', bottom: '0px', border: '0px'}}>
-              <div style={{textAlign: 'center', paddingTop: '5px', backgroundColor: backgroundColor, position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '1px 1px 0px 0px'}}>
-                {m.format('DD')}
+              <div style={{backgroundColor: backgroundColor, position :'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', border: '1px dotted black', borderWidth: '1px 1px 0px 0px'}}>
+                <div style={{border: '1px dotted black', borderWidth: '0px 0px 1px 0px', paddingTop: '5px', paddingBottom: '5px', textAlign: 'center'}}>{m.format('DD')}</div>
               </div>
             </div>
           )
@@ -1057,10 +1077,10 @@
     renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       if(groupId == '') {
-        label = 'Für alle reservierbar:'
+        label = 'Übrig für alle:'
       } else {
         var name = this.entitlementGroupNameForId(timeline_availability, groupId)
-        label = 'Reserviert für Gruppe \'' + name + '\':'
+        label = 'Anspruch für Gruppe \'' + name + '\':'
       }
 
 
@@ -1078,10 +1098,18 @@
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
+        // if(count > quantity) {
+        //
+        //
+        //   return quantity
+        // } else {
+        //   return count
+        // }
+
         if(count > quantity) {
-
-
-          return quantity
+          return (
+            <span style={{color: 'red'}}>{count}</span>
+          )
         } else {
           return count
         }
@@ -1106,7 +1134,7 @@
             // value += total
           }
           return (
-            <span style={{color: 'red'}}>{value}</span>
+            <span style={{color: 'red'}}>{count + ' / ' + quantity}</span>
           )
         } else {
           return 0
@@ -1125,8 +1153,8 @@
 
       var reservedDiv = (
         <div key={'reserved_' + groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px'}}>
-          {this.renderLabelSmall(firstMoment, label)}
-          {this.renderIndexedQuantitiesSmall(mappingReservation, firstMoment, lastMoment, this.reservationColors)}
+          {this.renderLabelEntitlement(firstMoment, label, quantity)}
+          {this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors)}
         </div>
       )
 
@@ -1157,7 +1185,7 @@
         )
       }
 
-      return _.compact([reservedDiv, assignedDiv, reservationsDiv, unassignedDiv])
+      return _.compact([reservedDiv])
 
     },
 
@@ -1166,9 +1194,9 @@
 
       return _.reduce(
         entitlementQuantities,
-        (memo, quantity) => memo + 60,
+        (memo, quantity) => memo + 40,
         0
-      ) + 30 + 20
+      )
 
 
     },
@@ -1181,7 +1209,7 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * 30 * 2, wholeWidth, firstMoment, lastMoment, relevantItemsCount)
+        return this.renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, v.quantity, v.groupId, topEntitlements + index * (30 + 10), wholeWidth, firstMoment, lastMoment, relevantItemsCount)
       })
     },
 
@@ -1385,9 +1413,11 @@
 
       var topTotalQuantities = topDays + 50
 
-      var topEntitlementQuantities = topTotalQuantities + 40
+      var topEntitlementQuantities = topTotalQuantities + 50
 
-      var topReservations = topEntitlementQuantities + this.heightEntitlementQuantities(entitlementQuantities) + 40
+      var topAvailabilities = topEntitlementQuantities + this.heightEntitlementQuantities(entitlementQuantities) + 10
+
+      var topReservations = topAvailabilities + 70
 
       var wholeHeight = topReservations + this.calcReservationsHeight(allLayoutedReservationFrames) + 200
 
@@ -1412,10 +1442,14 @@
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
           <div style={{position: 'absolute', top: topTotalQuantities + 'px', left: '0px', width: wholeWidth + 'px'}}>
-            {this.renderLabel(firstMoment, 'Verfügbar:')}
-            {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
+            {this.renderLabelEntitlement(firstMoment, 'Total:', relevantItemsCount)}
+            {this.renderIndexedQuantitiesSmall((i) => relevantItemsCount, firstMoment, lastMoment, unusedColors)}
           </div>
           {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
+          <div style={{position: 'absolute', top: topAvailabilities + 'px', left: '0px', width: wholeWidth + 'px'}}>
+            {this.renderLabelSmall(firstMoment, 'Verfügbar:')}
+            {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
+          </div>
         </div>
       )
     }
