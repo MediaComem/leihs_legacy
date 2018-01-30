@@ -133,13 +133,13 @@
       )
     },
 
-    renderLabelSmall(firstMoment, text) {
+    renderLabelSmall(firstMoment, text, top) {
 
       var offset = this.offset(firstMoment)
 
 
       return (
-        <div style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: '0px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+        <div style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
           {text}
         </div>
       )
@@ -189,7 +189,7 @@
     },
 
 
-    renderIndexedQuantities(valueFunc, firstMoment, lastMoment, colorFunc) {
+    renderIndexedQuantities(valueFunc, firstMoment, lastMoment, colorFunc, top, wholeWidth, key) {
 
       var offset = this.offset(firstMoment)
 
@@ -198,7 +198,7 @@
         this.numberOfDays(moment(), lastMoment)
       )
 
-      return _.map(
+      var values = _.map(
         range,
         (i) => {
 
@@ -214,9 +214,15 @@
           // )
         }
       )
+
+      return (
+        <div style={{position: 'absolute', top: top + 'px', left: '0px', width: wholeWidth + 'px'}}>
+          {values}
+        </div>
+      )
     },
 
-    renderIndexedQuantitiesSmall(valueFunc, firstMoment, lastMoment, colorFunc) {
+    renderIndexedQuantitiesSmall(valueFunc, firstMoment, lastMoment, colorFunc, top, wholeWidth, key) {
 
       var offset = this.offset(firstMoment)
 
@@ -225,7 +231,7 @@
         this.numberOfDays(moment(), lastMoment)
       )
 
-      return _.map(
+      var values = _.map(
         range,
         (i) => {
 
@@ -241,6 +247,13 @@
           // )
         }
       )
+
+      return (
+        <div key={key} style={{position: 'absolute', top: top + 'px', left: '0px', width: wholeWidth + 'px'}}>
+          {values}
+        </div>
+      )
+
     },
 
 
@@ -1074,7 +1087,7 @@
 
     },
 
-    renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
+    renderEntitlementQuantityLabel(timeline_availability, groupId, topEntitlement, wholeWidth, quantity, firstMoment) {
 
       if(groupId == '') {
         label = 'Übrig für alle:'
@@ -1083,11 +1096,17 @@
         label = 'Anspruch für Gruppe \'' + name + '\':'
       }
 
+      var offset = this.offset(firstMoment)
 
-      var mappingReservation = (index) => {
+      return (
+        <div key={'label_' + groupId} style={{fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: topEntitlement + 'px', left: (offset * 30 - 1000 - 20) + 'px', textAlign: 'right', width: '1000px', height: '30px', border: '0px'}}>
+          {label}
+        </div>
+      )
 
-        return quantity
-      }
+    },
+
+    renderEntitlementQuantity(timeline_availability, changesForDays, reservationsInGroups, quantity, groupId, topEntitlement, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
 
       var mappingAssigned = (index) => {
 
@@ -1098,94 +1117,17 @@
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
-        // if(count > quantity) {
-        //
-        //
-        //   return quantity
-        // } else {
-        //   return count
-        // }
-
         if(count > quantity) {
           return (
-            <span style={{color: 'red'}}>{count}</span>
+            <span style={{color: 'red'}}>{count + '/' + quantity}</span>
           )
         } else {
-          return count
+          return count + '/' + quantity
         }
 
       }
 
-      var mappingUnassigned = (index) => {
-
-        if(!changesForDays[index]) {
-          return 0
-        }
-
-        var algo = changesForDays[index].algorithm
-        var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
-
-
-
-        if(count > quantity) {
-          var value = count - quantity
-          var total = changesForDays[index].available
-          if(total < 0) {
-            // value += total
-          }
-          return (
-            <span style={{color: 'red'}}>{count + ' / ' + quantity}</span>
-          )
-        } else {
-          return 0
-        }
-
-      }
-
-      var mappingReservations = (index) => {
-
-        if(!changesForDays[index]) {
-          return 0
-        }
-
-        return _.size(changesForDays[index].reservations)
-      }
-
-      var reservedDiv = (
-        <div key={'reserved_' + groupId} style={{position: 'absolute', top: topEntitlement + 'px', left: '0px', width: wholeWidth + 'px'}}>
-          {this.renderLabelEntitlement(firstMoment, label, quantity)}
-          {this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors)}
-        </div>
-      )
-
-      var assignedDiv = (
-        <div key={'assigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 20) + 'px', left: '0px', width: wholeWidth + 'px'}}>
-          {this.renderLabelSmall(firstMoment, 'davon verwendet:')}
-          {this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors)}
-        </div>
-      )
-
-      var reservationsDiv = null
-      if(groupId == '') {
-        reservationsDiv = (
-          <div key={'reservations_' + groupId} style={{position: 'absolute', top: (topEntitlement + 60) + 'px', left: '0px', width: wholeWidth + 'px'}}>
-            {this.renderLabelSmall(firstMoment, 'Anzahl Reservationen:')}
-            {this.renderIndexedQuantitiesSmall(mappingReservations, firstMoment, lastMoment, this.reservationColors)}
-          </div>
-        )
-      }
-
-      var unassignedDiv = null
-      if(groupId == '') {
-        unassignedDiv = (
-          <div key={'unassigned_' + groupId} style={{position: 'absolute', top: (topEntitlement + 80) + 'px', left: '0px', width: wholeWidth + 'px'}}>
-            {this.renderLabelSmall(firstMoment, 'Ansprüche nicht erfüllbar:')}
-            {this.renderIndexedQuantitiesSmall(mappingUnassigned, firstMoment, lastMoment, this.reservationColors)}
-          </div>
-        )
-      }
-
-      return _.compact([reservedDiv])
+      return this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors,  topEntitlement, wholeWidth, 'reserved_' + groupId)
 
     },
 
@@ -1197,8 +1139,6 @@
         (memo, quantity) => memo + 1,
         0
       )
-
-
     },
 
     renderEntitlementQuantities(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
@@ -1213,6 +1153,18 @@
       })
     },
 
+
+    renderEntitlementQuantityLabels(timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, topEntitlements, wholeWidth, firstMoment, lastMoment, relevantItemsCount) {
+
+      return _.map(entitlementQuantities, (quantity, groupId) => {
+        return {
+          groupId: groupId,
+          quantity: quantity
+        }
+      }).map((v, index) => {
+        return this.renderEntitlementQuantityLabel(timeline_availability, v.groupId, topEntitlements + index * (30 + 10), wholeWidth, v.quantity, firstMoment)
+      })
+    },
 
 
     changesDates(timeline_availability) {
@@ -1441,15 +1393,12 @@
           <div style={{position: 'absolute', top: topReservations + 'px', left: '0px', width: wholeWidth + 'px'}}>
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
-          <div style={{position: 'absolute', top: topTotalQuantities + 'px', left: '0px', width: wholeWidth + 'px'}}>
-            {this.renderLabelEntitlement(firstMoment, 'Total:', relevantItemsCount)}
-            {this.renderIndexedQuantitiesSmall((i) => relevantItemsCount, firstMoment, lastMoment, unusedColors)}
-          </div>
+          {this.renderLabelSmall(firstMoment, 'Total:', topTotalQuantities)}
+          {this.renderIndexedQuantitiesSmall((i) => relevantItemsCount, firstMoment, lastMoment, unusedColors, topTotalQuantities, wholeWidth, null)}
+          {this.renderEntitlementQuantityLabels(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
           {this.renderEntitlementQuantities(this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
-          <div style={{position: 'absolute', top: topAvailabilities + 'px', left: '0px', width: wholeWidth + 'px'}}>
-            {this.renderLabelSmall(firstMoment, 'Verfügbar:')}
-            {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors)}
-          </div>
+          {this.renderLabelSmall(firstMoment, 'Verfügbar:', topAvailabilities)}
+          {this.renderIndexedQuantities((i) => unusedCounts[i], firstMoment, lastMoment, unusedColors, topAvailabilities, wholeWidth, null)}
         </div>
       )
     }
