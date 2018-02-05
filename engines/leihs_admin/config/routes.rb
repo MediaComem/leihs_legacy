@@ -21,6 +21,7 @@ LeihsAdmin::Engine.routes.draw do
 
   # Fields
   get 'fields', to: 'fields#index'
+  get 'fields/edit_react', to: 'fields#edit_react'
   post 'batch_update_fields', to: 'fields#batch_update'
 
   # Administrate settings

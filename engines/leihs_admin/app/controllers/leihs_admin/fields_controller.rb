@@ -7,6 +7,10 @@ module LeihsAdmin
       end.group_by { |f| f.data['group'] }
     end
 
+    def edit_react
+
+    end
+
     def batch_update
       ApplicationRecord.transaction do
         begin
