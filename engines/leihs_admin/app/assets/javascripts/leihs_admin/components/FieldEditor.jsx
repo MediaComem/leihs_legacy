@@ -5,6 +5,8 @@
     propTypes: {
     },
 
+    displayName: 'FieldEditor',
+
     getInitialState () {
       return {
       }
