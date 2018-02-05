@@ -8,6 +8,7 @@
 #
 #= require_self
 
+#= require underscore
 
 #= require react
 #= require react_ujs
