@@ -17,6 +17,14 @@ module TimelineAvailability
         	and status not in ('rejected', 'closed')
           and model_id = '#{model_id}'
           and reservations.type = 'ItemLine'
+          and not (
+            status = 'unsubmitted' and
+            updated_at < '#{Time.now.utc - Setting.timeout_minutes.minutes}'
+          )
+          and not (
+            end_date < '#{Time.zone.today}' and
+            item_id is null
+          )
       SQL
 
       ActiveRecord::Base.connection.exec_query(query).to_hash
