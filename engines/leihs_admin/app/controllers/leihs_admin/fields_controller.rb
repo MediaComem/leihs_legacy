@@ -8,7 +8,17 @@ module LeihsAdmin
     end
 
     def edit_react
-
+      fields = Field.all.map do |f|
+        {
+          id: f.id,
+          active: f.active,
+          position: f.position,
+          data: f.data
+        }
+      end
+      @props = {
+        fields: fields
+      }
     end
 
     def batch_update
