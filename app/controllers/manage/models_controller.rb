@@ -123,7 +123,9 @@ class Manage::ModelsController < Manage::ApplicationController
   include TimelineAvailability
   def timeline
     @props = {
-      timeline_availability: timeline_availability(fetch_model, current_inventory_pool.id, lending_manager?)
+      timeline_availability: timeline_availability(
+        fetch_model, current_inventory_pool.id, lending_manager?
+      )
     }
     respond_to do |format|
       format.html { render layout: false }

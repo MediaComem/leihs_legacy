@@ -1,3 +1,4 @@
+# rubocop:disable Metrics/ModuleLength
 module TimelineAvailability
   extend ActiveSupport::Concern
 
@@ -6,7 +7,6 @@ module TimelineAvailability
     private
 
     def running_reservations(inventory_pool_id, model_id)
-
       query = <<-SQL
         select
         	reservations.*
@@ -31,7 +31,6 @@ module TimelineAvailability
     end
 
     def reservation_users(reservations)
-
       user_ids = reservations.map { |r| r['user_id'] }
 
       return [] if user_ids.empty?
@@ -42,14 +41,13 @@ module TimelineAvailability
         from
         	users
         where
-        	users.id in (#{user_ids.map { |id| "'#{id}'"}.join(',')})
+        	users.id in (#{user_ids.map { |id| "'#{id}'" }.join(',')})
       SQL
 
       ActiveRecord::Base.connection.exec_query(query).to_hash
     end
 
     def entitlement_groups_users(users)
-
       user_ids = users.map { |r| r['id'] }
 
       return [] if user_ids.empty?
@@ -60,14 +58,19 @@ module TimelineAvailability
         from
         	entitlement_groups_users
         where
-        	user_id in (#{user_ids.map { |id| "'#{id}'"}.join(',')})
+        	user_id in (#{user_ids.map { |id| "'#{id}'" }.join(',')})
       SQL
 
       ActiveRecord::Base.connection.exec_query(query).to_hash
     end
 
-    def entitlement_groups(entitlements, entitlement_groups_users, inventory_pool_id)
-      group_ids = entitlements.map { |e| e['entitlement_group_id']} + entitlement_groups_users.map { |r| r['entitlement_group_id'] }
+    def entitlement_groups(
+      entitlements,
+      entitlement_groups_users,
+      inventory_pool_id
+    )
+      group_ids = entitlements.map { |e| e['entitlement_group_id'] } \
+       + entitlement_groups_users.map { |r| r['entitlement_group_id'] }
 
       return [] if group_ids.empty?
 
@@ -77,16 +80,14 @@ module TimelineAvailability
         from
         	entitlement_groups
         where
-        	entitlement_groups.id in (#{group_ids.map { |id| "'#{id}'"}.join(',')})
+        	entitlement_groups.id in (#{group_ids.map { |id| "'#{id}'" }.join(',')})
           and entitlement_groups.inventory_pool_id = '#{inventory_pool_id}'
       SQL
 
       ActiveRecord::Base.connection.exec_query(query).to_hash
-
     end
 
     def entitlements(inventory_pool_id, model_id)
-
       query = <<-SQL
         select
         	entitlements.*
@@ -101,7 +102,6 @@ module TimelineAvailability
     end
 
     def items(inventory_pool_id, model_id)
-
       query = <<-SQL
         select
         	items.*
@@ -114,7 +114,6 @@ module TimelineAvailability
       SQL
 
       ActiveRecord::Base.connection.exec_query(query).to_hash
-
     end
 
     def timeline_availability(model_id, inventory_pool_id, is_lending_manager)
@@ -125,7 +124,9 @@ module TimelineAvailability
       entitlements = entitlements(inventory_pool.id, model.id)
       reservation_users = reservation_users(running_reservations)
       entitlement_groups_users = entitlement_groups_users(reservation_users)
-      entitlement_groups = entitlement_groups(entitlements, entitlement_groups_users, inventory_pool.id)
+      entitlement_groups = entitlement_groups(
+        entitlements, entitlement_groups_users, inventory_pool.id
+      )
       items = items(inventory_pool.id, model.id)
 
       {
@@ -141,3 +142,4 @@ module TimelineAvailability
     end
   end
 end
+# rubocop:enable Metrics/ModuleLength
