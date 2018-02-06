@@ -128,7 +128,7 @@
         var field = this.editField()
         return (
           <div className='col-sm-8'>
-            <h1>Edit Field {field.id}</h1>
+            <h1>Edit Field {'\'' + field.data.label + '\''}</h1>
           </div>
         )
       } else {
