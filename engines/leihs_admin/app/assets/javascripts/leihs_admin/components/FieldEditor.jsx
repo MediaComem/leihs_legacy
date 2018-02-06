@@ -43,7 +43,8 @@
         attribute: '',
         active: false,
         type: 'text',
-        target: 'both'
+        target: 'both',
+        values: []
       }
     },
 
@@ -72,7 +73,13 @@
         attribute: field.data.attribute[1],
         active: field.active,
         type: field.data.type,
-        target: this.readTargetType(field.data.target_type)
+        target: this.readTargetType(field.data.target_type),
+        values: field.data.values.map((v) => {
+          return {
+            label: v.label,
+            value: (v.value ? v.value : '')
+          }
+        })
       }
     },
 
@@ -336,12 +343,36 @@
     },
 
     mergeSelect(event, attribute) {
-      // event.preventDefault()
+      event.preventDefault()
       var value = event.target.value
       this.setState(
         (previous) => {
           next = _.clone(previous)
           next.fieldInput[attribute] = value
+          return next
+        }
+      )
+    },
+
+    mergeValuesLabel(event, index) {
+      event.preventDefault()
+      var value = event.target.value
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.values[index].label = value
+          return next
+        }
+      )
+    },
+
+    mergeValuesValue(event, index) {
+      event.preventDefault()
+      var value = event.target.value
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.values[index].value = value
           return next
         }
       )
@@ -369,6 +400,36 @@
 
     },
 
+
+    renderValue(v, i) {
+
+      return (
+        <div key={'value_' + i} className='row form-group'>
+          <div className='col-sm-6'>
+            <input onChange={(e) => this.mergeValuesLabel(e, i)} className='form-control' type='text' value={v.label} />
+          </div>
+          <div className='col-sm-6'>
+            <input onChange={(e) => this.mergeValuesValue(e, i)} className='form-control' type='text' value={v.value} />
+          </div>
+        </div>
+
+      )
+
+
+    },
+
+    renderValuesBox() {
+
+      var type = this.state.fieldInput.type
+      if(!(type == 'select' || type == 'radio')) {
+        return null
+      }
+
+      return this.state.fieldInput.values.map((v, i) => {
+        return this.renderValue(v, i)
+      })
+
+    },
 
 
     renderEditFieldForm() {
@@ -407,10 +468,10 @@
             </div>
             <div className='row form-group'>
               <div className='col-sm-6'>
-                <strong>Target</strong>
+                <strong>Type</strong>
               </div>
               <div className='col-sm-6'>
-                <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'type')}>
+                <select value={this.state.fieldInput.type} onChange={(e) => this.mergeSelect(e, 'type')}>
                   <option value='text'>Text</option>
                   <option value='date'>Date</option>
                   <option value='select'>Select</option>
@@ -422,11 +483,12 @@
                   <option value='attachment'>Attachment</option>
                   <option value='composite'>Composite</option>
                 </select>
+                {this.renderValuesBox()}
               </div>
             </div>
             <div className='row form-group'>
               <div className='col-sm-6'>
-                <strong>Type</strong>
+                <strong>Target</strong>
               </div>
               <div className='col-sm-6'>
                 <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'target')}>
