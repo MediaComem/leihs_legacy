@@ -17,8 +17,23 @@ module LeihsAdmin
         }
       end
       @props = {
-        fields: fields
+        fields: fields,
+        update_path: fields_update_react_path
       }
+    end
+
+    def update_react
+      field_id = params[:field][:id]
+      field = Field.find(field_id)
+      field.data = params[:field][:data].to_h
+      field.position = params[:field][:position].to_i
+      field.active = params[:field][:active] == 'true'
+      field.save!
+      respond_to do |format|
+        format.json do
+          render(status: :ok, json: {result: 'field-saved'})
+        end
+      end
     end
 
     def batch_update

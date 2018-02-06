@@ -12,6 +12,10 @@ class Manage::FieldsController < Manage::ApplicationController
     end
   end
 
+  def update
+
+  end
+
   def hide
     current_user.hidden_fields.find_or_create_by(field_id: params[:id])
     head :ok

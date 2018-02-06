@@ -69,7 +69,8 @@
     cancelEdit(event) {
       event.preventDefault()
       this.setState({
-        editFieldId: null
+        editFieldId: null,
+        editFieldError: null
       })
     },
 
@@ -86,13 +87,33 @@
       )
     },
 
+    saveEditField() {
+      var field = this.editField()
+      $.ajax({
+        url: this.props.update_path,
+        type: 'post',
+        data: {
+          field: field
+        }
+      }).done((data) => {
+        this.setState({
+          editFieldId: null,
+          editFieldError: null
+        })
+      }).error((data) => {
+        this.setState({
+          editFieldError: 'ajax-error'
+        })
+      })
+    },
+
     renderEditFieldButtons() {
       var field = this.editField()
       return (
         <div className='col-sm-4 text-right'>
           <a onClick={(e) => this.cancelEdit(e)} className='btn btn-default'>Abbrechen</a>
           {' '}
-          <button className='btn btn-success' type='submit'>Speichern</button>
+          <button onClick={(e) => this.saveEditField()} className='btn btn-success' type='submit'>Speichern</button>
         </div>
       )
     },
@@ -106,10 +127,31 @@
       )
     },
 
+    renderErrorMessage() {
+      return 'Ein unerwarteter Fehler ist aufgetreten.'
+    },
+
+
+    renderEditFieldFlash() {
+
+      if(!this.state.editFieldError) {
+        return null
+      }
+
+      return (
+        <h4 className='alert alert-danger error'>
+          <ul>
+            <li>{this.renderErrorMessage()}</li>
+          </ul>
+        </h4>
+      )
+    },
+
     renderEditField() {
       var field = this.fieldById(this.state.editFieldId)
       return (
         <div>
+          {this.renderEditFieldFlash()}
           {this.renderEditFieldHeader()}
         </div>
       )
