@@ -18,8 +18,24 @@ module LeihsAdmin
       end
       @props = {
         fields: fields,
+        new_path: fields_new_react_path,
         update_path: fields_update_react_path
       }
+    end
+
+    def new_react
+      field = Field.new
+      field.id = params[:field][:id]
+      field.data = params[:field][:data].to_h
+      field.position = 0
+      field.active = false
+      field.save!
+      respond_to do |format|
+        format.json do
+          render(status: :ok, json: {result: 'field-saved'})
+        end
+      end
+
     end
 
     def update_react

@@ -9,6 +9,7 @@
 
     getInitialState () {
       return {
+        showEdit: false,
         editFieldId: null,
         editFieldError: null,
         fieldInput: null
@@ -37,15 +38,26 @@
 
     createFieldInput() {
       return {
+        id: '',
         label: ''
+      }
+    },
+
+    editFieldInput(fieldId) {
+      var field = this.fieldById(fieldId)
+      return {
+        id: field.id,
+        label: field.data.label
       }
     },
 
     onEditClick(event, fieldId) {
       event.preventDefault()
       this.setState({
+        showEdit: true,
         editFieldId: fieldId,
-        fieldInput: this.createFieldInput()
+        editFieldError: null,
+        fieldInput: this.editFieldInput(fieldId)
       })
     },
 
@@ -59,12 +71,30 @@
       )
     },
 
+    onClickCreate(event) {
+      event.preventDefault()
+      this.setState({
+        showEdit: true,
+        editFieldId: null,
+        editFieldError: null,
+        fieldInput: this.createFieldInput()
+      })
+    },
+
     renderTitle() {
       return (
         <div className='panel'>
           <div className='row'>
             <div className='col-sm-6'>
               <h1>Feld Editor</h1>
+            </div>
+
+            <div className='col-sm-6 text-right'>
+              <a onClick={e => this.onClickCreate(e)} className='btn btn-default' href='/admin/suppliers/new'>
+                <i className='fa fa-plus'></i>
+                {' '}
+                Feld erstellen
+              </a>
             </div>
           </div>
         </div>
@@ -78,6 +108,7 @@
     cancelEdit(event) {
       event.preventDefault()
       this.setState({
+        showEdit: false,
         editFieldId: null,
         editFieldError: null
       })
@@ -87,35 +118,85 @@
       return this.fieldById(this.state.editFieldId)
     },
 
-    renderEditFieldTitle(field) {
-      var field = this.editField()
-      return (
-        <div className='col-sm-8'>
-          <h1>Edit Field {field.id}</h1>
-        </div>
-      )
+    editMode() {
+      return this.state.editFieldId ? true : false
+    },
+
+    renderEditFieldTitle() {
+
+      if(this.editMode()) {
+        var field = this.editField()
+        return (
+          <div className='col-sm-8'>
+            <h1>Edit Field {field.id}</h1>
+          </div>
+        )
+      } else {
+        return (
+          <div className='col-sm-8'>
+            <h1>New Field</h1>
+          </div>
+        )
+      }
+
     },
 
     readFieldFromInputs() {
-      var field = this.editField()
 
-      field.data.label = this.state.fieldInput.label
+      var field = {}
+      if(this.editMode()) {
+
+        field = this.editField()
+        field.data.label = this.state.fieldInput.label
+
+      } else {
+        field = {
+          id: this.state.fieldInput.id,
+          active: false,
+          position: 0,
+          data: {
+            label: this.state.fieldInput.label
+          }
+
+        }
+      }
+
+
 
       return field
+    },
+
+    ajaxConfig() {
+
+      if(this.editMode()) {
+        return {
+          path: this.props.update_path,
+          type: 'post'
+        }
+      } else {
+        return {
+          path: this.props.new_path,
+          type: 'put'
+        }
+      }
+
     },
 
     saveEditField() {
 
       var field = this.readFieldFromInputs()
 
+      var config = this.ajaxConfig()
+
       $.ajax({
-        url: this.props.update_path,
-        type: 'post',
+        url: config.path,
+        type: config.type,
         data: {
           field: field
         }
       }).done((data) => {
         this.setState({
+          showEdit: false,
           editFieldId: null,
           editFieldError: null
         })
@@ -178,10 +259,40 @@
       )
     },
 
+    renderIdInput() {
+
+      if(this.editMode()) {
+
+        return (
+          <div className='col-sm-6'>
+            <input disabled className='form-control' type='text' defaultValue={this.editField().id} />
+          </div>
+        )
+
+
+      } else {
+        return (
+          <div className='col-sm-6'>
+            <input onChange={(e) => this.mergeInput(e, 'id')} className='form-control' type='text' value={this.state.fieldInput.id} />
+          </div>
+        )
+
+      }
+
+    },
+
+
+
     renderEditFieldForm() {
       return (
         <div className='row'>
           <div className='col-sm-6'>
+            <div className='row form-group'>
+              <div className='col-sm-6'>
+                <strong>Id *</strong>
+              </div>
+              {this.renderIdInput()}
+            </div>
             <div className='row form-group'>
               <div className='col-sm-6'>
                 <strong>Name *</strong>
@@ -251,7 +362,7 @@
 
     render () {
 
-      if(this.state.editFieldId) {
+      if(this.state.showEdit) {
         return this.renderEditField()
       } else {
         return this.renderOverview()
