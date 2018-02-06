@@ -383,7 +383,7 @@
       if(this.editMode()) {
 
         return (
-          <div className='col-sm-6'>
+          <div className='col-sm-9'>
             <input disabled className='form-control' type='text' defaultValue={this.editField().id} />
           </div>
         )
@@ -391,7 +391,7 @@
 
       } else {
         return (
-          <div className='col-sm-6'>
+          <div className='col-sm-9'>
             <input onChange={(e) => this.mergeInput(e, 'id')} className='form-control' type='text' value={this.state.fieldInput.id} />
           </div>
         )
@@ -435,42 +435,42 @@
     renderEditFieldForm() {
       return (
         <div className='row'>
-          <div className='col-sm-6'>
+          <div className='col-sm-12'>
             <div className='row form-group'>
-              <div className='col-sm-6'>
+              <div className='col-sm-3'>
                 <strong>Id *</strong>
               </div>
               {this.renderIdInput()}
             </div>
             <div className='row form-group'>
-              <div className='col-sm-6'>
+              <div className='col-sm-3'>
                 <strong>Name *</strong>
               </div>
-              <div className='col-sm-6'>
+              <div className='col-sm-9'>
                 <input onChange={(e) => this.mergeInput(e, 'label')} className='form-control' type='text' value={this.state.fieldInput.label} />
               </div>
             </div>
             <div className='row form-group'>
-              <div className='col-sm-6'>
+              <div className='col-sm-3'>
                 <strong>Attribute *</strong>
               </div>
-              <div className='col-sm-6'>
+              <div className='col-sm-9'>
                 <input onChange={(e) => this.mergeInput(e, 'attribute')} className='form-control' type='text' value={this.state.fieldInput.attribute} />
               </div>
             </div>
             <div className='row form-group'>
-              <div className='col-sm-6'>
+              <div className='col-sm-3'>
                 <strong>Active</strong>
               </div>
-              <div className='col-sm-6'>
+              <div className='col-sm-9'>
                 <input onChange={(e) => this.mergeCheckbox(e, 'active')} checked={this.state.fieldInput.active} autoComplete='off' type='checkbox' />
               </div>
             </div>
             <div className='row form-group'>
-              <div className='col-sm-6'>
+              <div className='col-sm-3'>
                 <strong>Type</strong>
               </div>
-              <div className='col-sm-6'>
+              <div className='col-sm-9'>
                 <select value={this.state.fieldInput.type} onChange={(e) => this.mergeSelect(e, 'type')}>
                   <option value='text'>Text</option>
                   <option value='date'>Date</option>
@@ -487,10 +487,10 @@
               </div>
             </div>
             <div className='row form-group'>
-              <div className='col-sm-6'>
+              <div className='col-sm-3'>
                 <strong>Target</strong>
               </div>
-              <div className='col-sm-6'>
+              <div className='col-sm-9'>
                 <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'target')}>
                   <option value='both'>Beides</option>
                   <option value='item'>Gegenstand</option>
