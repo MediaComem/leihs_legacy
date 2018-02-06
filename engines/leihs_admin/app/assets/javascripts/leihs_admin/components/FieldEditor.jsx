@@ -182,7 +182,27 @@
 
     },
 
+
+    validateInputs() {
+
+      if(!this.editMode()) {
+
+        if(this.state.fieldInput.id.trim() == '') {
+          return false
+        }
+
+      }
+
+      return true
+
+    },
+
+
     saveEditField() {
+
+      if(!this.validateInputs()) {
+        return;
+      }
 
       var field = this.readFieldFromInputs()
 
