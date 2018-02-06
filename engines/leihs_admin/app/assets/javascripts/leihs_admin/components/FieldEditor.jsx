@@ -43,8 +43,9 @@
         attribute: '',
         active: false,
         type: 'text',
-        target: 'both',
-        values: []
+        target: 'both'
+        // ,
+        // values: []
       }
     },
 
@@ -65,6 +66,21 @@
 
     },
 
+    editValues(field) {
+
+      if(!field.data.values) {
+        return undefined
+      }
+
+      return field.data.values.map((v) => {
+        return {
+          label: v.label,
+          value: (v.value ? v.value : '')
+        }
+      })
+
+    },
+
     editFieldInput(fieldId) {
       var field = this.fieldById(fieldId)
       return {
@@ -74,12 +90,7 @@
         active: field.active,
         type: field.data.type,
         target: this.readTargetType(field.data.target_type),
-        values: field.data.values.map((v) => {
-          return {
-            label: v.label,
-            value: (v.value ? v.value : '')
-          }
-        })
+        values: this.editValues(field)
       }
     },
 
@@ -349,6 +360,14 @@
         (previous) => {
           next = _.clone(previous)
           next.fieldInput[attribute] = value
+
+          if(attribute == 'type') {
+            if(value == 'radio' || value == 'select') {
+              next.fieldInput.values = [{label: '', value: ''}]
+            } else {
+              next.fieldInput.values = undefined
+            }
+          }
           return next
         }
       )
@@ -378,6 +397,28 @@
       )
     },
 
+    removeValuesValue(event, index) {
+      event.preventDefault()
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          delete next.fieldInput.values[index]
+          return next
+        }
+      )
+    },
+
+    addValuesValue(event) {
+      event.preventDefault()
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.values.push({label: '', value: ''})
+          return next
+        }
+      )
+    },
+
     renderIdInput() {
 
       if(this.editMode()) {
@@ -401,15 +442,39 @@
     },
 
 
-    renderValue(v, i) {
+    renderValue(v, i, last) {
+
+      var renderMinus = (i, last) => {
+        if(last) {
+          return null
+        }
+        return (
+          <a onClick={(e) => this.removeValuesValue(e, i)} className='btn btn-default'>-</a>
+        )
+      }
+
+      var renderPlus = (last) => {
+
+        if(!last) {
+          return null
+        }
+
+        return (
+          <a onClick={(e) => this.addValuesValue(e)} className='btn btn-default'>+</a>
+        )
+      }
 
       return (
         <div key={'value_' + i} className='row form-group'>
-          <div className='col-sm-6'>
+          <div className='col-sm-5'>
             <input onChange={(e) => this.mergeValuesLabel(e, i)} className='form-control' type='text' value={v.label} />
           </div>
-          <div className='col-sm-6'>
+          <div className='col-sm-5'>
             <input onChange={(e) => this.mergeValuesValue(e, i)} className='form-control' type='text' value={v.value} />
+          </div>
+          <div className='col-sm-2 line-actions'>
+            {renderMinus(i, last)}
+            {renderPlus(last)}
           </div>
         </div>
 
@@ -425,8 +490,10 @@
         return null
       }
 
-      return this.state.fieldInput.values.map((v, i) => {
-        return this.renderValue(v, i)
+      var values = this.state.fieldInput.values
+
+      return values.map((v, i) => {
+        return this.renderValue(v, i, values.length - 1 == i)
       })
 
     },
