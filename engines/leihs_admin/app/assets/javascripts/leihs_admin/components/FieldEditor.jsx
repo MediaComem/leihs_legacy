@@ -195,11 +195,19 @@
           field: field
         }
       }).done((data) => {
-        this.setState({
-          showEdit: false,
-          editFieldId: null,
-          editFieldError: null
-        })
+
+        if(data.result == 'field-exists-already') {
+          this.setState({
+            editFieldError: 'field-exists-already'
+          })
+        } else {
+          this.setState({
+            showEdit: false,
+            editFieldId: null,
+            editFieldError: null
+          })
+        }
+
       }).error((data) => {
         this.setState({
           editFieldError: 'ajax-error'
@@ -228,7 +236,12 @@
     },
 
     renderErrorMessage() {
-      return 'Ein unerwarteter Fehler ist aufgetreten.'
+      if(this.state.editFieldError == 'field-exists-already') {
+        return 'Ein Feld mit dieser Id existiert schon.'
+      } else {
+        return 'Ein unerwarteter Fehler ist aufgetreten.'
+      }
+
     },
 
 

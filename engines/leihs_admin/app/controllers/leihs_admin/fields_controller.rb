@@ -24,6 +24,16 @@ module LeihsAdmin
     end
 
     def new_react
+
+      if Field.unscoped.where(id: params[:field][:id]).first
+        respond_to do |format|
+          format.json do
+            render(status: :ok, json: {result: 'field-exists-already'})
+          end
+        end
+        return
+      end
+
       field = Field.new
       field.id = params[:field][:id]
       field.data = params[:field][:data].to_h
