@@ -146,7 +146,7 @@
       var field = {}
       if(this.editMode()) {
 
-        field = this.editField()
+        field = JSON.parse(JSON.stringify(this.editField()))
         field.data.label = this.state.fieldInput.label
 
       } else {
