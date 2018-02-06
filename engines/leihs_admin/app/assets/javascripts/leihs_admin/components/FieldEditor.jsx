@@ -9,6 +9,7 @@
 
     getInitialState () {
       return {
+        editFieldId: null
       }
     },
 
@@ -32,6 +33,23 @@
       )
     },
 
+    onEditClick(event, fieldId) {
+      event.preventDefault()
+      this.setState({
+        editFieldId: fieldId
+      })
+    },
+
+    renderEditButton(fieldId) {
+      return (
+        <div className='col-sm-2 text-right line-actions'>
+          <a onClick={(e) => this.onEditClick(event, fieldId)} className='btn btn-default'>
+            Editieren
+          </a>
+        </div>
+      )
+    },
+
     renderTitle() {
       return (
         <div className='panel'>
@@ -40,6 +58,59 @@
               <h1>Feld Editor</h1>
             </div>
           </div>
+        </div>
+      )
+    },
+
+    fieldById(fieldId) {
+      return _.find(this.allFields(), (f) => f.id == fieldId)
+    },
+
+    cancelEdit(event) {
+      event.preventDefault()
+      this.setState({
+        editFieldId: null
+      })
+    },
+
+    editField() {
+      return this.fieldById(this.state.editFieldId)
+    },
+
+    renderEditFieldTitle(field) {
+      var field = this.editField()
+      return (
+        <div className='col-sm-8'>
+          <h1>Edit Field {field.id}</h1>
+        </div>
+      )
+    },
+
+    renderEditFieldButtons() {
+      var field = this.editField()
+      return (
+        <div className='col-sm-4 text-right'>
+          <a onClick={(e) => this.cancelEdit(e)} className='btn btn-default'>Abbrechen</a>
+          {' '}
+          <button className='btn btn-success' type='submit'>Speichern</button>
+        </div>
+      )
+    },
+
+    renderEditFieldHeader() {
+      return (
+        <div className='row'>
+          {this.renderEditFieldTitle()}
+          {this.renderEditFieldButtons()}
+        </div>
+      )
+    },
+
+    renderEditField() {
+      var field = this.fieldById(this.state.editFieldId)
+      return (
+        <div>
+          {this.renderEditFieldHeader()}
         </div>
       )
     },
@@ -53,9 +124,10 @@
                 {f.data.label}
               </strong>
             </div>
-            <div className='col-sm-8'>
+            <div className='col-sm-6'>
               {JSON.stringify(f)}
             </div>
+            {this.renderEditButton(f.id)}
           </div>
         )
       })
@@ -76,14 +148,24 @@
       )
     },
 
-    render () {
-
+    renderOverview() {
       return (
         <div>
           {this.renderTitle()}
           {this.renderEditableFieldsBox()}
         </div>
       )
+
+    },
+
+    render () {
+
+      if(this.state.editFieldId) {
+        return this.renderEditField()
+      } else {
+        return this.renderOverview()
+      }
+
     }
   })
 })()
