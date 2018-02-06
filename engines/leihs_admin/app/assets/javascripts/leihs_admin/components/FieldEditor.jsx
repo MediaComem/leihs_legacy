@@ -38,7 +38,7 @@
 
     createFieldInput() {
       return {
-        id: '',
+        id: 'properties_',
         label: ''
       }
     },
@@ -187,7 +187,7 @@
 
       if(!this.editMode()) {
 
-        if(this.state.fieldInput.id.trim() == '') {
+        if(!this.state.fieldInput.id.startsWith('properties_') || this.state.fieldInput.id.trim().length <= 11) {
           return false
         }
 
