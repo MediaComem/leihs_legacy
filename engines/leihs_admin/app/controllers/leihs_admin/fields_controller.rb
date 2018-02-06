@@ -38,7 +38,7 @@ module LeihsAdmin
       field.id = params[:field][:id]
       field.data = params[:field][:data].to_h
       field.position = 0
-      field.active = false
+      field.active = params[:field][:active] == 'true'
       field.save!
       respond_to do |format|
         format.json do

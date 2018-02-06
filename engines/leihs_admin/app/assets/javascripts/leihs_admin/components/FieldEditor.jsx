@@ -41,8 +41,27 @@
         id: 'properties_',
         label: '',
         attribute: '',
-        active: false
+        active: false,
+        type: 'text',
+        target: 'both'
       }
+    },
+
+    writeTargetType(target) {
+      if(target == 'both') {
+        return undefined
+      } else {
+        return target
+      }
+    },
+
+    readTargetType(targetType) {
+      if(!targetType) {
+        return 'both'
+      } else {
+        return targetType
+      }
+
     },
 
     editFieldInput(fieldId) {
@@ -51,7 +70,9 @@
         id: field.id,
         label: field.data.label,
         attribute: field.data.attribute[1],
-        active: field.active
+        active: field.active,
+        type: field.data.type,
+        target: this.readTargetType(field.data.target_type)
       }
     },
 
@@ -154,6 +175,8 @@
         field.active = this.state.fieldInput.active
         field.data.label = this.state.fieldInput.label
         field.data.attribute = ['properties', this.state.fieldInput.attribute]
+        field.data.type = this.state.fieldInput.type
+        field.data.target_type = this.writeTargetType(this.state.fieldInput.target)
 
       } else {
         field = {
@@ -162,9 +185,10 @@
           position: 0,
           data: {
             label: this.state.fieldInput.label,
-            attribute: ['properties', this.state.fieldInput.attribute]
+            attribute: ['properties', this.state.fieldInput.attribute],
+            type: this.state.fieldInput.type,
+            target_type: this.writeTargetType(this.state.fieldInput.target)
           }
-
         }
       }
 
@@ -311,6 +335,18 @@
       )
     },
 
+    mergeSelect(event, attribute) {
+      // event.preventDefault()
+      var value = event.target.value
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput[attribute] = value
+          return next
+        }
+      )
+    },
+
     renderIdInput() {
 
       if(this.editMode()) {
@@ -367,6 +403,37 @@
               </div>
               <div className='col-sm-6'>
                 <input onChange={(e) => this.mergeCheckbox(e, 'active')} checked={this.state.fieldInput.active} autoComplete='off' type='checkbox' />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-6'>
+                <strong>Target</strong>
+              </div>
+              <div className='col-sm-6'>
+                <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'type')}>
+                  <option value='text'>Text</option>
+                  <option value='date'>Date</option>
+                  <option value='select'>Select</option>
+                  <option value='textarea'>Textarea</option>
+                  <option value='autocomplete-search'>Autocomplete Search</option>
+                  <option value='autocomplete'>Autocomplete</option>
+                  <option value='radio'>Radio</option>
+                  <option value='checkbox'>Checkbox</option>
+                  <option value='attachment'>Attachment</option>
+                  <option value='composite'>Composite</option>
+                </select>
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-6'>
+                <strong>Type</strong>
+              </div>
+              <div className='col-sm-6'>
+                <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'target')}>
+                  <option value='both'>Beides</option>
+                  <option value='item'>Gegenstand</option>
+                  <option value='license'>Lizenz</option>
+                </select>
               </div>
             </div>
           </div>
