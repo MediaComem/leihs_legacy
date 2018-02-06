@@ -22,11 +22,16 @@
 
     isEditableField(field) {
       var attribute = field.data.attribute
-      if(attribute instanceof Array) {
-        return attribute[0] == 'properties'
-      } else {
+
+      if(!(attribute instanceof Array)) {
         return false
       }
+
+      if(attribute[0] != 'properties') {
+        return false
+      }
+
+      return _.contains(['text', 'date', 'select', 'textarea', 'radio', 'checkbox'], field.data.type)
     },
 
     editableFields() {
@@ -589,12 +594,8 @@
                   <option value='date'>Date</option>
                   <option value='select'>Select</option>
                   <option value='textarea'>Textarea</option>
-                  <option value='autocomplete-search'>Autocomplete Search</option>
-                  <option value='autocomplete'>Autocomplete</option>
                   <option value='radio'>Radio</option>
                   <option value='checkbox'>Checkbox</option>
-                  <option value='attachment'>Attachment</option>
-                  <option value='composite'>Composite</option>
                 </select>
                 {this.renderValuesBox()}
               </div>
