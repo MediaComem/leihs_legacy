@@ -8,7 +8,7 @@ module LeihsAdmin
     end
 
     def edit_react
-      fields = Field.all.map do |f|
+      fields = Field.unscoped.all.map do |f|
         {
           id: f.id,
           active: f.active,
@@ -50,7 +50,7 @@ module LeihsAdmin
 
     def update_react
       field_id = params[:field][:id]
-      field = Field.find(field_id)
+      field = Field.unscoped.find(field_id)
       field.data = params[:field][:data].to_h
       field.position = params[:field][:position].to_i
       field.active = params[:field][:active] == 'true'

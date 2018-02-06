@@ -39,7 +39,9 @@
     createFieldInput() {
       return {
         id: 'properties_',
-        label: ''
+        label: '',
+        attribute: '',
+        active: false
       }
     },
 
@@ -47,7 +49,9 @@
       var field = this.fieldById(fieldId)
       return {
         id: field.id,
-        label: field.data.label
+        label: field.data.label,
+        attribute: field.data.attribute[1],
+        active: field.active
       }
     },
 
@@ -147,15 +151,18 @@
       if(this.editMode()) {
 
         field = JSON.parse(JSON.stringify(this.editField()))
+        field.active = this.state.fieldInput.active
         field.data.label = this.state.fieldInput.label
+        field.data.attribute = ['properties', this.state.fieldInput.attribute]
 
       } else {
         field = {
           id: this.state.fieldInput.id,
-          active: false,
+          active: this.state.fieldInput.active,
           position: 0,
           data: {
-            label: this.state.fieldInput.label
+            label: this.state.fieldInput.label,
+            attribute: ['properties', this.state.fieldInput.attribute]
           }
 
         }
@@ -292,6 +299,18 @@
       )
     },
 
+    mergeCheckbox(event, attribute) {
+      // event.preventDefault()
+      var value = event.target.checked
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput[attribute] = value
+          return next
+        }
+      )
+    },
+
     renderIdInput() {
 
       if(this.editMode()) {
@@ -332,6 +351,22 @@
               </div>
               <div className='col-sm-6'>
                 <input onChange={(e) => this.mergeInput(e, 'label')} className='form-control' type='text' value={this.state.fieldInput.label} />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-6'>
+                <strong>Attribute *</strong>
+              </div>
+              <div className='col-sm-6'>
+                <input onChange={(e) => this.mergeInput(e, 'attribute')} className='form-control' type='text' value={this.state.fieldInput.attribute} />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-6'>
+                <strong>Active</strong>
+              </div>
+              <div className='col-sm-6'>
+                <input onChange={(e) => this.mergeCheckbox(e, 'active')} checked={this.state.fieldInput.active} autoComplete='off' type='checkbox' />
               </div>
             </div>
           </div>
