@@ -9,7 +9,9 @@
 
     getInitialState () {
       return {
-        editFieldId: null
+        editFieldId: null,
+        editFieldError: null,
+        fieldInput: null
       }
     },
 
@@ -33,10 +35,17 @@
       )
     },
 
+    createFieldInput() {
+      return {
+        label: ''
+      }
+    },
+
     onEditClick(event, fieldId) {
       event.preventDefault()
       this.setState({
-        editFieldId: fieldId
+        editFieldId: fieldId,
+        fieldInput: this.createFieldInput()
       })
     },
 
@@ -87,8 +96,18 @@
       )
     },
 
-    saveEditField() {
+    readFieldFromInputs() {
       var field = this.editField()
+
+      field.data.label = this.state.fieldInput.label
+
+      return field
+    },
+
+    saveEditField() {
+
+      var field = this.readFieldFromInputs()
+
       $.ajax({
         url: this.props.update_path,
         type: 'post',
@@ -147,12 +166,42 @@
       )
     },
 
+    mergeInput(event, attribute) {
+      event.preventDefault()
+      var value = event.target.value
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput[attribute] = value
+          return next
+        }
+      )
+    },
+
+    renderEditFieldForm() {
+      return (
+        <div className='row'>
+          <div className='col-sm-6'>
+            <div className='row form-group'>
+              <div className='col-sm-6'>
+                <strong>Name *</strong>
+              </div>
+              <div className='col-sm-6'>
+                <input onChange={(e) => this.mergeInput(e, 'label')} className='form-control' type='text' value={this.state.fieldInput.label} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    },
+
     renderEditField() {
       var field = this.fieldById(this.state.editFieldId)
       return (
         <div>
           {this.renderEditFieldFlash()}
           {this.renderEditFieldHeader()}
+          {this.renderEditFieldForm()}
         </div>
       )
     },
