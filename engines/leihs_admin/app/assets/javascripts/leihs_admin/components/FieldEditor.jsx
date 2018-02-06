@@ -66,7 +66,22 @@
 
     },
 
-    editValues(field) {
+    writeValues(values) {
+      if(!values) {
+        return undefined
+      }
+
+      return values.map((v) => {
+        return {
+          label: v.label,
+          value: (v.value ? v.value : null)
+        }
+      })
+
+
+    },
+
+    readValues(field) {
 
       if(!field.data.values) {
         return undefined
@@ -90,7 +105,7 @@
         active: field.active,
         type: field.data.type,
         target: this.readTargetType(field.data.target_type),
-        values: this.editValues(field)
+        values: this.readValues(field)
       }
     },
 
@@ -195,6 +210,7 @@
         field.data.attribute = ['properties', this.state.fieldInput.attribute]
         field.data.type = this.state.fieldInput.type
         field.data.target_type = this.writeTargetType(this.state.fieldInput.target)
+        field.data.values = this.writeValues(this.state.fieldInput.values)
 
       } else {
         field = {
@@ -205,7 +221,8 @@
             label: this.state.fieldInput.label,
             attribute: ['properties', this.state.fieldInput.attribute],
             type: this.state.fieldInput.type,
-            target_type: this.writeTargetType(this.state.fieldInput.target)
+            target_type: this.writeTargetType(this.state.fieldInput.target),
+            values: this.writeValues(this.state.fieldInput.values)
           }
         }
       }
@@ -220,12 +237,12 @@
       if(this.editMode()) {
         return {
           path: this.props.update_path,
-          type: 'post'
+          type: 'POST'
         }
       } else {
         return {
           path: this.props.new_path,
-          type: 'put'
+          type: 'PUT'
         }
       }
 
@@ -259,10 +276,13 @@
 
       $.ajax({
         url: config.path,
-        type: config.type,
-        data: {
+        // type: config.type,
+        contentType: 'application/json',
+        dataType: 'json',
+        method: config.type,
+        data: JSON.stringify({
           field: field
-        }
+        })
       }).done((data) => {
 
         if(data.result == 'field-exists-already') {
@@ -492,9 +512,23 @@
 
       var values = this.state.fieldInput.values
 
-      return values.map((v, i) => {
+      var header = (
+        <div key={'header'} className='row form-group' style={{marginTop: '20px'}}>
+          <div className='col-sm-5'>
+            <strong>Label</strong>
+          </div>
+          <div className='col-sm-5'>
+            <strong>Value</strong>
+          </div>
+          <div className='col-sm-2 line-actions'>
+          </div>
+        </div>
+
+      )
+
+      return [header].concat(values.map((v, i) => {
         return this.renderValue(v, i, values.length - 1 == i)
-      })
+      }))
 
     },
 
@@ -535,6 +569,18 @@
             </div>
             <div className='row form-group'>
               <div className='col-sm-3'>
+                <strong>Target</strong>
+              </div>
+              <div className='col-sm-9'>
+                <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'target')}>
+                  <option value='both'>Beides</option>
+                  <option value='item'>Gegenstand</option>
+                  <option value='license'>Lizenz</option>
+                </select>
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-3'>
                 <strong>Type</strong>
               </div>
               <div className='col-sm-9'>
@@ -551,18 +597,6 @@
                   <option value='composite'>Composite</option>
                 </select>
                 {this.renderValuesBox()}
-              </div>
-            </div>
-            <div className='row form-group'>
-              <div className='col-sm-3'>
-                <strong>Target</strong>
-              </div>
-              <div className='col-sm-9'>
-                <select value={this.state.fieldInput.target} onChange={(e) => this.mergeSelect(e, 'target')}>
-                  <option value='both'>Beides</option>
-                  <option value='item'>Gegenstand</option>
-                  <option value='license'>Lizenz</option>
-                </select>
               </div>
             </div>
           </div>
