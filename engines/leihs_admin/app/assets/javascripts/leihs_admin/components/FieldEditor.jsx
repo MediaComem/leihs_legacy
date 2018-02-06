@@ -422,7 +422,7 @@
       this.setState(
         (previous) => {
           next = _.clone(previous)
-          delete next.fieldInput.values[index]
+          next.fieldInput.values = _.reject(next.fieldInput.values, (v, i) => i == index)
           return next
         }
       )
@@ -465,7 +465,7 @@
     renderValue(v, i, last) {
 
       var renderMinus = (i, last) => {
-        if(last) {
+        if(last && i == 0) {
           return null
         }
         return (
