@@ -75,9 +75,9 @@
     },
 
     writeValues(values) {
-      if(!values) {
-        return undefined
-      }
+      // if(!values) {
+      //   return undefined
+      // }
 
       return values.map((v) => {
         return {
@@ -91,9 +91,9 @@
 
     readValues(field) {
 
-      if(!field.data.values) {
-        return undefined
-      }
+      // if(!field.data.values) {
+      //   return undefined
+      // }
 
       return field.data.values.map((v) => {
         return {
@@ -106,15 +106,27 @@
 
     editFieldInput(field) {
       // var field = this.state.editField //this.fieldById(fieldId)
-      return {
+      var input = {
         id: field.id,
         label: field.data.label,
         attribute: field.data.attribute[1],
         active: field.active,
         type: field.data.type,
         target: this.readTargetType(field.data.target_type),
-        values: this.readValues(field)
+        // values: this.readValues(field)
       }
+
+      if(field.data.type == 'radio' || field.data.type == 'select') {
+
+        if(field.data.values && (field.data.values instanceof Array)) {
+
+          input.values = this.readValues(field)
+
+
+        }
+      }
+
+      return input
     },
 
     onEditClick(event, fieldId) {
@@ -228,7 +240,17 @@
         field.data.attribute = ['properties', this.state.fieldInput.attribute]
         field.data.type = this.state.fieldInput.type
         field.data.target_type = this.writeTargetType(this.state.fieldInput.target)
-        field.data.values = this.writeValues(this.state.fieldInput.values)
+
+        if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
+
+          if(this.state.fieldInput.values && (this.state.fieldInput.values instanceof Array)) {
+
+            field.data.values = this.writeValues(this.state.fieldInput.values)
+          }
+
+        }
+
+
 
       } else {
         field = {
@@ -240,9 +262,19 @@
             attribute: ['properties', this.state.fieldInput.attribute],
             type: this.state.fieldInput.type,
             target_type: this.writeTargetType(this.state.fieldInput.target),
-            values: this.writeValues(this.state.fieldInput.values)
+            // values: this.writeValues(this.state.fieldInput.values)
           }
         }
+
+        if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
+
+          if(this.state.fieldInput.values && (this.state.fieldInput.values instanceof Array)) {
+
+            field.data.values = this.writeValues(this.state.fieldInput.values)
+          }
+
+        }
+
       }
 
 
@@ -519,8 +551,15 @@
 
     renderValuesBox() {
 
-      var type = this.state.fieldInput.type
-      if(!(type == 'select' || type == 'radio')) {
+      var isMulti = false
+      if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
+
+        if(this.state.fieldInput.values && (this.state.fieldInput.values instanceof Array)) {
+          isMulti = true
+        }
+      }
+
+      if(!isMulti) {
         return null
       }
 
