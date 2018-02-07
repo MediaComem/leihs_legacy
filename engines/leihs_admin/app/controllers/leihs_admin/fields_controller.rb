@@ -55,7 +55,7 @@ module LeihsAdmin
       field.id = params[:field][:id]
       field.data = params[:field][:data].to_h
       field.position = 0
-      field.active = params[:field][:active] == 'true'
+      field.active = params[:field][:active]
       field.save!
       respond_to do |format|
         format.json do
@@ -69,8 +69,8 @@ module LeihsAdmin
       field_id = params[:field][:id]
       field = Field.unscoped.find(field_id)
       field.data = params[:field][:data].to_h
-      field.position = params[:field][:position].to_i
-      field.active = params[:field][:active] == 'true'
+      field.position = params[:field][:position]
+      field.active = params[:field][:active]
       field.save!
       respond_to do |format|
         format.json do
