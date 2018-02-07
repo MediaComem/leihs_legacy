@@ -8,19 +8,36 @@ module LeihsAdmin
     end
 
     def edit_react
-      fields = Field.unscoped.all.map do |f|
-        {
-          id: f.id,
-          active: f.active,
-          position: f.position,
-          data: f.data
-        }
-      end
       @props = {
-        fields: fields,
+        all_fields_path: fields_all_fields_path,
+        single_field_path: fields_single_field_path,
         new_path: fields_new_react_path,
         update_path: fields_update_react_path
       }
+    end
+
+    def single_field
+      field = Field.unscoped.find(params[:id])
+      props = {
+        field: presenterify_field(field)
+      }
+      respond_to do |format|
+        format.json do
+          render(status: :ok, json: props)
+        end
+      end
+    end
+
+    def all_fields
+      fields = Field.unscoped.all.map { |f| presenterify_field(f) }
+      props = {
+        fields: fields
+      }
+      respond_to do |format|
+        format.json do
+          render(status: :ok, json: props)
+        end
+      end
     end
 
     def new_react
@@ -80,6 +97,15 @@ module LeihsAdmin
     end
 
     private
+
+    def presenterify_field(field)
+      {
+        id: field.id,
+        active: field.active,
+        position: field.position,
+        data: field.data
+      }
+    end
 
     def get_active_status_value!(field, field_spec)
       case field_spec.require(:active)

@@ -22,6 +22,8 @@ LeihsAdmin::Engine.routes.draw do
   # Fields
   get 'fields', to: 'fields#index'
   get 'fields/edit_react', to: 'fields#edit_react'
+  get 'fields/single_field/(:id)', to: 'fields#single_field', :as => 'fields_single_field'
+  get 'fields/all_fields', to: 'fields#all_fields'
   put 'fields/new_react', to: 'fields#new_react'
   post 'fields/update_react', to: 'fields#update_react'
   post 'batch_update_fields', to: 'fields#batch_update'

@@ -11,13 +11,16 @@
       return {
         showEdit: false,
         editFieldId: null,
+        editField: null,
         editFieldError: null,
-        fieldInput: null
+        fieldInput: null,
+        loading: true,
+        editLoading: false
       }
     },
 
     allFields() {
-      return this.props.fields
+      return this.state.fields
     },
 
     isEditableField(field) {
@@ -101,8 +104,8 @@
 
     },
 
-    editFieldInput(fieldId) {
-      var field = this.fieldById(fieldId)
+    editFieldInput(field) {
+      // var field = this.state.editField //this.fieldById(fieldId)
       return {
         id: field.id,
         label: field.data.label,
@@ -117,10 +120,13 @@
     onEditClick(event, fieldId) {
       event.preventDefault()
       this.setState({
-        showEdit: true,
         editFieldId: fieldId,
         editFieldError: null,
-        fieldInput: this.editFieldInput(fieldId)
+        // showEdit: true,
+        // fieldInput: this.editFieldInput(fieldId),
+        editLoading: true
+      }, () => {
+        this.loadEdit()
       })
     },
 
@@ -168,17 +174,24 @@
       return _.find(this.allFields(), (f) => f.id == fieldId)
     },
 
-    cancelEdit(event) {
-      event.preventDefault()
+    closeEdit() {
       this.setState({
         showEdit: false,
         editFieldId: null,
-        editFieldError: null
+        editFieldError: null,
+        loading: true
+      }, () => {
+        this.loadList()
       })
     },
 
+    cancelEdit(event) {
+      event.preventDefault()
+      this.closeEdit()
+    },
+
     editField() {
-      return this.fieldById(this.state.editFieldId)
+      return this.state.editField// this.fieldById(this.state.editFieldId)
     },
 
     editMode() {
@@ -295,11 +308,7 @@
             editFieldError: 'field-exists-already'
           })
         } else {
-          this.setState({
-            showEdit: false,
-            editFieldId: null,
-            editFieldError: null
-          })
+          this.closeEdit()
         }
 
       }).error((data) => {
@@ -659,7 +668,62 @@
 
     },
 
+    componentDidMount() {
+
+      this.loadList()
+
+    },
+
+    loadEdit() {
+      $.ajax({
+        url: this.props.single_field_path,
+        // type: config.type,
+        contentType: 'application/json',
+        dataType: 'json',
+        method: 'GET',
+        data: {id: this.state.editFieldId}
+      }).done((data) => {
+        this.setState({
+          editField: data.field,
+          showEdit: true,
+          fieldInput: this.editFieldInput(data.field),
+          editLoading: false
+        })
+
+      }).error((data) => {
+
+      })
+
+    },
+
+    loadList() {
+
+      $.ajax({
+        url: this.props.all_fields_path,
+        // type: config.type,
+        contentType: 'application/json',
+        dataType: 'json',
+        method: 'GET',
+        data: JSON.stringify({})
+      }).done((data) => {
+        this.setState({
+          fields: data.fields,
+          loading: false
+        })
+
+      }).error((data) => {
+
+      })
+
+    },
+
     render () {
+
+      if(this.state.loading || this.state.editLoading) {
+        return (
+          <div></div>
+        )
+      }
 
       if(this.state.showEdit) {
         return this.renderEditField()
