@@ -18,8 +18,17 @@ module LeihsAdmin
 
     def single_field
       field = Field.unscoped.find(params[:id])
+      attribute = field.data['attribute']
+      if attribute.length != 2 || attribute[0] != 'properties'
+        throw 'This method should only retur fields, which are editable.'
+      end
+      property = attribute[1]
+
+      items_count = Item.where("items.properties::json->>'#{property}' is not null").count
+
       props = {
-        field: presenterify_field(field)
+        field: presenterify_field(field),
+        items_count: items_count
       }
       respond_to do |format|
         format.json do

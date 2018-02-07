@@ -11,7 +11,7 @@
       return {
         showEdit: false,
         editFieldId: null,
-        editField: null,
+        editResult: null,
         editFieldError: null,
         fieldInput: null,
         loading: true,
@@ -191,7 +191,7 @@
     },
 
     editField() {
-      return this.state.editField// this.fieldById(this.state.editFieldId)
+      return this.state.editResult.field// this.fieldById(this.state.editFieldId)
     },
 
     editMode() {
@@ -319,7 +319,7 @@
     },
 
     renderEditFieldButtons() {
-      var field = this.editField()
+      // var field = this.editField()
       return (
         <div className='col-sm-4 text-right'>
           <a onClick={(e) => this.cancelEdit(e)} className='btn btn-default'>Abbrechen</a>
@@ -546,11 +546,54 @@
 
     },
 
+    deleteEditField() {
+
+
+    },
+
+
+    renderDeleteField() {
+
+      if(!this.editMode()) {
+        return null
+      }
+
+      var itemsCount = this.state.editResult.items_count
+      if(itemsCount == 0) {
+
+        return (
+          <div className='row form-group'>
+            <div className='col-sm-3' style={{paddingBottom: '60px'}}>
+              <strong>This property is not used by any items:</strong>
+            </div>
+            <div className='col-sm-9'>
+              <button onClick={(e) => this.deleteEditField()} className='btn btn-danger' type='submit'>Delete</button>
+            </div>
+          </div>
+        )
+
+      } else {
+
+        return (
+          <div className='row form-group'>
+            <div className='col-sm-12' style={{paddingBottom: '30px'}}>
+              <strong>This property is used by {itemsCount} items.</strong>
+            </div>
+          </div>
+        )
+      }
+
+
+
+
+    },
+
 
     renderEditFieldForm() {
       return (
         <div className='row'>
           <div className='col-sm-12'>
+            {this.renderDeleteField()}
             <div className='row form-group'>
               <div className='col-sm-3'>
                 <strong>Id *</strong>
@@ -685,7 +728,7 @@
         data: {id: this.state.editFieldId}
       }).done((data) => {
         this.setState({
-          editField: data.field,
+          editResult: data,
           showEdit: true,
           fieldInput: this.editFieldInput(data.field),
           editLoading: false
