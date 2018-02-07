@@ -241,13 +241,8 @@
         field.data.type = this.state.fieldInput.type
         field.data.target_type = this.writeTargetType(this.state.fieldInput.target)
 
-        if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
-
-          if(this.state.fieldInput.values && (this.state.fieldInput.values instanceof Array)) {
-
-            field.data.values = this.writeValues(this.state.fieldInput.values)
-          }
-
+        if(this.isInputMulti()) {
+          field.data.values = this.writeValues(this.state.fieldInput.values)
         }
 
 
@@ -266,13 +261,8 @@
           }
         }
 
-        if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
-
-          if(this.state.fieldInput.values && (this.state.fieldInput.values instanceof Array)) {
-
-            field.data.values = this.writeValues(this.state.fieldInput.values)
-          }
-
+        if(this.isInputMulti()) {
+          field.data.values = this.writeValues(this.state.fieldInput.values)
         }
 
       }
@@ -549,7 +539,7 @@
 
     },
 
-    renderValuesBox() {
+    isInputMulti() {
 
       var isMulti = false
       if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
@@ -559,7 +549,13 @@
         }
       }
 
-      if(!isMulti) {
+      return isMulti
+    },
+
+    renderValuesBox() {
+
+
+      if(!this.isInputMulti()) {
         return null
       }
 
