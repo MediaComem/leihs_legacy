@@ -626,7 +626,8 @@
     },
 
     renderEditableFields() {
-      return this.editableFields().map(f => {
+      var fields = _.sortBy(this.editableFields(), (field) => field.data.label)
+      return fields.map(f => {
         return (
           <div key={'editable_field_' + f.id} className='row' style={{wordBreak: 'break-word', paddingTop: '15px', paddingBottom: '15px'}}>
             <div className='col-sm-4'>
@@ -649,7 +650,7 @@
           <div className='panel-heading'>
             <h4>Editierbare Felder</h4>
           </div>
-          <div className='panel-body'>
+          <div className='panel-body' style={{paddingTop: '0px', paddingBottom: '0px'}}>
             <div className='list-of-lines'>
               {this.renderEditableFields()}
             </div>
