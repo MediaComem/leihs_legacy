@@ -331,7 +331,7 @@
 
     renderEditFieldHeader() {
       return (
-        <div className='row'>
+        <div className='row' style={{marginBottom: '40px'}}>
           {this.renderEditFieldTitle()}
           {this.renderEditFieldButtons()}
         </div>
@@ -617,7 +617,7 @@
     renderEditField() {
       var field = this.fieldById(this.state.editFieldId)
       return (
-        <div>
+        <div style={{marginBottom: '100px'}}>
           {this.renderEditFieldFlash()}
           {this.renderEditFieldHeader()}
           {this.renderEditFieldForm()}
