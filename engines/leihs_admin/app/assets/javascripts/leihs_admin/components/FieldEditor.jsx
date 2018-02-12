@@ -545,7 +545,7 @@
 
         return (
           <div className='col-sm-9'>
-            <input disabled className='form-control' type='text' defaultValue={this.editField().id} />
+            <input disabled className='form-control' type='text' defaultValue={this.editField().id.replace('properties_', '')} />
           </div>
         )
 
