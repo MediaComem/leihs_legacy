@@ -54,6 +54,8 @@
         id: 'properties_',
         label: '',
         attribute: '',
+        packages: false,
+        required: false,
         active: false,
         type: 'text',
         target: 'both'
@@ -115,6 +117,8 @@
         id: field.id,
         label: field.data.label,
         attribute: field.data.attribute[1],
+        packages: (field.data.forPackage ? true : false),
+        required: (field.data.required ? true : false),
         active: field.active,
         type: field.data.type,
         target: this.readTargetType(field.data.target_type),
@@ -241,6 +245,7 @@
 
         field = JSON.parse(JSON.stringify(this.editField()))
         field.active = this.state.fieldInput.active
+        field.data.required = (this.state.fieldInput.required ? true : undefined)
         field.data.label = this.state.fieldInput.label
         field.data.attribute = ['properties', this.state.fieldInput.attribute]
         field.data.type = this.state.fieldInput.type
@@ -256,6 +261,7 @@
         field = {
           id: this.state.fieldInput.id,
           active: this.state.fieldInput.active,
+          required: (this.state.fieldInput.required ? true : undefined),
           position: 0,
           data: {
             label: this.state.fieldInput.label,
@@ -409,6 +415,30 @@
         (previous) => {
           next = _.clone(previous)
           next.fieldInput[attribute] = value
+          return next
+        }
+      )
+    },
+
+    mergeRequired(event) {
+      // event.preventDefault()
+      var value = event.target.checked
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.required = value
+          return next
+        }
+      )
+    },
+
+    mergePackages(event) {
+      // event.preventDefault()
+      var value = event.target.checked
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.packages = value
           return next
         }
       )
@@ -686,6 +716,22 @@
               </div>
               <div className='col-sm-9'>
                 <input onChange={(e) => this.mergeCheckbox(e, 'active')} checked={this.state.fieldInput.active} autoComplete='off' type='checkbox' />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-3'>
+                <strong>Required</strong>
+              </div>
+              <div className='col-sm-9'>
+                <input onChange={(e) => this.mergeRequired(e)} checked={this.state.fieldInput.required} autoComplete='off' type='checkbox' />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-3'>
+                <strong>Packages</strong>
+              </div>
+              <div className='col-sm-9'>
+                <input onChange={(e) => this.mergePackages(e)} checked={this.state.fieldInput.packages} autoComplete='off' type='checkbox' />
               </div>
             </div>
             <div className='row form-group'>
