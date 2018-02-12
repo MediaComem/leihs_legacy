@@ -628,7 +628,7 @@
         return (
           <div className='row form-group'>
             <div className='col-sm-3' style={{paddingBottom: '60px'}}>
-              <strong>This property is not used by any items/licenses:</strong>
+              <strong>This field is not used by any items/licenses:</strong>
             </div>
             <div className='col-sm-9'>
               <button onClick={(e) => this.deleteEditField(e)} className='btn btn-danger' type='submit'>Delete</button>
@@ -641,7 +641,7 @@
         return (
           <div className='row form-group'>
             <div className='col-sm-12' style={{paddingBottom: '30px'}}>
-              <strong>This property is used by {itemsCount} items/licenses.</strong>
+              <strong>This field is used by {itemsCount} items/licenses.</strong>
             </div>
           </div>
         )
