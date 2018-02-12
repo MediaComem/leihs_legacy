@@ -275,6 +275,8 @@
         field.data.label = this.state.fieldInput.label
         field.data.attribute = ['properties', this.state.fieldInput.attribute]
         field.data.type = this.state.fieldInput.type
+        field.data.forPackage = this.state.fieldInput.packages
+        field.data.required = this.state.fieldInput.required
         field.data.target_type = this.writeTargetType(this.state.fieldInput.target)
 
         if(this.isInputMulti()) {
@@ -293,6 +295,8 @@
             label: this.state.fieldInput.label,
             group: this.readGroupFromInput(),
             attribute: ['properties', this.state.fieldInput.attribute],
+            forPackage: this.state.fieldInput.packages,
+            required: this.state.fieldInput.required,
             type: this.state.fieldInput.type,
             target_type: this.writeTargetType(this.state.fieldInput.target),
             // values: this.writeValues(this.state.fieldInput.values)
@@ -748,12 +752,12 @@
     renderGroup(g, i) {
       var string = (g == null ? '' : g)
       return (
-        <label key={'group_' + g} style={{float: 'left', width: '200px'}}>
+        <label key={'group_' + g} style={{float: 'left', width: '200px', fontWeight: 'normal'}}>
           <div style={{width: '30px', float: 'left'}}>
             <input onChange={(e) => this.onChangeGroup(e)} value={string} name={'radio_' + i} checked={string == this.state.fieldInput.group && !this.state.newGroupSelected} type='radio' />
           </div>
           <div style={{width: '160px', float: 'left'}}>
-            {(string == '' ? <span style={{fontStyle: 'italic'}}>Ohne Gruppe</span> : string)}
+            {(string == '' ? <span style={{fontStyle: 'italic'}}>Keine</span> : string)}
           </div>
         </label>
       )
@@ -763,7 +767,7 @@
     renderGroupInput() {
 
       return (
-        <label key={'group_input'} style={{float: 'left', width: '400px'}}>
+        <label key={'group_input'} style={{float: 'left', width: '400px', fontWeight: 'normal'}}>
           <div style={{width: '30px', float: 'left'}}>
             <input onChange={(e) => this.onChangeNewGroup(e)} value={'radio_input'} name={'radio_input'} checked={this.state.newGroupSelected} type='radio' />
           </div>
