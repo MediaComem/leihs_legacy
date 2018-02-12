@@ -12,16 +12,23 @@ module LeihsAdmin
         all_fields_path: fields_all_fields_path,
         single_field_path: fields_single_field_path,
         new_path: fields_new_react_path,
-        update_path: fields_update_react_path
+        update_path: fields_update_react_path,
+        fields_path: fields_path
       }
     end
 
-    def single_field
-      field = Field.unscoped.find(params[:id])
-      attribute = field.data['attribute']
-      if attribute.length != 2 || attribute[0] != 'properties'
-        throw 'This method should only retur fields, which are editable.'
+    def destroy
+      Field.unscoped.find(params[:id]).destroy!
+      respond_to do |format|
+        format.json do
+          render(status: :ok, json: {})
+        end
       end
+    end
+
+    def single_field
+      field = Field.unscoped.where(dynamic: true).where(id: params[:id]).first
+      attribute = field.data['attribute']
       property = attribute[1]
 
       items_count = Item.where("items.properties::json->>'#{property}' is not null").count
@@ -64,6 +71,7 @@ module LeihsAdmin
       field.id = params[:field][:id]
       field.data = params[:field][:data].to_h
       field.position = 0
+      field.dynamic = true
       field.active = params[:field][:active]
       field.save!
       respond_to do |format|
@@ -112,7 +120,8 @@ module LeihsAdmin
         id: field.id,
         active: field.active,
         position: field.position,
-        data: field.data
+        data: field.data,
+        dynamic: field.dynamic
       }
     end
 

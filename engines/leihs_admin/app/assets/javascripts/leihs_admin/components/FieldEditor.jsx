@@ -24,15 +24,20 @@
     },
 
     isEditableField(field) {
-      var attribute = field.data.attribute
 
-      if(!(attribute instanceof Array)) {
+      if(!field.dynamic) {
         return false
       }
 
-      if(attribute[0] != 'properties') {
-        return false
-      }
+      // var attribute = field.data.attribute
+      //
+      // if(!(attribute instanceof Array)) {
+      //   return false
+      // }
+      //
+      // if(attribute[0] != 'properties') {
+      //   return false
+      // }
 
       return _.contains(['text', 'date', 'select', 'textarea', 'radio', 'checkbox'], field.data.type)
     },
@@ -581,9 +586,33 @@
 
     },
 
-    deleteEditField() {
 
+    deleteEditField(event) {
+      event.preventDefault()
 
+      var fieldId = this.state.editFieldId
+
+      $.ajax({
+        url: this.props.fields_path + '/' + fieldId,
+        contentType: 'application/json',
+        dataType: 'json',
+        method: 'DELETE'
+      }).done((data) => {
+
+        this.closeEdit()
+        // if(data.result == 'field-exists-already') {
+        //   this.setState({
+        //     editFieldError: 'field-exists-already'
+        //   })
+        // } else {
+        //   this.closeEdit()
+        // }
+
+      }).error((data) => {
+        // this.setState({
+        //   editFieldError: 'ajax-error'
+        // })
+      })
     },
 
 
@@ -599,10 +628,10 @@
         return (
           <div className='row form-group'>
             <div className='col-sm-3' style={{paddingBottom: '60px'}}>
-              <strong>This property is not used by any items:</strong>
+              <strong>This property is not used by any items/licenses:</strong>
             </div>
             <div className='col-sm-9'>
-              <button onClick={(e) => this.deleteEditField()} className='btn btn-danger' type='submit'>Delete</button>
+              <button onClick={(e) => this.deleteEditField(e)} className='btn btn-danger' type='submit'>Delete</button>
             </div>
           </div>
         )
@@ -612,7 +641,7 @@
         return (
           <div className='row form-group'>
             <div className='col-sm-12' style={{paddingBottom: '30px'}}>
-              <strong>This property is used by {itemsCount} items.</strong>
+              <strong>This property is used by {itemsCount} items/licenses.</strong>
             </div>
           </div>
         )

@@ -21,6 +21,7 @@ LeihsAdmin::Engine.routes.draw do
 
   # Fields
   get 'fields', to: 'fields#index'
+  delete 'fields/:id', to: 'fields#destroy'
   get 'fields/edit_react', to: 'fields#edit_react'
   get 'fields/single_field/(:id)', to: 'fields#single_field', :as => 'fields_single_field'
   get 'fields/all_fields', to: 'fields#all_fields'
