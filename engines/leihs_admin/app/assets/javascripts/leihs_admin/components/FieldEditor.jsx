@@ -53,9 +53,8 @@
 
     createFieldInput() {
       return {
-        id: 'properties_',
+        id: '',
         label: '',
-        attribute: '',
         packages: false,
         group: '',
         required: false,
@@ -119,7 +118,6 @@
       var input = {
         id: field.id,
         label: field.data.label,
-        attribute: field.data.attribute[1],
         packages: (field.data.forPackage ? true : false),
         required: (field.data.required ? true : false),
         group: (field.data.group == null ? '' : field.data.group),
@@ -273,7 +271,7 @@
         field.data.required = (this.state.fieldInput.required ? true : undefined)
         field.data.group = this.readGroupFromInput()
         field.data.label = this.state.fieldInput.label
-        field.data.attribute = ['properties', this.state.fieldInput.attribute]
+        // field.data.attribute = ['properties', this.state.fieldInput.attribute]
         field.data.type = this.state.fieldInput.type
         field.data.forPackage = this.state.fieldInput.packages
         field.data.required = this.state.fieldInput.required
@@ -287,14 +285,14 @@
 
       } else {
         field = {
-          id: this.state.fieldInput.id,
+          id: 'properties_' + this.state.fieldInput.id,
           active: this.state.fieldInput.active,
           required: (this.state.fieldInput.required ? true : undefined),
           position: 0,
           data: {
             label: this.state.fieldInput.label,
             group: this.readGroupFromInput(),
-            attribute: ['properties', this.state.fieldInput.attribute],
+            attribute: ['properties', this.state.fieldInput.id],
             forPackage: this.state.fieldInput.packages,
             required: this.state.fieldInput.required,
             type: this.state.fieldInput.type,
@@ -335,9 +333,9 @@
 
       if(!this.editMode()) {
 
-        if(!this.state.fieldInput.id.startsWith('properties_') || this.state.fieldInput.id.trim().length <= 11) {
-          return false
-        }
+        // if(!this.state.fieldInput.id.startsWith('properties_') || this.state.fieldInput.id.trim().length <= 11) {
+        //   return false
+        // }
 
       }
 
@@ -806,7 +804,7 @@
             {this.renderDeleteField()}
             <div className='row form-group'>
               <div className='col-sm-3'>
-                <strong>Id *</strong>
+                <strong>Attribute *</strong>
               </div>
               {this.renderIdInput()}
             </div>
@@ -816,14 +814,6 @@
               </div>
               <div className='col-sm-9'>
                 <input onChange={(e) => this.mergeInput(e, 'label')} className='form-control' type='text' value={this.state.fieldInput.label} />
-              </div>
-            </div>
-            <div className='row form-group'>
-              <div className='col-sm-3'>
-                <strong>Attribute *</strong>
-              </div>
-              <div className='col-sm-9'>
-                <input onChange={(e) => this.mergeInput(e, 'attribute')} className='form-control' type='text' value={this.state.fieldInput.attribute} />
               </div>
             </div>
             <div className='row form-group'>
