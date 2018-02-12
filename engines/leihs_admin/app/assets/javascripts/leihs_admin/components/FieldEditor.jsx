@@ -14,6 +14,8 @@
         editResult: null,
         editFieldError: null,
         fieldInput: null,
+        newGroupSelected: false,
+        groupInput: '',
         loading: true,
         editLoading: false
       }
@@ -55,6 +57,7 @@
         label: '',
         attribute: '',
         packages: false,
+        group: '',
         required: false,
         active: false,
         type: 'text',
@@ -119,6 +122,7 @@
         attribute: field.data.attribute[1],
         packages: (field.data.forPackage ? true : false),
         required: (field.data.required ? true : false),
+        group: (field.data.group == null ? '' : field.data.group),
         active: field.active,
         type: field.data.type,
         target: this.readTargetType(field.data.target_type),
@@ -145,6 +149,8 @@
         editFieldError: null,
         // showEdit: true,
         // fieldInput: this.editFieldInput(fieldId),
+        newGroupSelected: false,
+        groupInput: '',
         editLoading: true
       }, () => {
         this.loadEdit()
@@ -167,6 +173,8 @@
         showEdit: true,
         editFieldId: null,
         editFieldError: null,
+        newGroupSelected: false,
+        groupInput: '',
         fieldInput: this.createFieldInput()
       })
     },
@@ -180,7 +188,7 @@
             </div>
 
             <div className='col-sm-6 text-right'>
-              <a onClick={e => this.onClickCreate(e)} className='btn btn-default' href='/admin/suppliers/new'>
+              <a onClick={e => this.onClickCreate(e)} className='btn btn-default'>
                 <i className='fa fa-plus'></i>
                 {' '}
                 Feld erstellen
@@ -238,6 +246,23 @@
 
     },
 
+
+    readGroupFromInput() {
+
+      if(this.state.newGroupSelected) {
+
+        if(this.state.groupInput.trim().length > 0) {
+          return this.state.groupInput
+        } else {
+          return null
+        }
+      } else {
+        return (this.state.fieldInput.group == '' ? null : this.state.fieldInput.group)
+      }
+
+
+    },
+
     readFieldFromInputs() {
 
       var field = {}
@@ -246,6 +271,7 @@
         field = JSON.parse(JSON.stringify(this.editField()))
         field.active = this.state.fieldInput.active
         field.data.required = (this.state.fieldInput.required ? true : undefined)
+        field.data.group = this.readGroupFromInput()
         field.data.label = this.state.fieldInput.label
         field.data.attribute = ['properties', this.state.fieldInput.attribute]
         field.data.type = this.state.fieldInput.type
@@ -265,6 +291,7 @@
           position: 0,
           data: {
             label: this.state.fieldInput.label,
+            group: this.readGroupFromInput(),
             attribute: ['properties', this.state.fieldInput.attribute],
             type: this.state.fieldInput.type,
             target_type: this.writeTargetType(this.state.fieldInput.target),
@@ -682,6 +709,91 @@
 
     },
 
+    groups() {
+
+
+      return _.sortBy(
+        _.uniq(
+          this.state.fields.map((f) => f.data.group)
+        ),
+        (g) => (g ? g : '')
+      )
+
+    },
+
+    onChangeGroup(event) {
+      // event.preventDefault()
+      var value = event.target.value
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.newGroupSelected = false
+          next.fieldInput.group = value
+          return next
+        }
+      )
+    },
+
+    onChangeNewGroup(event) {
+      // event.preventDefault()
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.newGroupSelected = true
+          return next
+        }
+      )
+    },
+
+    renderGroup(g, i) {
+      var string = (g == null ? '' : g)
+      return (
+        <label key={'group_' + g} style={{float: 'left', width: '200px'}}>
+          <div style={{width: '30px', float: 'left'}}>
+            <input onChange={(e) => this.onChangeGroup(e)} value={string} name={'radio_' + i} checked={string == this.state.fieldInput.group && !this.state.newGroupSelected} type='radio' />
+          </div>
+          <div style={{width: '160px', float: 'left'}}>
+            {(string == '' ? <span style={{fontStyle: 'italic'}}>Ohne Gruppe</span> : string)}
+          </div>
+        </label>
+      )
+
+    },
+
+    renderGroupInput() {
+
+      return (
+        <label key={'group_input'} style={{float: 'left', width: '400px'}}>
+          <div style={{width: '30px', float: 'left'}}>
+            <input onChange={(e) => this.onChangeNewGroup(e)} value={'radio_input'} name={'radio_input'} checked={this.state.newGroupSelected} type='radio' />
+          </div>
+          <div style={{width: '360px', float: 'left'}}>
+            <input onChange={(e) => this.setState({groupInput: e.target.value})} type='text' value={this.state.groupInput} />
+          </div>
+        </label>
+      )
+    },
+
+    renderGroups() {
+      return this.groups().map((g, i) => {
+        return this.renderGroup(g, i)
+      }).concat([
+        this.renderGroupInput()
+      ])
+    },
+
+    renderGroupForm() {
+      return (
+        <div className='row form-group'>
+          <div className='col-sm-3'>
+            <strong>Group</strong>
+          </div>
+          <div className='col-sm-9'>
+            {this.renderGroups()}
+          </div>
+        </div>
+      )
+    },
 
     renderEditFieldForm() {
       return (
@@ -734,6 +846,7 @@
                 <input onChange={(e) => this.mergePackages(e)} checked={this.state.fieldInput.packages} autoComplete='off' type='checkbox' />
               </div>
             </div>
+            {this.renderGroupForm()}
             <div className='row form-group'>
               <div className='col-sm-3'>
                 <strong>Target</strong>
