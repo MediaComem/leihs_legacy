@@ -132,6 +132,8 @@
         if(field.data.values && (field.data.values instanceof Array)) {
 
           input.values = this.readValues(field)
+          var defaultIndex = _.findIndex(field.data.values, (v) => v.value == field.data['default'])
+          input.defaultValue = defaultIndex
 
 
         }
@@ -279,6 +281,7 @@
 
         if(this.isInputMulti()) {
           field.data.values = this.writeValues(this.state.fieldInput.values)
+          field.data.default = field.data.values[this.state.fieldInput.defaultValue].value
         }
 
 
@@ -303,6 +306,7 @@
 
         if(this.isInputMulti()) {
           field.data.values = this.writeValues(this.state.fieldInput.values)
+          field.data.default = field.data.values[this.state.fieldInput.defaultValue].value
         }
 
       }
@@ -484,8 +488,10 @@
           if(attribute == 'type') {
             if(value == 'radio' || value == 'select') {
               next.fieldInput.values = [{label: '', value: ''}]
+              next.fieldInput.defaultValue = 0
             } else {
               next.fieldInput.values = undefined
+              next.fieldInput.defaultValue = undefined
             }
           }
           return next
@@ -561,10 +567,23 @@
 
     },
 
+    changeDefaultValueRadio(event, index) {
 
-    renderValue(v, i, last) {
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.defaultValue = index
+          return next
+        }
+      )
+
+    },
+
+
+    renderValue(v, i, last, defaultValue) {
 
       var renderMinus = (i, last) => {
+        return null
         if(last && i == 0) {
           return null
         }
@@ -586,10 +605,13 @@
 
       return (
         <div key={'value_' + i} className='row form-group'>
+          <div className='col-sm-1' style={{textAlign: 'right'}}>
+            <input onChange={(e) => this.changeDefaultValueRadio(e, i)} value={'default_radio_' + i} name={'defaul_radio_' + i} checked={i == defaultValue} type='radio' />
+          </div>
           <div className='col-sm-5'>
             <input onChange={(e) => this.mergeValuesLabel(e, i)} className='form-control' type='text' value={v.label} />
           </div>
-          <div className='col-sm-5'>
+          <div className='col-sm-4'>
             <input onChange={(e) => this.mergeValuesValue(e, i)} className='form-control' type='text' value={v.value} />
           </div>
           <div className='col-sm-2 line-actions'>
@@ -624,13 +646,17 @@
       }
 
       var values = this.state.fieldInput.values
+      var defaultValue = this.state.fieldInput.defaultValue
 
       var header = (
         <div key={'header'} className='row form-group' style={{marginTop: '20px'}}>
+          <div className='col-sm-1' style={{textAlign: 'right'}}>
+            <strong>Default</strong>
+          </div>
           <div className='col-sm-5'>
             <strong>Label</strong>
           </div>
-          <div className='col-sm-5'>
+          <div className='col-sm-4'>
             <strong>Value</strong>
           </div>
           <div className='col-sm-2 line-actions'>
@@ -640,7 +666,7 @@
       )
 
       return [header].concat(values.map((v, i) => {
-        return this.renderValue(v, i, values.length - 1 == i)
+        return this.renderValue(v, i, values.length - 1 == i, defaultValue)
       }))
 
     },
