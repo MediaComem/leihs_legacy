@@ -60,7 +60,9 @@
         required: false,
         active: false,
         type: 'text',
-        target: 'both'
+        target: 'both',
+        role: 'lending_manager',
+        owner: false
         // ,
         // values: []
       }
@@ -124,6 +126,8 @@
         active: field.active,
         type: field.data.type,
         target: this.readTargetType(field.data.target_type),
+        role: field.data.permissions.role,
+        owner: field.data.permissions.owner
         // values: this.readValues(field)
       }
 
@@ -278,6 +282,10 @@
         field.data.forPackage = this.state.fieldInput.packages
         field.data.required = this.state.fieldInput.required
         field.data.target_type = this.writeTargetType(this.state.fieldInput.target)
+        field.data.permissions = {
+          role: this.state.fieldInput.role,
+          owner: this.state.fieldInput.owner
+        }
 
         if(this.isInputMulti()) {
           field.data.values = this.writeValues(this.state.fieldInput.values)
@@ -300,6 +308,10 @@
             required: this.state.fieldInput.required,
             type: this.state.fieldInput.type,
             target_type: this.writeTargetType(this.state.fieldInput.target),
+            permissions: {
+              role: this.state.fieldInput.role,
+              owner: this.state.fieldInput.owner
+            }
             // values: this.writeValues(this.state.fieldInput.values)
           }
         }
@@ -441,6 +453,18 @@
       )
     },
 
+    mergeOwner(event) {
+      var value = event.target.checked
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.owner = value
+          return next
+        }
+      )
+
+    },
+
     mergeCheckbox(event, attribute) {
       // event.preventDefault()
       var value = event.target.checked
@@ -472,6 +496,18 @@
         (previous) => {
           next = _.clone(previous)
           next.fieldInput.packages = value
+          return next
+        }
+      )
+    },
+
+    mergeRole(event) {
+      event.preventDefault()
+      var value = event.target.value
+      this.setState(
+        (previous) => {
+          next = _.clone(previous)
+          next.fieldInput.role = value
           return next
         }
       )
@@ -855,7 +891,7 @@
                 <strong>Required</strong>
               </div>
               <div className='col-sm-9'>
-                <input onChange={(e) => this.mergeRequired(e)} checked={this.state.fieldInput.required} autoComplete='off' type='checkbox' />
+                <input onChange={(e) => this.mergeRequired(e)} checked={this.state.fieldInput.required} type='checkbox' />
               </div>
             </div>
             <div className='row form-group'>
@@ -863,7 +899,26 @@
                 <strong>Packages</strong>
               </div>
               <div className='col-sm-9'>
-                <input onChange={(e) => this.mergePackages(e)} checked={this.state.fieldInput.packages} autoComplete='off' type='checkbox' />
+                <input onChange={(e) => this.mergePackages(e)} checked={this.state.fieldInput.packages} type='checkbox' />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-3'>
+                <strong>Owner</strong>
+              </div>
+              <div className='col-sm-9'>
+                <input onChange={(e) => this.mergeOwner(e)} checked={this.state.fieldInput.owner} type='checkbox' />
+              </div>
+            </div>
+            <div className='row form-group'>
+              <div className='col-sm-3'>
+                <strong>Role</strong>
+              </div>
+              <div className='col-sm-9'>
+                <select value={this.state.fieldInput.role} onChange={(e) => this.mergeRole(e)}>
+                  <option value='lending_manager'>Lending Manager</option>
+                  <option value='inventotry_manager'>Inventory Manager</option>
+                </select>
               </div>
             </div>
             {this.renderGroupForm()}
