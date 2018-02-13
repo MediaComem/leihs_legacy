@@ -132,13 +132,15 @@
         // values: this.readValues(field)
       }
 
-      if(field.data.type == 'radio' || field.data.type == 'select') {
+      if(field.data.type == 'radio' || field.data.type == 'select' || field.data.type == 'checkbox') {
 
         if(field.data.values && (field.data.values instanceof Array)) {
 
           input.values = this.readValues(field)
-          var defaultIndex = _.findIndex(field.data.values, (v) => v.value == field.data['default'])
-          input.defaultValue = defaultIndex
+          if(field.data.type != 'checkbox') {
+            var defaultIndex = _.findIndex(field.data.values, (v) => v.value == field.data['default'])
+            input.defaultValue = defaultIndex
+          }
 
 
         }
@@ -292,7 +294,9 @@
 
         if(this.isInputMulti()) {
           field.data.values = this.writeValues(this.state.fieldInput.values)
-          field.data.default = field.data.values[this.state.fieldInput.defaultValue].value
+          if(this.state.fieldInput.type != 'checkbox') {
+            field.data.default = field.data.values[this.state.fieldInput.defaultValue].value
+          }
         }
 
 
@@ -321,7 +325,9 @@
 
         if(this.isInputMulti()) {
           field.data.values = this.writeValues(this.state.fieldInput.values)
-          field.data.default = field.data.values[this.state.fieldInput.defaultValue].value
+          if(this.state.fieldInput.type != 'checkbox') {
+            field.data.default = field.data.values[this.state.fieldInput.defaultValue].value
+          }
         }
 
       }
@@ -541,7 +547,7 @@
           next.fieldInput[attribute] = value
 
           if(attribute == 'type') {
-            if(value == 'radio' || value == 'select') {
+            if(value == 'radio' || value == 'select' || value == 'checkbox') {
               next.fieldInput.values = [{label: '', value: '', existing: false}]
               next.fieldInput.defaultValue = 0
             } else {
@@ -664,16 +670,33 @@
 
       var disableValueInput = this.editMode() && v.existing
 
+      var renderDefaultRadio = () => {
+        if(this.state.fieldInput.type == 'checkbox') {
+          return null
+        }
+
+        return (
+          <div className='col-sm-1' style={{textAlign: 'right'}}>
+            <input onChange={(e) => this.changeDefaultValueRadio(e, i)} value={'default_radio_' + i} name={'default_radio_' + i} checked={i == defaultValue} type='radio' />
+          </div>
+        )
+
+      }
+
+      var valueColSpan = 'col-sm-4'
+      if(this.state.fieldInput.type == 'checkbox') {
+        valueColSpan = 'col-sm-5'
+      }
+
+
 
       return (
         <div key={'value_' + i} className='row form-group'>
-          <div className='col-sm-1' style={{textAlign: 'right'}}>
-            <input onChange={(e) => this.changeDefaultValueRadio(e, i)} value={'default_radio_' + i} name={'defaul_radio_' + i} checked={i == defaultValue} type='radio' />
-          </div>
+          {renderDefaultRadio()}
           <div className='col-sm-5'>
             <input onChange={(e) => this.mergeValuesLabel(e, i)} className='form-control' type='text' value={v.label} />
           </div>
-          <div className='col-sm-4'>
+          <div className={valueColSpan}>
             <input disabled={disableValueInput} onChange={(e) => this.mergeValuesValue(e, i)} className='form-control' type='text' value={v.value} />
           </div>
           <div className='col-sm-2 line-actions'>
@@ -690,7 +713,7 @@
     isInputMulti() {
 
       var isMulti = false
-      if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select') {
+      if(this.state.fieldInput.type == 'radio' || this.state.fieldInput.type == 'select' || this.state.fieldInput.type == 'checkbox') {
 
         if(this.state.fieldInput.values && (this.state.fieldInput.values instanceof Array)) {
           isMulti = true
@@ -710,15 +733,30 @@
       var values = this.state.fieldInput.values
       var defaultValue = this.state.fieldInput.defaultValue
 
+      var renderDefault = () => {
+          if(this.state.fieldInput.type == 'checkbox') {
+            return null
+          }
+
+          return (
+            <div className='col-sm-1' style={{textAlign: 'right'}}>
+              <strong>Default</strong>
+            </div>
+          )
+      }
+
+      var valueColSpan = 'col-sm-4'
+      if(this.state.fieldInput.type == 'checkbox') {
+        valueColSpan = 'col-sm-5'
+      }
+
       var header = (
         <div key={'header'} className='row form-group' style={{marginTop: '20px'}}>
-          <div className='col-sm-1' style={{textAlign: 'right'}}>
-            <strong>Default</strong>
-          </div>
+          {renderDefault()}
           <div className='col-sm-5'>
             <strong>Label</strong>
           </div>
-          <div className='col-sm-4'>
+          <div className={valueColSpan}>
             <strong>Value</strong>
           </div>
           <div className='col-sm-2 line-actions'>
