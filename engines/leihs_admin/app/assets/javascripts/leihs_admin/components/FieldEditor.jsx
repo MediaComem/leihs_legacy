@@ -155,7 +155,8 @@
         // fieldInput: this.editFieldInput(fieldId),
         newGroupSelected: false,
         groupInput: '',
-        editLoading: true
+        editLoading: true,
+        validationErrors: []
       }, () => {
         this.loadEdit()
       })
@@ -347,15 +348,21 @@
 
     validateInputs() {
 
-      if(!this.editMode()) {
+      var errors = []
 
-        // if(!this.state.fieldInput.id.startsWith('properties_') || this.state.fieldInput.id.trim().length <= 11) {
-        //   return false
-        // }
-
+      if(!this.editMode() && !this.state.fieldInput.id.trim().length > 0) {
+        errors.push('Attribute is mandatory.')
       }
 
-      return true
+      if(!this.state.fieldInput.label.trim().length > 0) {
+        errors.push('Name is mandatory.')
+      }
+
+      this.setState({
+        validationErrors: errors
+      })
+
+      return errors.length == 0
 
     },
 
@@ -428,17 +435,27 @@
 
     renderEditFieldFlash() {
 
-      if(!this.state.editFieldError) {
+      if(this.state.editFieldError) {
+        return (
+          <h4 className='alert alert-danger error'>
+            <ul>
+              <li>{this.renderErrorMessage()}</li>
+            </ul>
+          </h4>
+        )
+      } else if(this.state.validationErrors && this.state.validationErrors.length > 0) {
+        return (
+          <h4 className='alert alert-danger error'>
+            <ul>
+              {this.state.validationErrors.map((e, i) => <li key={'error_' + i}>{e}</li>)}
+            </ul>
+          </h4>
+        )
+
+      } else {
         return null
       }
 
-      return (
-        <h4 className='alert alert-danger error'>
-          <ul>
-            <li>{this.renderErrorMessage()}</li>
-          </ul>
-        </h4>
-      )
     },
 
     mergeInput(event, attribute) {
