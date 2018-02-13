@@ -917,7 +917,7 @@
               <div className='col-sm-9'>
                 <select value={this.state.fieldInput.role} onChange={(e) => this.mergeRole(e)}>
                   <option value='lending_manager'>Lending Manager</option>
-                  <option value='inventotry_manager'>Inventory Manager</option>
+                  <option value='inventory_manager'>Inventory Manager</option>
                 </select>
               </div>
             </div>
