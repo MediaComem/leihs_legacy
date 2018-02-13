@@ -109,7 +109,8 @@
       return field.data.values.map((v) => {
         return {
           label: v.label,
-          value: (v.value ? v.value : '')
+          value: (v.value ? v.value : ''),
+          existing: true
         }
       })
 
@@ -541,7 +542,7 @@
 
           if(attribute == 'type') {
             if(value == 'radio' || value == 'select') {
-              next.fieldInput.values = [{label: '', value: ''}]
+              next.fieldInput.values = [{label: '', value: '', existing: false}]
               next.fieldInput.defaultValue = 0
             } else {
               next.fieldInput.values = undefined
@@ -593,7 +594,7 @@
       this.setState(
         (previous) => {
           next = _.clone(previous)
-          next.fieldInput.values.push({label: '', value: ''})
+          next.fieldInput.values.push({label: '', value: '', existing: false})
           return next
         }
       )
@@ -637,7 +638,11 @@
     renderValue(v, i, last, defaultValue) {
 
       var renderMinus = (i, last) => {
-        return null
+
+        if(v.existing) {
+          return null
+        }
+
         if(last && i == 0) {
           return null
         }
@@ -657,6 +662,9 @@
         )
       }
 
+      var disableValueInput = this.editMode() && v.existing
+
+
       return (
         <div key={'value_' + i} className='row form-group'>
           <div className='col-sm-1' style={{textAlign: 'right'}}>
@@ -666,7 +674,7 @@
             <input onChange={(e) => this.mergeValuesLabel(e, i)} className='form-control' type='text' value={v.label} />
           </div>
           <div className='col-sm-4'>
-            <input onChange={(e) => this.mergeValuesValue(e, i)} className='form-control' type='text' value={v.value} />
+            <input disabled={disableValueInput} onChange={(e) => this.mergeValuesValue(e, i)} className='form-control' type='text' value={v.value} />
           </div>
           <div className='col-sm-2 line-actions'>
             {renderMinus(i, last)}
