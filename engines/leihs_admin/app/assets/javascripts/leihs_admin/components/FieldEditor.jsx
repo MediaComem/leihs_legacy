@@ -180,6 +180,7 @@
         editFieldError: null,
         newGroupSelected: false,
         groupInput: '',
+        validationErrors: [],
         fieldInput: this.createFieldInput()
       })
     },
