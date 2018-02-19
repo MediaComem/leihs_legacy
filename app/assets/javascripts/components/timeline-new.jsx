@@ -1563,7 +1563,7 @@
           {this.renderBoldLabel(topTest, wholeWidth, 'müssen aus fremden Gruppen genommen werden', null, firstMoment)}
           {this.renderNotAssignable(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topTest + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts)}
 
-          {this.renderBoldLabel(topTest2, wholeWidth, 'zuwenig Gegenstände vorhanden', null, firstMoment)}
+          {this.renderBoldLabel(topTest2, wholeWidth, 'Überbuchungen', null, firstMoment)}
           {this.renderNotEnough(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topTest2 + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts)}
 
           {this.renderLabelSmall(firstMoment, 'Verfügbar:', topAvailabilities)}
