@@ -513,7 +513,14 @@
 
           if(this.late(rr)) {
             var length = this.numberOfDays(start, end)
-            var lateLength = this.numberOfDays(start, lastMoment) - length
+            var lateLength = this.numberOfDays(start, lastMoment) - length + 1
+            var fullLength = this.numberOfDays(start, lastMoment)
+
+            var labelOffset = offset
+            if(labelOffset < 0) {
+              labelOffset = 0
+              fullLength = fullLength + offset
+            }
 
 
             // background-color: gray;
@@ -523,17 +530,24 @@
             // http://lea.verou.me/css3patterns/#diagonal-stripes
             return [
               <div key={'reservation_late_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30 + length * 30) + 'px', width: (lateLength * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{backgroundColor: 'rgba(212, 84, 84, 0.5)', position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', borderRadius: '0px 5px 5px 0px', padding: '2px 5px', margin: '3px 3px 3px 0px'}}>
+                <div style={{backgroundColor: 'rgba(212, 84, 84, 0.5)', position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', borderRadius: '0px 5px 5px 0px', padding: '2px 5px', margin: '0px 3px 0px 0px'}}>
                   {' '}
                 </div>
               </div>
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
+                <div style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                  {' '}
+                </div>
+              </div>
+              ,
+              <div key={'reservation_label_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (labelOffset * 30) + 'px', width: (fullLength * 30) + 'px', height: height + 'px', border: '0px'}}>
                 {this.renderPopup(timeline_availability, rr)}
-                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'none', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr, '#eee') /*+ ' ' + rr.id*/}
                 </div>
               </div>
+
             ]
 
           } else {
