@@ -1134,23 +1134,29 @@
 
     },
 
-    _onScroll(event) {
+    labelPosition() {
 
       var firstMoment = this.state.preprocessedData.firstMoment
       var offset = this.offset(firstMoment)
 
+      var x = 0
+
+      if(window.scrollX > offset * 30 - 20) {
+        x = window.scrollX + 20
+      } else {
+        x = offset * 30
+      }
+
+      return x
+    },
+
+    _onScroll(event) {
+
       var elements = document.getElementsByClassName('scrollWithPage')
       _.each(elements, (e) => {
 
-        var x = 0
 
-        if(window.scrollX > offset * 30 - 20) {
-          x = window.scrollX + 20
-        } else {
-          x = offset * 30
-        }
-
-        e.style.left = x + 'px'
+        e.style.left = this.labelPosition() + 'px'
       })
 
     },
@@ -1160,7 +1166,7 @@
       var offset = this.offset(firstMoment)
 
       return (
-        <div key={key} className='scrollWithPage' style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (offset * 30 + window.scrollX) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
+        <div key={key} className='scrollWithPage' style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (this.labelPosition()) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
           {label}
         </div>
       )
