@@ -1,3 +1,4 @@
+# encoding: utf-8
 require_relative '../shared/common_steps'
 require_relative '../shared/login_steps'
 require_relative '../shared/personas_dump_steps'
@@ -80,7 +81,7 @@ module Manage
         expect(numbers_col_txt).to eq label
       end
 
-      step 'the timeline shows an availabilty of :num' do |num|
+      step 'the timeline shows :assigned assigned of :available available for the group' do |assigned, available|
         @order_line ||= find('#lines .order-line', text: @model.product)
         within(@order_line.find('.multibutton')) do
            find('.dropdown-holder').click
@@ -88,10 +89,8 @@ module Manage
         end
         within('.modal.in') do
           within_frame 'timeline' do
-            group_row = find('tr', text: "Ausleihbar für Gruppe '#{@group.name}")
-            expect(group_row.text).to include(
-              "Ausleihbar für Gruppe '#{@group.name}' #{num}"
-            )
+            find("div[title='Entitlement Info #{@group.id}']", text: "#{available} reserviert für Gruppe #{@group.name}, davon zugewiesen")
+            expect(find("div[title='Entitlement #{@group.id}']").text.start_with?(assigned)).to eq(true)
           end
           click_on _('Close')
         end

@@ -99,13 +99,13 @@
       )
 
       if(m.isSameOrBefore(moment(), 'day')) {
-        return moment().add(+ 1, 'month').endOf('month')
+        return moment().add(+ 1, 'month')
       } else {
         var inOneYear = moment().add(1, 'year')
         if(m.endOf('month').isAfter(inOneYear)) {
           return inOneYear
         } else {
-          return m.endOf('month')
+          return m.add(+ 1, 'month')
         }
       }
 
@@ -222,7 +222,7 @@
       )
     },
 
-    renderIndexedQuantitiesSmall(valueFunc, firstMoment, lastMoment, colorFunc, top, wholeWidth, key) {
+    renderIndexedQuantitiesSmall(title, valueFunc, firstMoment, lastMoment, colorFunc, top, wholeWidth, key) {
 
       var offset = this.offset(firstMoment)
 
@@ -249,7 +249,7 @@
       )
 
       return (
-        <div key={key} style={{position: 'absolute', top: top + 'px', left: '0px', width: wholeWidth + 'px'}}>
+        <div key={key} title={title} style={{position: 'absolute', top: top + 'px', left: '0px', width: wholeWidth + 'px'}}>
           {values}
         </div>
       )
@@ -1161,19 +1161,19 @@
 
     },
 
-    renderBoldLabel(top, wholeWidth, label, key, firstMoment) {
+    renderBoldLabel(title, top, wholeWidth, label, key, firstMoment) {
 
       var offset = this.offset(firstMoment)
 
       return (
-        <div key={key} className='scrollWithPage' style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (this.labelPosition()) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
+        <div key={key} title={title} className='scrollWithPage' style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (this.labelPosition()) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
           {label}
         </div>
       )
 
     },
 
-    renderEntitlementQuantityLabel(timeline_availability, groupId, top, wholeWidth, quantity, firstMoment) {
+    renderEntitlementQuantityLabel(title, timeline_availability, groupId, top, wholeWidth, quantity, firstMoment) {
 
       if(quantity < 0) {
         quantity = 0
@@ -1185,7 +1185,7 @@
         label = quantity + ' reserviert für Gruppe ' + name + ', davon zugewiesen'
       }
 
-      return this.renderBoldLabel(top, wholeWidth, label, 'label_' + groupId, firstMoment)
+      return this.renderBoldLabel(title, top, wholeWidth, label, 'label_' + groupId, firstMoment)
 
     },
 
@@ -1214,7 +1214,7 @@
 
       }
 
-      return this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors,  top, wholeWidth, 'test')
+      return this.renderIndexedQuantitiesSmall(null, mappingAssigned, firstMoment, lastMoment, this.reservationColors,  top, wholeWidth, 'test')
     },
 
     renderNotAssignable(lineHeight, timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, top, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts) {
@@ -1256,7 +1256,7 @@
 
       }
 
-      return this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors,  top, wholeWidth, 'test')
+      return this.renderIndexedQuantitiesSmall(null, mappingAssigned, firstMoment, lastMoment, this.reservationColors,  top, wholeWidth, 'test')
     },
 
 
@@ -1286,7 +1286,7 @@
 
       }
 
-      return this.renderIndexedQuantitiesSmall(mappingAssigned, firstMoment, lastMoment, this.reservationColors,  topEntitlement, wholeWidth, 'reserved_' + groupId)
+      return this.renderIndexedQuantitiesSmall('Entitlement ' + groupId, mappingAssigned, firstMoment, lastMoment, this.reservationColors,  topEntitlement, wholeWidth, 'reserved_' + groupId)
 
     },
 
@@ -1321,7 +1321,7 @@
           quantity: quantity
         }
       }).map((v, index) => {
-        return this.renderEntitlementQuantityLabel(timeline_availability, v.groupId, topEntitlements + index * lineHeight, wholeWidth, v.quantity, firstMoment)
+        return this.renderEntitlementQuantityLabel('Entitlement Info ' + v.groupId, timeline_availability, v.groupId, topEntitlements + index * lineHeight, wholeWidth, v.quantity, firstMoment)
       })
     },
 
@@ -1561,15 +1561,15 @@
             {this.renderReservations(allLayoutedReservationFrames, firstMoment, lastMoment, this.props.timeline_availability, this.state.preprocessedData.invalidReservations)}
           </div>
           {this.renderLabelSmall(firstMoment, 'Total:', topTotalQuantities)}
-          {this.renderIndexedQuantitiesSmall((i) => relevantItemsCount, firstMoment, lastMoment, unusedColors, topTotalQuantities, wholeWidth, null)}
+          {this.renderIndexedQuantitiesSmall(null, (i) => relevantItemsCount, firstMoment, lastMoment, unusedColors, topTotalQuantities, wholeWidth, null)}
 
           {this.renderEntitlementQuantityLabels(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
           {this.renderEntitlementQuantities(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topEntitlementQuantities + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount)}
 
-          {this.renderBoldLabel(topTest, wholeWidth, 'müssen aus fremden Gruppen genommen werden', null, firstMoment)}
+          {this.renderBoldLabel(null, topTest, wholeWidth, 'müssen aus fremden Gruppen genommen werden', null, firstMoment)}
           {this.renderNotAssignable(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topTest + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts)}
 
-          {this.renderBoldLabel(topTest2, wholeWidth, 'Überbuchungen', null, firstMoment)}
+          {this.renderBoldLabel(null, topTest2, wholeWidth, 'Überbuchungen', null, firstMoment)}
           {this.renderNotEnough(entitlementLineHeight, this.props.timeline_availability, this.state.preprocessedData.changesForDays, reservationsInGroups, entitlementQuantities, topTest2 + 20, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts)}
 
           {this.renderLabelSmall(firstMoment, 'Verfügbar:', topAvailabilities)}
