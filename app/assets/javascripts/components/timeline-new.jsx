@@ -597,7 +597,7 @@
               ,
               <div key={'reservation_label' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (labelOffset * 30) + 'px', width: (labelLength * 30) + 'px', height: height + 'px', border: '0px'}}>
                 {this.renderPopup(timeline_availability, rr)}
-                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'none', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', padding: '2px 5px', margin: '0px 3px'}}>
+                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'none', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (labelLength * 30 - 4 - 3) + 'px', padding: '2px 5px', margin: '0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr, '#e3be1f') /*+ ' ' + rr.id*/}
                 </div>
               </div>
