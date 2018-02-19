@@ -1119,7 +1119,7 @@
       var mappingAssigned = (index) => {
 
         if(!changesForDays[index]) {
-          return 0
+          return 'n/a'
         }
 
         var algo = changesForDays[index].algorithm
@@ -1143,12 +1143,16 @@
     renderNotAssignable(lineHeight, timeline_availability, changesForDays, reservationsInGroups, entitlementQuantities, top, wholeWidth, firstMoment, lastMoment, relevantItemsCount, unusedCounts) {
 
       var quantity = entitlementQuantities['']
+      if(quantity < 0) {
+        quantity = 0
+      }
 
       var mappingAssigned = (index) => {
 
         if(!changesForDays[index]) {
-          return 0
+          return 'n/a'
         }
+
 
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == ''))
@@ -1184,11 +1188,15 @@
       var mappingAssigned = (index) => {
 
         if(!changesForDays[index]) {
-          return 0
+          return 'n/a'
         }
 
         var algo = changesForDays[index].algorithm
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
+
+        if(quantity < 0) {
+          return '0/0'
+        } else
 
         if(count > quantity) {
           return quantity + '/' + quantity
