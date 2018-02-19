@@ -11,7 +11,7 @@ Feature: Model availability Timeline
     When I search for 'a'
     Then for each visible model I can see the Timeline
     When I open the inventory
-    Then for each visible model I can see the Timeline
+    Then for each visible model I can see the Timeline in new window
 
   Scenario: open timeline in pending orders as group-manager
     Given I am Andi

@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
-Then /^for each visible model I can see the Timeline$/ do
 
+def for_each_visible_model_I_can_see_the_Timeline(in_new_window)
   line_selector = nil
   parent_id = nil
 
@@ -35,17 +35,35 @@ Then /^for each visible model I can see the Timeline$/ do
 
   line_texts[0..5].each do |line_text|
     line = find(line_selector, text: line_text)
+    timeline_button = nil
     if current_role == :group_manager and (@contract.nil? or [:signed].include? @contract.state)
-      line.find('.line-actions > a', text: _('Timeline')).click
+      timeline_button = line.find('.line-actions > a', text: _('Timeline'))
     else
       within line.find('.line-actions .multibutton') do
         find('.dropdown-toggle').click
-        find('.dropdown-item', text: _('Timeline')).click
+        timeline_button = find('.dropdown-item', text: _('Timeline'))
       end
     end
-    find('.modal iframe')
-    evaluate_script %Q{ $(".modal iframe").contents().first("#my_timeline").length; }
-    find('.modal .button', text: _('Close')).click
-    step 'the modal is closed'
+    if in_new_window
+      new_window =  window_opened_by { timeline_button.click }
+      within_window new_window do
+        find('div.row > div > div > div', text: 'Total')
+        new_window.close
+      end
+    else
+      timeline_button.click
+      find('.modal iframe')
+      evaluate_script %Q{ $(".modal iframe").contents().first("#my_timeline").length; }
+      find('.modal .button', text: _('Close')).click
+      step 'the modal is closed'
+    end
   end
+end
+
+Then /^for each visible model I can see the Timeline$/ do
+  for_each_visible_model_I_can_see_the_Timeline(false)
+end
+
+Then /^for each visible model I can see the Timeline in new window$/ do
+  for_each_visible_model_I_can_see_the_Timeline(true)
 end

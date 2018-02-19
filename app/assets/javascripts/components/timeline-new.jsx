@@ -844,6 +844,8 @@
           userEntitlementGroups,
           (uegs, uid) => {
 
+            console.log('UEGS = ' + JSON.stringify(uegs))
+
             return [
               uid,
               _.filter(
@@ -946,14 +948,16 @@
           return [
             u.id,
 
-            _.filter(timeline_availability.entitlement_groups_users, (egu) => {
-              return egu.user_id == u.id
-            }).map(
-              (egu) => {
-                return _.find(timeline_availability.entitlement_groups, (eg) => {
-                  return eg.id == egu.entitlement_group_id
-                })
-              }
+            _.compact( // compact should theoretically not be needed, but there are exceptions e.g.: http://localhost:3000/manage/8bd16d45-056d-5590-bc7f-12849f034351/models/6ef67281-54f1-5460-a5ba-ae984d01d43c/timeline
+              _.filter(timeline_availability.entitlement_groups_users, (egu) => {
+                return egu.user_id == u.id
+              }).map(
+                (egu) => {
+                  return _.find(timeline_availability.entitlement_groups, (eg) => {
+                    return eg.id == egu.entitlement_group_id
+                  })
+                }
+              )
             )
           ]
         })

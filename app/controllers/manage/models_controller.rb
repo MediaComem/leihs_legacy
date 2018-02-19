@@ -124,7 +124,7 @@ class Manage::ModelsController < Manage::ApplicationController
   def timeline
     @props = {
       timeline_availability: timeline_availability(
-        fetch_model, current_inventory_pool.id, lending_manager?
+        fetch_model.id, current_inventory_pool.id, lending_manager?
       )
     }
     respond_to do |format|
