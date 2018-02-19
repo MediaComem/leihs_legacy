@@ -71,7 +71,7 @@
 
     firstReservationMoment() {
 
-      return moment().add(- 14, 'days').startOf('month')
+      return moment().add(- 7, 'days')
 
       // var m = this.findMinimumMoment(
       //   this.mapToMoments(
