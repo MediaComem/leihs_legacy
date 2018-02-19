@@ -19,7 +19,7 @@ module TimelineAvailability
           and reservations.type = 'ItemLine'
           and not (
             status = 'unsubmitted' and
-            updated_at < '#{Time.now.utc - Setting.timeout_minutes.minutes}'
+            updated_at < '#{Time.now.utc - Setting.first.timeout_minutes.minutes}'
           )
           and not (
             end_date < '#{Time.zone.today}' and
