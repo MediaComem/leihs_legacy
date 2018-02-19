@@ -931,10 +931,14 @@
 
     componentDidMount() {
       document.addEventListener('mousedown', this._handleClickOutside);
+
+      document.addEventListener('scroll', this._onScroll)
     },
 
     componentWillUnmount() {
       document.removeEventListener('mousedown', this._handleClickOutside);
+
+      document.removeEventListener('scroll', this._onScroll)
     },
 
     _onToggle(event, rr) {
@@ -1087,12 +1091,33 @@
 
     },
 
+    _onScroll(event) {
+
+      var firstMoment = this.state.preprocessedData.firstMoment
+      var offset = this.offset(firstMoment)
+
+      var elements = document.getElementsByClassName('scrollWithPage')
+      _.each(elements, (e) => {
+
+        var x = 0
+
+        if(window.scrollX > offset * 30 - 20) {
+          x = window.scrollX + 20
+        } else {
+          x = offset * 30
+        }
+
+        e.style.left = x + 'px'
+      })
+
+    },
+
     renderBoldLabel(top, wholeWidth, label, key, firstMoment) {
 
       var offset = this.offset(firstMoment)
 
       return (
-        <div key={key} style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (offset * 30) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
+        <div key={key} className='scrollWithPage' style={{fontWeight: 'bold', fontSize: '10px', padding: '4px', margin: '2px', position: 'absolute', top: top + 'px', left: (offset * 30 + window.scrollX) + 'px', textAlign: 'lef', width: '400px', height: '30px', border: '0px'}}>
           {label}
         </div>
       )
@@ -1101,11 +1126,14 @@
 
     renderEntitlementQuantityLabel(timeline_availability, groupId, top, wholeWidth, quantity, firstMoment) {
 
+      if(quantity < 0) {
+        quantity = 0
+      }
       if(groupId == '') {
-        label = 'von den gemeinsamen'
+        label = quantity + ' verfügbar für Allgemein, davon zugewiesen'
       } else {
         var name = this.entitlementGroupNameForId(timeline_availability, groupId)
-        label = 'aus Gruppe' + name
+        label = quantity + ' reserviert für Gruppe ' + name + ', davon zugewiesen'
       }
 
       return this.renderBoldLabel(top, wholeWidth, label, 'label_' + groupId, firstMoment)
@@ -1195,16 +1223,16 @@
         var count = _.size(_.filter(algo, (a) => a.assignment == groupId))
 
         if(quantity < 0) {
-          return '0/0'
+          return '0'
         } else
 
         if(count > quantity) {
-          return quantity + '/' + quantity
+          return quantity/* + '/' + quantity*/
           // return (
           //   <span style={{color: 'red'}}>{count + '/' + quantity}</span>
           // )
         } else {
-          return count + '/' + quantity
+          return count/* + '/' + quantity*/
         }
 
       }
