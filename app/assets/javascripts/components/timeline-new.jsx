@@ -530,20 +530,20 @@
             // http://lea.verou.me/css3patterns/#diagonal-stripes
             return [
               <div key={'reservation_late_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30 + length * 30) + 'px', width: (lateLength * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{backgroundColor: 'rgba(212, 84, 84, 0.5)', position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', borderRadius: '0px 5px 5px 0px', padding: '2px 5px', margin: '0px 3px 0px 0px'}}>
+                <div style={{backgroundColor: 'rgba(212, 84, 84, 0.5)', position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', borderRadius: '0px 5px 5px 0px', margin: '0px 3px 0px 0px'}}>
                   {' '}
                 </div>
               </div>
               ,
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
-                <div style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                <div style={{backgroundColor: 'rgba(212, 84, 84, 1.0)', position: 'absolute', top: '0px', left: '0px', bottom: '0px', width: (length * 30 - 4) + 'px', borderRadius: '5px 0px 0px 5px', margin: '0px 0px 0px 3px'}}>
                   {' '}
                 </div>
               </div>
               ,
               <div key={'reservation_label_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (labelOffset * 30) + 'px', width: (fullLength * 30) + 'px', height: height + 'px', border: '0px'}}>
                 {this.renderPopup(timeline_availability, rr)}
-                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'none', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
+                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'none', color: '#eee', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (fullLength * 30 - 4) + 'px', position: 'absolute', top: '0px', left: '0px', bottom: '0px', borderRadius: '5px 0px 0px 5px', padding: '2px 5px', margin: '0px 0px 0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr, '#eee') /*+ ' ' + rr.id*/}
                 </div>
               </div>
@@ -565,14 +565,43 @@
               padding = '0px 5px'
             }
 
-            return (
+            var labelOffset = offset
+            var labelLength = length
+            if(labelOffset < 0) {
+              labelOffset = 0
+              labelLength = labelLength + offset
+            }
+
+
+            var invalidBorder = null
+            if(invalidReservations[rr.id]) {
+
+              invalidBorder = (
+                <div key={'reservation_border_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
+                  <div style={{backgroundColor: 'none', position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', borderRadius: '5px', margin: '0px 3px 0px 3px', border: '2px solid red'}}>
+                    {' '}
+                  </div>
+                </div>
+
+              )
+            }
+
+            return _.compact([
               <div key={'reservation_' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (offset * 30) + 'px', width: (length * 30) + 'px', height: height + 'px', border: '0px'}}>
+                <div style={{backgroundColor: backgroundColor, position: 'absolute', top: '0px', left: '0px', bottom: '0px', right: '0px', borderRadius: '5px', margin: '0px 3px 0px 3px'}}>
+                  {' '}
+                </div>
+              </div>
+              ,
+              invalidBorder
+              ,
+              <div key={'reservation_label' + rr.id} style={{position: 'absolute', top: (index * totalHeight) + 'px', left: (labelOffset * 30) + 'px', width: (labelLength * 30) + 'px', height: height + 'px', border: '0px'}}>
                 {this.renderPopup(timeline_availability, rr)}
-                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: backgroundColor, display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', borderRadius: '5px', padding: padding, margin: margin, border: border}}>
+                <div onClick={(e) => this._onToggle(e, rr)} ref={(ref) => this.barReference = ref} style={{backgroundColor: 'none', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: (length * 30 - 4 - 3) + 'px', padding: '2px 5px', margin: '0px 3px'}}>
                   {this.reservationLabel(timeline_availability, rr, '#e3be1f') /*+ ' ' + rr.id*/}
                 </div>
               </div>
-            )
+            ])
           }
 
 
