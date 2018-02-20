@@ -1200,7 +1200,7 @@
       var mappingAssigned = (index) => {
 
         if(!changesForDays[index]) {
-          return 'n/a'
+          return '0'
         }
 
         var algo = changesForDays[index].algorithm
@@ -1231,7 +1231,7 @@
       var mappingAssigned = (index) => {
 
         if(!changesForDays[index]) {
-          return 'n/a'
+          return '0'
         }
 
 
@@ -1269,7 +1269,7 @@
       var mappingAssigned = (index) => {
 
         if(!changesForDays[index]) {
-          return 'n/a'
+          return '0'
         }
 
         var algo = changesForDays[index].algorithm
