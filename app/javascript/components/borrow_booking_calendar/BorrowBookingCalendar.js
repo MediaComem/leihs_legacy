@@ -22,48 +22,66 @@ const BorrowBookingCalendar = createReactClass({
       quantity: (this.props.initialQuantity || 1),
       isLoading: true,
       calendarData: [],
-      poolContext: this.props.inventoryPools[0]
+      poolContext: this.props.inventoryPools[0],
+      changesAlgorithm: null
     }
   },
 
   componentDidMount() {
-    this._fetchAndUpdateCalendarData(this._getLastDateInCalendarView(this.state.endDate))
+    this._fetchTimelinelAvailability()
   },
 
   _f: 'YYYY-MM-DD',
 
-  _fetchAndUpdateCalendarData(toDate = null) {
-    let fromDate
-    if (_.isEmpty(this.state.calendarData)) {
-      fromDate = this._getFirstDateInCalendarView(this.state.todayDate)
-    } else {
-      fromDate = _.last(this.state.calendarData)
-        .date.clone()
-        .add(1, 'day')
-    }
+  _fetchTimelinelAvailability() {
 
-    if (this.state.isLoading) {
-      this._fetchAvailabilities(
-        fromDate.format(this._f),
-        toDate ? toDate.format(this._f) : this._getLastDateInCalendarView().format(this._f)
-      ).done(data => {
-        const newDates = _.map(data.list, avalObject => {
-          return {
-            date: moment(avalObject.d),
-            availableQuantity: avalObject.quantity,
-            visitsCount: avalObject.visits_count
-          }
-        })
-
-        this.setState(prevState => {
-          return {
-            isLoading: false,
-            calendarData: prevState.calendarData.concat(newDates)
-          }
-        })
+    var url = '/manage/' + this.state.poolContext.inventory_pool.id + '/models/' + this.props.model.id + '/timeline'
+    return $.ajax({
+      url: url,
+      method: 'GET',
+      dataType: 'json',
+      data: {
+      }
+    }).done(data => {
+      var timeline_availability = data.timeline_availability
+      var relevantItemsCount = TimelinePreprocessData.relevantItemsCount(timeline_availability)
+      var userEntitlementGroupsForModel = TimelinePreprocessData.userEntitlementGroupsForModel(timeline_availability)
+      var calculateChanges = TimelinePreprocessData.changesDates(timeline_availability)
+      var changesAlgorithm = TimelinePreprocessData.changesAlgorithm(timeline_availability, calculateChanges, userEntitlementGroupsForModel, relevantItemsCount)
+      this.setState({
+        isLoading: false,
+        relevantItemsCount: relevantItemsCount,
+        timeline_availability: timeline_availability,
+        changesAlgorithm: changesAlgorithm
       })
+    })
+  },
+
+  _dataForDay(changesForDays, refDay, offset) {
+    return {
+      date: moment(refDay).add(offset, 'days'),
+      availableQuantity: changesForDays[offset].available,
+      visitsCount: 6
     }
   },
+
+  _getDatesForCurrentMonthView() {
+    const firstDate = this._getFirstDateInCalendarView()
+    var changesForDays = TimelinePreprocessData.changesForDays(
+      this.state.timeline_availability,
+      firstDate,
+      moment(firstDate).add(42, 'days'),
+      this.state.changesAlgorithm,
+      this.state.relevantItemsCount
+    )
+    return _.map(
+      _.range(0, 42),
+      (i) => {
+        return this._dataForDay(changesForDays, firstDate, i)
+      }
+    )
+  },
+
 
   _getFirstDateInCalendarView(date = null) {
     const firstDateOfMonth = date
@@ -91,14 +109,6 @@ const BorrowBookingCalendar = createReactClass({
     } else {
       return this._dropUntil(_.rest(arr), func)
     }
-  },
-
-  _getDatesForCurrentMonthView() {
-    const firstDate = this._getFirstDateInCalendarView()
-    const arr1 = this._dropUntil(this.state.calendarData, el => {
-      return el.date.isSame(firstDate)
-    })
-    return _.take(arr1, 42)
   },
 
   existingReservations() {
@@ -196,20 +206,6 @@ const BorrowBookingCalendar = createReactClass({
     })
   },
 
-  _fetchAvailabilities(startDate, endDate) {
-    return $.ajax({
-      url: '/borrow/booking_calendar_availability',
-      method: 'GET',
-      dataType: 'json',
-      data: {
-        start_date: startDate,
-        end_date: endDate,
-        model_id: this.props.model.id,
-        inventory_pool_id: this.state.poolContext.inventory_pool.id,
-        reservation_ids: _.map(this.props.reservations, (r) => r.id)
-      }
-    })
-  },
 
   _switchMonth(direction) {
     this.setState(
@@ -226,14 +222,10 @@ const BorrowBookingCalendar = createReactClass({
             throw new Error('invalid switch month direction')
         }
 
-        const isLoading = !this._isLoadedUptoDate(this._getLastDateInCalendarView())
-
         return {
-          firstDateOfCurrentMonth: firstDateOfMonth,
-          isLoading: isLoading
+          firstDateOfCurrentMonth: firstDateOfMonth
         }
-      },
-      this._fetchAndUpdateCalendarData // second callback argument to setState
+      }
     )
   },
 
@@ -278,11 +270,8 @@ const BorrowBookingCalendar = createReactClass({
       this.setState(
         {
           startDate: sd,
-          endDate: ed,
-
-          isLoading: !this._isLoadedUptoDate(loadDate)
-        },
-        () => this._fetchAndUpdateCalendarData(loadDate)
+          endDate: ed
+        }
       )
     }
   },
@@ -308,7 +297,7 @@ const BorrowBookingCalendar = createReactClass({
           ip => ip.inventory_pool.id == event.target.value
         )
       },
-      () => this._fetchAndUpdateCalendarData(toDate)
+      () => this._fetchTimelinelAvailability()
     )
   },
 
@@ -401,7 +390,7 @@ const BorrowBookingCalendar = createReactClass({
       serverError: null,
       isLoading: true,
       calendarData: []
-    }, this._fetchAndUpdateCalendarData)
+    }, this._fetchTimelinelAvailability)
   },
 
   _renderErrors(errors) {

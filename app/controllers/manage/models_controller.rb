@@ -129,6 +129,7 @@ class Manage::ModelsController < Manage::ApplicationController
     }
     respond_to do |format|
       format.html { render layout: false }
+      format.json { render json: @props }
     end
   end
 

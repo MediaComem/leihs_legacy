@@ -419,14 +419,14 @@ window.TimelinePreprocessData = {
     })
   },
 
-  changesForDays(timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount) {
+  changesForDays(timeline_availability, firstMoment, lastMoment, changesAlgorithm, relevantItemsCount) {
 
     return _.range(
       0,
-      TimelineUtil.numberOfDays(moment(), lastMoment)
+      TimelineUtil.numberOfDays(firstMoment, lastMoment)
     ).map((i) => {
 
-      var day = moment().add(i, 'days')
+      var day = moment(firstMoment).add(i, 'days')
 
       return _.last(_.filter(
         changesAlgorithm,
@@ -474,7 +474,7 @@ window.TimelinePreprocessData = {
     var reservationsInGroups = TimelinePreprocessData.reservationsInGroups(timeline_availability, entitlementQuantities, lastMoment, relevantItemsCount)
     var calculateChanges = TimelinePreprocessData.changesDates(timeline_availability)
     var changesAlgorithm = TimelinePreprocessData.changesAlgorithm(timeline_availability, calculateChanges, userEntitlementGroupsForModel, relevantItemsCount)
-    var changesForDays = TimelinePreprocessData.changesForDays(timeline_availability, lastMoment, changesAlgorithm, relevantItemsCount)
+    var changesForDays = TimelinePreprocessData.changesForDays(timeline_availability, moment(), lastMoment, changesAlgorithm, relevantItemsCount)
     var invalidReservations = TimelinePreprocessData.invalidReservations(timeline_availability, changesAlgorithm, relevantItemsCount)
 
     return {
