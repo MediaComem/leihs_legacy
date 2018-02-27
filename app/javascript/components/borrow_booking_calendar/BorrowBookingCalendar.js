@@ -60,7 +60,7 @@ const BorrowBookingCalendar = createReactClass({
   _dataForDay(changesForDays, refDay, offset) {
     return {
       date: moment(refDay).add(offset, 'days'),
-      availableQuantity: changesForDays[offset].available,
+      availableQuantity: (changesForDays[offset] ? changesForDays[offset].available : 0),
       visitsCount: 6
     }
   },
