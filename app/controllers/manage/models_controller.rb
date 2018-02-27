@@ -10,7 +10,7 @@ class Manage::ModelsController < Manage::ApplicationController
     if not open_actions.include?(action_name.to_sym) \
       and (request.post? or not request.format.json?)
       super
-    else
+    elsif not open_actions.include?(action_name.to_sym)
       require_role :group_manager, current_inventory_pool
     end
   end
