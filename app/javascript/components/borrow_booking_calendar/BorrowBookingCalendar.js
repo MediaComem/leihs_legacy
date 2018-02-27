@@ -57,10 +57,10 @@ const BorrowBookingCalendar = createReactClass({
     })
   },
 
-  _dataForDay(changesForDays, refDay, offset) {
+  _dataForDay(changesForDays, relevantItemsCount, refDay, offset) {
     return {
       date: moment(refDay).add(offset, 'days'),
-      availableQuantity: (changesForDays[offset] ? changesForDays[offset].available : 0),
+      availableQuantity: (changesForDays[offset] ? changesForDays[offset].available : relevantItemsCount),
       visitsCount: 6
     }
   },
@@ -77,7 +77,7 @@ const BorrowBookingCalendar = createReactClass({
     return _.map(
       _.range(0, 42),
       (i) => {
-        return this._dataForDay(changesForDays, firstDate, i)
+        return this._dataForDay(changesForDays, this.state.relevantItemsCount, firstDate, i)
       }
     )
   },
