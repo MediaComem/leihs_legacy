@@ -4576,7 +4576,7 @@ window.i18n.locale_data = {
       ],
       "You are suspended for this inventory pool": [
          null,
-         "Sie sind für dieses Gerätepark gesperrt"
+         "Sie sind für diesen Gerätepark gesperrt"
       ],
       "Does not have any reservable items": [
          null,
