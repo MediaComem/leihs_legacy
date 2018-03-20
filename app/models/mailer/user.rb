@@ -20,7 +20,7 @@ class Mailer::User < ActionMailer::Base
                                              name,
                                              user.language)
         Liquid::Template
-          .parse(template)
+          .parse(template.body)
           .render(MailTemplate.liquid_variables_for_user(user,
                                                          inventory_pool,
                                                          reservations))
@@ -44,7 +44,7 @@ class Mailer::User < ActionMailer::Base
                                              name,
                                              user.language)
         Liquid::Template
-          .parse(template)
+          .parse(template.body)
           .render(MailTemplate.liquid_variables_for_user(user,
                                                          inventory_pool,
                                                          reservations))

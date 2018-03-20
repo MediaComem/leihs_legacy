@@ -17,7 +17,7 @@ class Mailer::Order < ActionMailer::Base
                                              name,
                                              order.target_user.language)
         Liquid::Template
-          .parse(template)
+          .parse(template.body)
           .render(MailTemplate.liquid_variables_for_order(order, comment))
       end
     end
@@ -36,7 +36,7 @@ class Mailer::Order < ActionMailer::Base
                                              name,
                                              order.target_user.language)
         Liquid::Template
-          .parse(template)
+          .parse(template.body)
           .render(MailTemplate.liquid_variables_for_order(order, nil))
       end
     end
@@ -56,7 +56,7 @@ class Mailer::Order < ActionMailer::Base
                                              name,
                                              order.target_user.language)
         Liquid::Template
-          .parse(template)
+          .parse(template.body)
           .render(MailTemplate.liquid_variables_for_order(order, nil))
       end
     end
@@ -75,7 +75,7 @@ class Mailer::Order < ActionMailer::Base
                                              name,
                                              order.target_user.language)
         Liquid::Template
-          .parse(template)
+          .parse(template.body)
           .render(MailTemplate.liquid_variables_for_order(order, comment))
       end
     end

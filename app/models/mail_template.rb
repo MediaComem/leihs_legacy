@@ -91,31 +91,10 @@ class MailTemplate < ApplicationRecord
   end
 
   def self.get_template(scope, inventory_pool, name, language)
-    mt = MailTemplate.find_by(inventory_pool_id: inventory_pool,
-                              name: name,
-                              language: language,
-                              format: 'text')
-    mt ||= MailTemplate.where(inventory_pool_id: inventory_pool,
-                              name: name,
-                              format: 'text')
-
-    if mt.blank?
-      mt = MailTemplate.find_by(inventory_pool_id: nil,
-                                name: name,
-                                language: language,
-                                format: 'text')
-      mt ||= MailTemplate.where(inventory_pool_id: nil,
-                                name: name,
-                                format: 'text')
-    end
-
-    if mt.blank?
-      File.read(File.join(Rails.root,
-                          "app/views/mailer/#{scope}/",
-                          "#{name}.text.liquid"))
-    else
-      Array(mt).map(&:body).join('\n\n- - - - - - - - - -\n\n')
-    end
+    MailTemplate.find_by!(inventory_pool_id: inventory_pool.id,
+                          name: name,
+                          language: language,
+                          format: 'text')
   end
 
   def label_for_audits
