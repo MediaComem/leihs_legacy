@@ -109,7 +109,7 @@ module LeihsAdmin
                 expect(Setting.first.send(k).to_s).to eq field.value
                 @new_settings[k] = new_value = Faker::Lorem.paragraph
                 field.set new_value
-              when 'deliver_order_notifications', 'smtp_enable_starttls_auto'
+              when 'deliver_received_order_notifications', 'smtp_enable_starttls_auto'
                 field = find("input[name='setting[#{k}]']")
                 expect(Setting.first.send(k)).to eq field.checked?
                 # TODO: @new_settings[k]

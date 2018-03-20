@@ -6,7 +6,7 @@ Feature: Order mails
   @borrow_order_mails
   Scenario: Submitting an order should trigger sending of the appropriate mails
     Given I am logged in as customer
-    And 'deliver_order_notifications' is set to true in admin settings
+    And 'deliver_received_order_notifications' is set to true in admin settings
     And there exists pool A
     And I have access to pool A
     And there is a model A
