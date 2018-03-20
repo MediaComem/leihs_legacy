@@ -90,7 +90,7 @@ class MailTemplate < ApplicationRecord
     }.deep_stringify_keys
   end
 
-  def self.get_template(scope, inventory_pool, name, language)
+  def self.get_template(inventory_pool, name, language)
     MailTemplate.find_by!(inventory_pool_id: inventory_pool.id,
                           name: name,
                           language: language,
