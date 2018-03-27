@@ -4584,11 +4584,7 @@ window.i18n.locale_data = {
       ],
       "You are suspended for this inventory pool": [
          null,
-         "Sie sind für dieses Gerätepark gesperrt"
-      ],
-      "Does not have any borrowable items": [
-         null,
-         "Hat keine ausleihbaren Gegenstände"
+         "Sie sind für diesen Gerätepark gesperrt"
       ],
       "These mail templates are copied for a new inventory pool when it is created.": [
          null,
@@ -4609,6 +4605,10 @@ window.i18n.locale_data = {
       "click here to reload": [
          null,
          "klicke hier um neu zu laden"
+      ],
+      "Does not have any reservable items": [
+         null,
+         "Hat keine reservierbaren Gegenstände"
       ]
    }
 }

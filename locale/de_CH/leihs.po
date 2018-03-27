@@ -3541,10 +3541,7 @@ msgid "The readonly attributes are managed through settings.yml file. More infor
 msgstr "Die schreibgeschützten Attribute werden durch die settings.yml Datei verwaltet. Mehr Informationen findet man "
 
 msgid "You are suspended for this inventory pool"
-msgstr "Sie sind für dieses Gerätepark gesperrt"
-
-msgid "Does not have any borrowable items"
-msgstr "Hat keine ausleihbaren Gegenstände"
+msgstr "Sie sind für diesen Gerätepark gesperrt"
 
 msgid "These mail templates are copied for a new inventory pool when it is created."
 msgstr "Diese Mail-Templates werden für ein neues Gerätepark kopiert, wenn es erstellt wird."
@@ -3560,3 +3557,6 @@ msgstr "Eine Bestellungen kann nicht mehrere Delegationen haben"
 
 msgid "click here to reload"
 msgstr "klicke hier um neu zu laden"
+
+msgid "Does not have any reservable items"
+msgstr "Hat keine reservierbaren Gegenstände"
