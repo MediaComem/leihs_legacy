@@ -475,14 +475,14 @@ class Model < ApplicationRecord
       inventory_pools
       .to_a
       .sum do |ip|
-      Entitlement.hash_with_generals(ip,
-                                     self,
-                                     groups,
-                                     ensure_non_negative_general: \
-                                     ensure_non_negative_general)
-        .values
-        .sum
-    end
+        Entitlement.hash_with_generals(ip,
+                                       self,
+                                       groups,
+                                       ensure_non_negative_general: \
+                                       ensure_non_negative_general)
+          .values
+          .sum
+      end
     borrowable_quantity = \
       borrowable_items
       .where(inventory_pool_id: user.inventory_pools)
