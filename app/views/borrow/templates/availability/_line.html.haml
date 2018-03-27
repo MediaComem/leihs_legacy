@@ -2,7 +2,7 @@
 
   model = @models.detect{|m| m.id == line[:model_id]}
   total_borrowable = \
-    model.total_borrowable_items_for_user(
+    model.total_borrowable_items_for_user_and_pool(
       current_user,
       line[:inventory_pool],
       ensure_non_negative_general: true
