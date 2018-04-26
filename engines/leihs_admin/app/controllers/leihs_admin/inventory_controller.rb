@@ -49,9 +49,10 @@ module LeihsAdmin
     end
 
     def objects_for_quick_export
-      item_objects_for_quick_export.concat(
-        option_objects_for_quick_export
-      )
+      item_objects_for_quick_export
+      # .concat(
+      #   option_objects_for_quick_export
+      # )
     end
 
     def categories_to_string(from_db)
@@ -88,6 +89,18 @@ module LeihsAdmin
           items.updated_at as updated_at,
           items.inventory_code as inventory_code,
           items.shelf as shelf,
+          items.serial_number as serial_number,
+          items.retired as retired,
+          items.retired_reason as retired_reason,
+          items.is_incomplete as is_incomplete,
+          items.is_borrowable as is_borrowable,
+          items.status_note as status_note,
+          items.is_inventory_relevant as is_inventory_relevant,
+          items.last_check as last_check,
+          items.invoice_number as invoice_number,
+          items.invoice_date as invoice_date,
+          items.price as price,
+          items.properties as properties,
           models.product as product,
           models.version as version,
           models.manufacturer as manufacturer,
@@ -98,6 +111,11 @@ module LeihsAdmin
           models.type as type,
           rooms.name as room_name,
           buildings.name as building_name,
+
+          (select inventory_pools.name from inventory_pools where inventory_pools.id = items.owner_id) as owner_name,
+
+          (select suppliers.name from suppliers where suppliers.id = items.supplier_id) as supplier_name,
+          -- to_json(items.*) as item_json,
 
           array_to_json(array((
             select
@@ -159,6 +177,9 @@ module LeihsAdmin
       result = ActiveRecord::Base.connection.exec_query(query).to_hash
 
       objects = result.map do |row|
+
+        # item = JSON.parse(row['item_json'])
+
         {
           _('Type') => if row['type'] == 'Model'
                          'Item'
@@ -182,6 +203,20 @@ module LeihsAdmin
           _('Important notes for hand over') => row['hand_over_note'],
           _('Responsible department') => nil,
           _('Initial Price') => nil,
+          _('Serial Number') => row['serial_number'],
+          _('Retired') => row['retired'],
+          _('Retired Reason') => row['retired_reason'],
+          _('Complete') => (row['is_incomplete'] ? false : true),
+          _('borrowable') => row['is_borrowable'],
+          _('Status note') => row['status_note'],
+          _('Relevant for inventory') => row['is_inventory_relevant'],
+          _('Owner') => row['owner_name'],
+          _('Last Checked') => row['last_check'],
+          _('Invoice Number') => row['invoice_number'],
+          _('Invoice Date') => row['invoice_date'],
+          _('Supplier') => row['supplier_name'],
+          _('Initial Price') => row['price'],
+          _('Properties') => row['properties'],
           _('Categories') => categories_to_string(row['categories']),
           _('Accessories') => accessories_to_string(row['accessories']),
           _('Compatibles') => compatibles_to_string(row['compatibles']),
@@ -192,50 +227,50 @@ module LeihsAdmin
     end
     # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/MethodLength
-    def option_objects_for_quick_export
-      query = <<-SQL
-        select
-          options.product as product,
-          options.version as version,
-          options.inventory_code as inventory_code,
-          inventory_pools.name as inventory_pool_name,
-          options.price as price
-        from
-          options,
-          inventory_pools
-        where
-          options.inventory_pool_id = inventory_pools.id
-      SQL
-      result = ActiveRecord::Base.connection.exec_query(query).to_hash
-
-      objects = result.map do |row|
-        {
-          _('Type') => 'Option',
-          _('Product') => row['product'],
-          _('Version') => row['version'],
-          _('Inventory Code') => row['inventory_code'],
-          _('Created at') => nil,
-          _('Updated at') => nil,
-          _('Manufacturer') => row['manufacturer'],
-          _('Building') => nil,
-          _('Room') => nil,
-          _('Shelf') => nil,
-          _('Description') => nil,
-          _('Technical Detail') => nil,
-          _('Internal Description') => nil,
-          _('Important notes for hand over') => nil,
-          _('Responsible department') => row['inventory_pool_name'],
-          _('Initial Price') => row['price'],
-          _('Categories') => nil,
-          _('Accessories') => nil,
-          _('Compatibles') => nil,
-          _('Properties') => nil
-        }
-      end
-      objects
-    end
-    # rubocop:enable Metrics/MethodLength
+    # # rubocop:disable Metrics/MethodLength
+    # def option_objects_for_quick_export
+    #   query = <<-SQL
+    #     select
+    #       options.product as product,
+    #       options.version as version,
+    #       options.inventory_code as inventory_code,
+    #       inventory_pools.name as inventory_pool_name,
+    #       options.price as price
+    #     from
+    #       options,
+    #       inventory_pools
+    #     where
+    #       options.inventory_pool_id = inventory_pools.id
+    #   SQL
+    #   result = ActiveRecord::Base.connection.exec_query(query).to_hash
+    #
+    #   objects = result.map do |row|
+    #     {
+    #       _('Type') => 'Option',
+    #       _('Product') => row['product'],
+    #       _('Version') => row['version'],
+    #       _('Inventory Code') => row['inventory_code'],
+    #       _('Created at') => nil,
+    #       _('Updated at') => nil,
+    #       _('Manufacturer') => row['manufacturer'],
+    #       _('Building') => nil,
+    #       _('Room') => nil,
+    #       _('Shelf') => nil,
+    #       _('Description') => nil,
+    #       _('Technical Detail') => nil,
+    #       _('Internal Description') => nil,
+    #       _('Important notes for hand over') => nil,
+    #       _('Responsible department') => row['inventory_pool_name'],
+    #       _('Initial Price') => row['price'],
+    #       _('Categories') => nil,
+    #       _('Accessories') => nil,
+    #       _('Compatibles') => nil,
+    #       _('Properties') => nil
+    #     }
+    #   end
+    #   objects
+    # end
+    # # rubocop:enable Metrics/MethodLength
   end
   # rubocop:enable Metrics/ClassLength
 end
