@@ -64,7 +64,8 @@
             url: dataUrl,
             data: $.param({
               format: 'json',
-              search_term: term
+              search_term: term,
+              packages: (this._getField().id == 'package_model_id')
             })
           }
         ).done((data) => {
