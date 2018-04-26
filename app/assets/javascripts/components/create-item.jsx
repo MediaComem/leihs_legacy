@@ -29,6 +29,22 @@
 
     },
 
+    // https://reactjs.org/docs/legacy-context.html
+    childContextTypes: {
+      hackyForPackage: PropTypes.bool
+    },
+    // NOTE: We need this hack to pass the forPackage value to the mdoel_id input since
+    // the current field config does not let us pass this information if we
+    // only should list package models or not.
+    getChildContext() {
+      return {
+        hackyForPackage: this.props.for_package
+      }
+
+    },
+
+
+
     getInitialState () {
       return {
         loadingFields: 'initial',

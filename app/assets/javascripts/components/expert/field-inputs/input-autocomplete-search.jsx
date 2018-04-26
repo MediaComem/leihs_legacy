@@ -59,14 +59,19 @@
 
         this.abortAjaxCall()
 
+        var params = {
+          format: 'json',
+          search_term: term
+        }
+
+        if(this.context.hackyForPackage && this._getField().id == 'model_id') {
+          params.packages = 'true'
+        }
+
         this.ajaxCall = $.ajax(
           {
             url: dataUrl,
-            data: $.param({
-              format: 'json',
-              search_term: term,
-              packages: (this._getField().id == 'package_model_id')
-            })
+            data: $.param(params)
           }
         ).done((data) => {
           callback(this._transformResult(data))
@@ -80,16 +85,19 @@
 
     },
 
+    contextTypes: {
+      hackyForPackage: PropTypes.bool
+    },
+
+
     render () {
       const props = this.props
       const selectedValue = props.selectedValue
 
       return (
-
         <FieldAutocomplete label={_jed(this._getField().label)}
           doSearch={this._doSearch} onChange={this._onChange}
           name={this.props.name} initialText={selectedValue.value.text}/>
-
       )
     }
   })

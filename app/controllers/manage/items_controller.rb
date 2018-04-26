@@ -220,8 +220,12 @@ class Manage::ItemsController < Manage::ApplicationController
   def new
     save_path = manage_create_item_path
 
+    next_code = Item.proposed_inventory_code(current_inventory_pool)
+    if params[:forPackage] == 'true'
+      next_code = 'P-' + next_code
+    end
     @props = {
-      next_code: Item.proposed_inventory_code(current_inventory_pool),
+      next_code: next_code,
       lowest_code: Item.proposed_inventory_code(current_inventory_pool, :lowest),
       highest_code: Item.proposed_inventory_code(current_inventory_pool, :highest),
       inventory_pool: current_inventory_pool,
