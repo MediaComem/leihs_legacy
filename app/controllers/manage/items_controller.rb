@@ -324,7 +324,7 @@ class Manage::ItemsController < Manage::ApplicationController
       # to false. Thats why we fixed with nil comparision, which is however
       # just a quick fix.
       # next unless field.get_value_from_params item_params
-      next if field.get_value_from_params(item_params).nil?
+      # next if field.get_value_from_params(item_params).nil?
       next if field.editable(current_user, current_inventory_pool, @item)
       @item
         .errors
