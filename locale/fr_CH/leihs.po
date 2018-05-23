@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-22 12:39+0200\n"
-"PO-Revision-Date: 2018-03-16 11:27+0100\n"
+"PO-Revision-Date: 2018-05-23 09:59+0200\n"
 "Last-Translator: Loïc Fürhoff <loic.furhoff@heig-vd.ch>\n"
 "Language-Team: French (Switzerland)\n"
 "Language: fr\n"
@@ -13,11 +13,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Loco-Source-Locale: fr_CH\n"
 "X-Launchpad-Export-Date: 2008-12-18 06:16+0000\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.7\n"
 "X-Loco-Parser: loco_parse_po\n"
 
 msgid "\"Couldn't connect to LDAP: #{LDAP_CONFIG[:host]}:#{LDAP_CONFIG[:port]}\""
-msgstr ""
+msgstr "\"Connexion impossible au LDAP: #{LDAP_CONFIG[:host]}:#{LDAP_CONFIG[:port]}\""
 
 msgid "Suspended until"
 msgstr "Suspendu jusqu'au"
@@ -41,7 +41,7 @@ msgid "Print dialog will open aut."
 msgstr "La fenêtre d'impression s'ouvrira automatiquement."
 
 msgid "Used for sending e-mails from leihs"
-msgstr "Utilisé pour envoyer des e-mails depuis leihs"
+msgstr "Utilisé pour envoyer des e-mails depuis Nectar"
 
 msgid ""
 "This note is added to any contract, but can be changed individually before actually printing and "
@@ -430,10 +430,10 @@ msgid "Dear client,"
 msgstr "Cher client,"
 
 msgid "Dear leihs client,"
-msgstr "Cher client leihs,"
+msgstr "Cher client Nectar,"
 
 msgid "Dear leihs manager,"
-msgstr "Cher manager leihs,"
+msgstr "Cher manager Nectar,"
 
 msgid "Defective"
 msgstr "Défecteux"
@@ -655,7 +655,7 @@ msgid "Invalid order_lines"
 msgstr "Champ order_lines invalide"
 
 msgid "Invalid technical user - contact your leihs admin"
-msgstr "Utilisateur technique invalide - contacter votre administrateur leihs"
+msgstr "Utilisateur technique invalide - contacter votre administrateur Nectar"
 
 msgid "Invalid username/password"
 msgstr "Nom d'utilisateur/mot de passe invalide"
@@ -847,7 +847,7 @@ msgid "Logged in successfully"
 msgstr "Connecté avec succès"
 
 msgid "Login"
-msgstr "Connexion"
+msgstr "Connexion HEIG-VD"
 
 msgid "Logout"
 msgstr "Déconnexion"
@@ -1071,7 +1071,7 @@ msgid "Phone%s"
 msgstr "Téléphone%s"
 
 msgid "Manage inventory, place reservations on items and pick them up"
-msgstr "Gérer un inventaire, réserver et récupérer du matériel"
+msgstr "Découvrez le matériel en vous connectant avec votre compte HEIG-VD"
 
 msgid ""
 "Please note that these contracts, while they do belong to approved orders, may be changed by the "
@@ -1781,25 +1781,25 @@ msgid "[Model %s] "
 msgstr "[Modèle %s] "
 
 msgid "[leihs] Order received"
-msgstr "[leihs] Commande reçue"
+msgstr "[Nectar] Commande reçue"
 
 msgid "[leihs] Reminder"
-msgstr "[leihs] Rappel"
+msgstr "[Nectar] Rappel"
 
 msgid "[leihs] Reservation Confirmation"
-msgstr "[leihs] Confirmation de réservation"
+msgstr "[Nectar] Confirmation de réservation"
 
 msgid "[leihs] Reservation Rejected"
-msgstr "[leihs] Réservation refusée"
+msgstr "[Nectar] Réservation refusée"
 
 msgid "[leihs] Reservation Submitted"
-msgstr "[leihs] Réservation envoyée"
+msgstr "[Nectar] Réservation envoyée"
 
 msgid "[leihs] Reservation confirmed (with changes)"
-msgstr "[leihs] Réservation confirmée (avec des changements)"
+msgstr "[Nectar] Réservation confirmée (avec des changements)"
 
 msgid "[leihs] Some items should be returned tomorrow"
-msgstr "[leihs] Des éléments doivent être retourné demain"
+msgstr "[Nectar] Des éléments doivent être retourné demain"
 
 msgid "already in Category"
 msgstr "déjà dans la Catégorie"

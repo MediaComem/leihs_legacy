@@ -4,7 +4,7 @@ module LanguageFactory
   def create
     languages = [{ name: 'Deutsch', locale_name: 'de-CH' },
                  { name: 'English (UK)', locale_name: 'en-GB' },
-                 { name: 'English (US)', locale_name: 'en-US' }]
+                 { name: 'Français', locale_name: 'fr-CH' }]
     languages.delete_if { |l| Language.find_by_locale_name(l[:locale_name]) }
     if languages.empty?
       Language.first

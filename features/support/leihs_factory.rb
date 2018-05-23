@@ -251,10 +251,9 @@ module LeihsFactory
   # Languages shipped by default
   #
   def self.create_default_languages
-    [['English (UK)', 'en-GB', true],
-     ['English (US)', 'en-US', false],
+    [['English (UK)', 'en-GB', false],
      ['Deutsch', 'de-CH', false],
-     ['Züritüütsch','gsw-CH', false]].each do |lang|
+     ['Français','fr-CH', true]].each do |lang|
         next if Language.exists?(locale_name: lang[1])
         LeihsFactory.create_language!(name: lang[0],
                                       locale_name: lang[1],

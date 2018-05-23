@@ -1,5 +1,3 @@
-# leihs
+# Nectar
 
-This is the main component of [leihs](https://github.com/leihs). See the
-super project [leihs/leihs](https://github.com/leihs/leihs) for more
-information.
+This is the main component of Nectar fork of [leihs legacy](https://github.com/leihs/leihs_legacy) part of [leihs](https://github.com/leihs/leihs)
