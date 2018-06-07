@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: version 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-10-22 12:39+0200\n"
-"PO-Revision-Date: 2018-05-24 11:30+0200\n"
+"PO-Revision-Date: 2018-06-07 13:55+0200\n"
 "Last-Translator: Loïc Fürhoff <loic.furhoff@heig-vd.ch>\n"
 "Language-Team: French (Switzerland)\n"
 "Language: fr\n"
@@ -62,9 +62,6 @@ msgstr "%s Résultats de recherche pour \"%s\""
 
 msgid "%s until %s"
 msgstr "%s jusqu'à %s"
-
-msgid "** This is an automatically generated response **"
-msgstr "** Ceci est une réponse générée automatiquement **"
 
 msgid ""
 "Users who don't bring back the items on the required date are suspended from "
@@ -143,15 +140,11 @@ msgstr "Adresse"
 msgid "Admin"
 msgstr "Administration"
 
+msgid "Administrators"
+msgstr "Administrateurs"
+
 msgid "All"
 msgstr "Tous"
-
-msgid ""
-"An order for the following items listed below was received in an inventory "
-"pool you are responsible for."
-msgstr ""
-"Une commande pour les éléments listés ci-dessous a été reçue dans le groupe "
-"d'inventaire pour lequel vous êtes responsable."
 
 msgid "Ankunftsdatum"
 msgstr "Date d'arrivée"
@@ -162,8 +155,8 @@ msgstr "Note d'arrivée"
 msgid "Ankunftszustand"
 msgstr "Etat à l'arrivée"
 
-msgid "Beschaffungsgruppe"
-msgstr "Groupe d'acheteurs"
+msgid "Anschaffungskategorie"
+msgstr "Catégorie d'achat"
 
 msgid "Werkstatt-Technik"
 msgstr "Atelier technique"
@@ -195,6 +188,9 @@ msgstr "Approuver la commande"
 msgid "Approve anyway"
 msgstr "Approuver tout de même"
 
+msgid "Save anyway"
+msgstr "Sauver tout de même"
+
 msgid "Approved"
 msgstr "Approuvée"
 
@@ -203,13 +199,6 @@ msgstr "Eléments approuvés"
 
 msgid "Approved on"
 msgstr "Approuvé le"
-
-msgid "Are any of the above borrowed items?"
-msgstr "Est-ce qu'il y a des éléments empruntés ?"
-
-msgid "Are any of the above items your personal computer?"
-msgstr ""
-"Est-ce que l'un des éléments ci-dessus est votre ordinateur personnel ?"
 
 msgid "Assign"
 msgstr "Assigner"
@@ -277,6 +266,9 @@ msgstr "Empruntable"
 msgid "Borrowed Items"
 msgstr "Eléments empruntés"
 
+msgid "Borrowed until"
+msgstr "Emprunté jusqu'au"
+
 msgid "Borrower"
 msgstr "Emprunteur"
 
@@ -288,19 +280,22 @@ msgid_plural "Buildings"
 msgstr[0] "Bâtiment"
 msgstr[1] "Bâtiments"
 
-msgid ""
-"By not returning these items, you are blocking other people's reservations. "
-"This is very unfair to the other clients and to the inventory manager, since "
-"you are causing a significant amount of trouble and annoyance."
-msgstr ""
-"En ne retournant pas ces éléments, vous bloquez les réservations d'autres "
-"personnes. "
+msgid "Building together with a general room successfully created"
+msgstr "Bâtiment avec une salle générale créée avec succès"
+
+msgid "Room"
+msgid_plural "Rooms"
+msgstr[0] "Salle"
+msgstr[1] "Salles"
 
 msgid "CSV"
 msgstr "CSV"
 
 msgid "CSV export"
 msgstr "Export CSV"
+
+msgid "Excel export"
+msgstr "Export Excel"
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -424,6 +419,9 @@ msgstr "Supprimer"
 
 msgid "Delete %s"
 msgstr "Supprimer la %s"
+
+msgid "Delete line"
+msgstr "Supprimer la ligne"
 
 msgid "Delete Selection"
 msgstr "Supprimer la sélection"
@@ -608,11 +606,6 @@ msgstr "pas en stock"
 msgid "In Total"
 msgstr "Au total"
 
-msgid ""
-"In the interest of all our clients we ask you to observe the return dates."
-msgstr ""
-"Dans l'intérêt de tous, nous vous demandons de respecter les dates de retour."
-
 msgid "Incomplete"
 msgstr "Incomplet"
 
@@ -728,6 +721,9 @@ msgstr "Paquet supprimé avec succès"
 msgid "Item saved."
 msgstr "Elément sauvé."
 
+msgid "License saved."
+msgstr "Serveur de license."
+
 msgid "Item taken back"
 msgstr "Elément restitué"
 
@@ -782,8 +778,14 @@ msgstr "Contrat de prêt N° %s"
 msgid "Lending Contracts No. %s"
 msgstr "Contrats de prêt N° %s"
 
+msgid "List of %s"
+msgstr "Liste de %s"
+
 msgid "List of available variables"
 msgstr "Liste des variables disponibles"
+
+msgid "List of Rooms"
+msgstr "Liste des salles"
 
 msgid "List of Buildings"
 msgstr "Liste des bâtiments"
@@ -931,6 +933,9 @@ msgstr "Non-empruntable"
 msgid "Not available"
 msgstr "Non-disponible"
 
+msgid "Not categorized"
+msgstr "Non-catégorisé"
+
 msgid "Note"
 msgstr "Note"
 
@@ -1068,6 +1073,9 @@ msgstr "Veuillez fournir tous les champs requis"
 msgid "Please provide an inventory code"
 msgstr "Veuillez fournir le code d'inventaire"
 
+msgid "Please select some fields."
+msgstr "Veuillez sélectionner un gabarit."
+
 msgid "Please specify the purpose of your order here..."
 msgstr "Veuillez spécifier le motif de votre commande ici..."
 
@@ -1106,6 +1114,9 @@ msgstr "Qté."
 
 msgid "Quantity"
 msgstr "Quantité"
+
+msgid "Quantities"
+msgstr "Quantités"
 
 msgid "Quantity allocations"
 msgstr "Quantité allouée"
@@ -1158,6 +1169,9 @@ msgstr "Eléments demandé"
 msgid "Reservation"
 msgstr "Réservation"
 
+msgid "Contact"
+msgstr "Contact"
+
 msgid "Contact person"
 msgstr "Personne de contact"
 
@@ -1197,12 +1211,6 @@ msgstr "Retour à cette transmission"
 msgid "Returned Items"
 msgstr "Eléments retournés"
 
-#, fuzzy
-#| msgid "Room"
-#| msgid_plural "Rooms"
-msgid "Room"
-msgstr "Salle"
-
 msgid "Save"
 msgstr "Sauver"
 
@@ -1224,6 +1232,9 @@ msgstr "Copier la license"
 msgid "Create copied item"
 msgstr "Créer un élément copié"
 
+msgid "Changes"
+msgstr "Modifications"
+
 msgid "Save changes"
 msgstr "Sauver les changements"
 
@@ -1240,7 +1251,7 @@ msgid "Search..."
 msgstr "Recherche..."
 
 msgid "admin_search_term"
-msgstr "Recherche..."
+msgstr "admin_terme_de_recherche"
 
 msgid "Searching"
 msgstr "En cours de recherche"
@@ -1280,13 +1291,6 @@ msgstr "Signé"
 
 msgid "Signed contracts"
 msgstr "Contrats signés"
-
-msgid ""
-"Since we did not receive any request for renewal, we consequently demand the "
-"return of the items without further delay."
-msgstr ""
-"Comme nous n'avons pas reçu de demande de prolongation, nous exigeons donc "
-"le retour des éléments sans plus tarder."
 
 msgid "Something went wrong!"
 msgstr "Quelque chose s'est mal déroulé!"
@@ -1405,15 +1409,6 @@ msgstr ""
 "L'erreur suivante s'est produite lors de l'envoi d'email de notification à "
 "%{email}:\\n"
 
-msgid ""
-"The following items are due to be returned tomorrow or need to be inspected"
-msgstr ""
-"Les éléments suivants doivent être retournés demain ou doivent être "
-"inspectés."
-
-msgid "The following items are overdue or need to be inspected"
-msgstr "Les éléments suivants sont en retard ou doivent être inspectés"
-
 msgid "The group quantities were successfully saved."
 msgstr "Les quantités de groupe ont été sauvées."
 
@@ -1475,9 +1470,6 @@ msgid ""
 msgstr ""
 "L'option n'appartient pas au groupe d'inventaire apparenté à ce contrat"
 
-msgid "The order now looks like this:"
-msgstr "La commande ressemble maintenant à ceci:"
-
 msgid "The parent item doesn't exist (parent_id: %d)"
 msgstr "L'élément parent n'existe pas (parent_id: %d)"
 
@@ -1492,16 +1484,6 @@ msgstr "Le modèle sélection n'est pas un paquet"
 
 msgid "The user does not have an email address"
 msgstr "L'utilisateur n'as pas d'adresse email"
-
-msgid ""
-"The user who placed this order has received a similar e-mail message "
-"informing them that the order first needs to be approved before it is valid."
-msgstr ""
-"L'utilisateur qui a passé cette commande a reçu un e-mail similaire "
-"l'informant que la commande doit d'abord être approuvée avant d'être valide."
-
-msgid "These are the comments of the inventory manager:"
-msgstr "Voici les commentaires du gestionnaire d'inventaire :"
 
 msgid ""
 "This contract is not signable because it doesn't have any contract "
@@ -1540,6 +1522,21 @@ msgstr "Groupes de ce client"
 
 msgid "This inventory pool is closed on that day."
 msgstr "Le groupe d'inventaire est fermé ce jour-ci."
+
+msgid "No orders are possible on this start date"
+msgstr "Aucune commande n'est possible pour cette date de début"
+
+msgid "Booking is no longer possible on this start date"
+msgstr "Les réservations ne sont plus possible pour cette date de début"
+
+msgid "Booking is no longer possible on this end date"
+msgstr "Les réservations ne sont plus possible pour cette date de fin"
+
+msgid "Invalid date"
+msgstr "Date non valide"
+
+msgid "Start and end date cannot be in the past"
+msgstr "Date de début et de fin ne peut pas être dans le passé"
 
 msgid "Inventory pool successfully updated."
 msgstr "Groupe d'inventaire actualisé avec succès."
@@ -1587,13 +1584,6 @@ msgstr ""
 "Cette commande ne peut pas être approuvée, parce que le groupe d'inventaire "
 "est fermé à la date de début ou de fin."
 
-msgid ""
-"This order is still pending. Please log in to your leihs system and either "
-"approve or reject it."
-msgstr ""
-"Cette commande est toujours en attente. Veuillez vous connecter à votre "
-"système Nectar et l'approuver ou la rejeter."
-
 msgid "Thu"
 msgstr "Jeu"
 
@@ -1632,16 +1622,6 @@ msgstr "Eléments empruntable"
 
 msgid "Unborrowable Items"
 msgstr "Eléments non-empruntable"
-
-msgid ""
-"Unfortunately your order is still pending, but you will soon receive a "
-"confirmation of order by separate e-mail. You can view the status of your "
-"order through your leihs account."
-msgstr ""
-"Malheureusement, votre commande est toujours en attente, mais vous recevrez "
-"bientôt une confirmation de commande séparément par e-mail. Vous pouvez "
-"consulter l'état de votre commande par l'intermédiaire de votre compte "
-"Nectar."
 
 msgid "Unsigned"
 msgstr "Non-signé"
@@ -1735,20 +1715,6 @@ msgstr "Visites"
 msgid "Warning"
 msgstr "Alerte"
 
-msgid ""
-"We are just sending you this little reminder because someone else is already "
-"waiting for some of these items."
-msgstr ""
-"Nous vous envoyons ce petit rappel parce que quelqu'un d'autre attend déjà "
-"certains de ces éléments."
-
-msgid ""
-"We kindly ask you to contact us as soon as possible. Your computer might "
-"need an update."
-msgstr ""
-"Nous vous prions de nous contacter le plus rapidement possible. Votre "
-"ordinateur pourrait avoir besoin d'une mise à jour."
-
 msgid "Wed"
 msgstr "Mer"
 
@@ -1831,15 +1797,6 @@ msgstr "Vous n'êtes pas connecté."
 msgid "You were served by %s"
 msgstr "Vous avez été servi par %s"
 
-msgid ""
-"You might receive an admonishment and be subject to late fees as well as the "
-"restriction of borrowing privileges. In case of recurrence you might be "
-"barred from the reservation system for up to 6 months."
-msgstr ""
-"Vous pourriez recevoir un avertissement, des frais de retard ainsi qu'une "
-"restriction des privilèges d'emprunt. En cas de récidive, vous pouvez être "
-"exclu du système de réservation jusqu'à 6 mois."
-
 msgid "You pick up the reserved items at the inventory pool"
 msgstr "Vous pouvez retirer les éléments réservés au groupe d'inventaire"
 
@@ -1852,20 +1809,6 @@ msgstr "Vous devriez refaire votre action ou recharger la page!"
 msgid "You wait for confirmation from the inventory pools in question"
 msgstr ""
 "Vous êtes en attente de confirmation du groupe d'inventaire en question"
-
-msgid ""
-"Your order for the following items has been confirmed by the inventory "
-"manager"
-msgstr ""
-"Votre commande pour les éléments suivants a été confirmée par le responsable "
-"de l'inventaire."
-
-msgid ""
-"Your order for the following items listed below was successfully submitted."
-msgstr "Votre commande pour les éléments suivants a été soumise avec succès."
-
-msgid "Your order was rejected for the following reason:"
-msgstr "Votre commande a été rejeté pour les raisons suivantes:"
 
 msgid "Your order was successfully transmitted to those responsible and is %s."
 msgstr "Votre commande a été transmise avec succès aux responsables et est %s."
@@ -2151,6 +2094,9 @@ msgstr "Gestionnaire de prêt"
 msgid "Inventory manager"
 msgstr "Gestionnaire d'inventaire"
 
+msgid "New"
+msgstr "Nouveau"
+
 msgid "New Delegation"
 msgstr "Nouvelle Delegation"
 
@@ -2332,6 +2278,9 @@ msgid_plural "%s Returns"
 msgstr[0] "%s Retour"
 msgstr[1] "%s Retours"
 
+msgid "Returns"
+msgstr "Retours"
+
 msgid "not yet saved"
 msgstr "pas encore enregistré"
 
@@ -2481,6 +2430,9 @@ msgstr "Prénom"
 
 msgid "User|AccessRight|Suspended reason"
 msgstr "Utilisateur|Droit d'accès|Motif de la suspension"
+
+msgid "AccessRight"
+msgstr "Droit d'accès"
 
 msgid "The selected inventory pool is closed on that day"
 msgstr "Le groupe d'inventaire sélectionné est fermé ce jour-là"
@@ -2760,6 +2712,11 @@ msgid_plural "%s items"
 msgstr[0] "%s élément"
 msgstr[1] "%s éléments"
 
+msgid "%s room"
+msgid_plural "%s rooms"
+msgstr[0] "%s salle"
+msgstr[1] "%s salles"
+
 msgid "to %s"
 msgstr "à %s"
 
@@ -2834,6 +2791,15 @@ msgstr "Faire les changements et sauver"
 msgid "Create new model"
 msgstr "Créer un nouveau modèle"
 
+msgid "The model needs a product name."
+msgstr "Le modèle a besoin d'un nom de produit."
+
+msgid "A model with the same product name and empty version already exists."
+msgstr "Un modèle avec le même nom de produit et une version vide existe déjà."
+
+msgid "A model with the same product name and version already exists."
+msgstr "Un modèle avec le même nom de produit et la même version existe déjà"
+
 msgid "Removed on save"
 msgstr "Supprimer lors de la sauvegarde"
 
@@ -2846,6 +2812,13 @@ msgstr "Problèmes d'upload"
 msgid "%s was saved, but there were problems uploading files"
 msgstr ""
 "%s a été sauvé, mais des problèmes sont survenus lors de l'upload de fichiers"
+
+msgid ""
+"%s was saved, but there were problems uploading some images. Only images "
+"smaller than 8MB and of type png, gif and jpg are allowed."
+msgstr ""
+"%s a été sauvé, mais il y a eu un problème lors du téléversement des images. "
+"Seules les images de moins de 8 Mo et de type png, gif ou jpg sont admises."
 
 msgid "Uploading files - please wait"
 msgstr "Upload de fichiers en cours - veuillez patienter"
@@ -2891,6 +2864,9 @@ msgstr "Créer une nouvelle option"
 
 msgid "Option saved"
 msgstr "Option sauvée"
+
+msgid "Notification"
+msgstr "Notification"
 
 msgid "Hide notification"
 msgstr "Cacher la notification"
@@ -2948,6 +2924,12 @@ msgstr "Aucune vérification requise"
 
 msgid "Verification required"
 msgstr "Vérification requise"
+
+msgid "User to be verified"
+msgstr "Utilisateur à vérifier"
+
+msgid "User and model to be verified"
+msgstr "Utilisateur et modèle à vérifier"
 
 msgid "Statistics"
 msgstr "Statistiques"
@@ -3059,26 +3041,536 @@ msgstr "Utilisée sur la page d'accueil dans la section emprunt"
 msgid "A package item must belong to a package model"
 msgstr "Un élément paquet doit appartenir à un modèle de paquet"
 
+msgid "Product"
+msgstr "Produit"
+
+msgid "Min. number of days between order and hand over"
+msgstr "Min. de jours entre une commande et une transmission"
+
 msgid "Status note"
 msgstr "Note de statut"
+
+msgid "Which item is busiest?"
+msgstr "Quel élément est le plus utilisé ?"
+
+msgid "Which inventory pool has the most contracts?"
+msgstr "Quel groupe d'inventaire a le plus de contrats ?"
+
+msgid "Currency"
+msgstr "Monnaie"
 
 msgid "Fields"
 msgstr "Champs"
 
-msgid "admin_active"
+msgid "Field"
+msgstr "Champ"
+
+msgid "Show all fields"
+msgstr "Afficher tous les champs"
+
+msgid "Reset visibility of all fields on the item forms"
+msgstr "Réinitialiser la visibilité de tous les champs des formulaires"
+
+msgid "Hide this field from all item forms"
+msgstr "Cacher ce champ de tous les formulaires"
+
+msgid "last used +1"
+msgstr "dernier utilisé +1"
+
+msgid "fill up gaps"
+msgstr "combler les vides"
+
+msgid "assign highest available"
+msgstr "attribuer le plus élevée disponible"
+
+msgid "Swap Model"
+msgstr "Echanger le modèle"
+
+msgid "Checked before"
+msgstr "Vérifé avant le"
+
+msgid "Search category"
+msgstr "Catégorie de recherche"
+
+msgid "Budget limits"
+msgstr "Limites de budget"
+
+msgid "Budget period"
+msgstr "Période de budget"
+
+msgid "Budget periods"
+msgstr "Périodes de budget"
+
+msgid "Budget period end date"
+msgstr "Date de fin de la période de budget"
+
+msgid "The budget period is closed"
+msgstr "La période de budget est fermée"
+
+msgid "requesting phase until %s"
+msgstr "phase de demande jusqu'au %s"
+
+msgid "inspection phase until %s"
+msgstr "phase d'inspection jusqu'au %s"
+
+msgid "Model name"
+msgstr "Nom du modèle"
+
+msgid "Requested quantity"
+msgstr "Quantité demandée"
+
+msgid "Approved quantity"
+msgstr "Quantité approuvée"
+
+msgid "Order quantity"
+msgstr "Quantité de la commande"
+
+msgid "Requests"
+msgstr "Requêtes"
+
+msgid "Template Categories"
+msgstr "Catégories de gabarit"
+
+msgid "Edit templates"
+msgstr "Editer des gabarit"
+
+msgid "Requester"
+msgstr "Demandeur"
+
+msgid "Requesters"
+msgstr "Demandeurs"
+
+msgid "Not a requester"
+msgstr "N'est pas un demandeur"
+
+msgid "My groups"
+msgstr "Mes groupes"
+
+msgid "My requests"
+msgstr "Mes requêtes"
+
+msgid "Motivation"
+msgstr "Motif"
+
+msgid "Inspectors"
+msgstr "Inspecteur"
+
+msgid "Inspection"
+msgstr "Inspection"
+
+msgid "Inspection comment"
+msgstr "Commentaire de l'inspection"
+
+msgid "Inspection start date"
+msgstr "Date de début de l'inspection"
+
+msgid "Priority"
+msgstr "Priorité"
+
+msgid "Inspector's priority"
+msgstr "Priorité de l'inspecteur"
+
+msgid "Name of receiver"
+msgstr "Nom du destinataire"
+
+msgid "Organisation"
+msgstr "Organisation"
+
+msgid "Organisations"
+msgstr "Organisations"
+
+msgid "Organisation unit"
+msgstr "Unité d'organisation"
+
+#, fuzzy
+#| msgid "Organisations of the requesters"
+msgid "Organisations according to requester list"
+msgstr "Organisations selon la liste des demandeurs"
+
+msgid "Department"
+msgstr "Département"
+
+msgid "Attachment"
+msgstr "Pièce jointe"
+
+msgid "In inspection"
+msgstr "En inspection"
+
+msgid "Denied"
+msgstr "Refusé"
+
+msgid "approved"
+msgstr "Approuvé"
+
+msgid "Partially approved"
+msgstr "Approuvé partiellement"
+
+msgid "incl. VAT"
+msgstr "inc. TVA"
+
+msgid "Item price"
+msgstr "Prix de la pièce"
+
+msgid "State"
+msgstr "Etat"
+
+msgid "State of Request"
+msgstr "Etat de la requête"
+
+msgid "Move to another group"
+msgstr "Déplacer dans un autre groupe"
+
+msgid "Move to another budget period"
+msgstr "Déplacer à une autre période de budget"
+
+msgid "Point of Delivery"
+msgstr "Point de livraison"
+
+msgid "max 255 characters"
+msgstr "max. 255 caractères"
+
+msgid "Article or Project"
+msgstr "Article ou projet"
+
+msgid "Procurement"
+msgstr "Approvisionnement"
+
+msgid "Inquiry to procurement request"
+msgstr "Enquête sur la demande d'approvisionnement"
+
+msgid "Article nr. or Producer nr."
+msgstr "Article n° ou Producteur n°"
+
+msgid "Replacement"
+msgstr "Remplacement"
+
+msgid "Choose an article/project"
+msgstr "Choisir un article/projet"
+
+msgid "Choose an article or a category"
+msgstr "Choisir un article ou une catégorie"
+
+msgid "Request moved"
+msgstr "Requête déplacée"
+
+msgid "Mandatory"
+msgstr "Obligatoire"
+
+msgid "High"
+msgstr "Haut"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Medium"
+msgstr "Moyen"
+
+msgid "Low"
+msgstr "Bas"
+
+msgid "Are you sure you want to delete '%s'?"
+msgstr "Etes-vous sûr de vouloir supprimer '%s' ?"
+
+msgid "Type in a search term"
+msgstr "Entrer un terme de recherche"
+
+msgid "No results"
+msgstr "Aucun résultat"
+
+msgid "Searching..."
+msgstr "Recherche en cours..."
+
+msgid "must be greater or equal to the inspection start date"
+msgstr "doit être supérieur ou égal à la date de début d'inspection"
+
+msgid "Check invalid fields"
+msgstr "Il existe des champs invalides"
+
+msgid "Name of the requester"
+msgstr "Nom du demandeur"
+
+msgid "Add article for specific group"
+msgstr "Ajouter un article pour le groupe spécifique"
+
+msgid "You have unsaved data. Would you like to delete the data?"
+msgstr ""
+"Vous avez des données non-sauvegardées. Voulez-vous supprimer celle-ci ?"
+
+msgid "Special filters"
+msgstr "Filtres spéciaux"
+
+msgid "Only my own requests"
+msgstr "Seulement mes propres requêtes"
+
+msgid "Only my own categories"
+msgstr "Seulement mes propres catégories"
+
+msgid "Only categories with requests"
+msgstr "Seulement les catégories avec requêtes"
+
+msgid "New line (Add Article or Project)"
+msgstr "Nouvelle ligne (Ajouter un article ou un projet)"
+
+msgid "Create request for this category"
+msgstr "Créer une requête pour cette catégorie"
+
+msgid "Create request for another user"
+msgstr "Créer une requête pour un autre utilisateur"
+
+msgid "Select all"
+msgstr "Sélectionner tout"
+
+msgid "None selected"
+msgstr "Aucun sélectionné"
+
+msgid "All selected"
+msgstr "Tout sélectionné"
+
+msgid "selected"
+msgstr "sélectionné"
+
+msgid "You are not authorized for this action."
+msgstr "Vous n'avez pas l'autorisation pour cette action."
+
+msgid "Current budget period not defined yet"
+msgstr "Aucune période de budget actuel n'a encore été définie"
+
+msgid "No categories defined yet"
+msgstr "Aucune catégorie n'a encore été définie"
+
+msgid "No admins defined yet"
+msgstr "Aucun admin n'a encore été défini"
+
+msgid "No requesters defined yet"
+msgstr "Aucun demandeur n'a encore été défini"
+
+msgid "Create new budget period"
+msgstr "Créer une nouvelle période de budget"
+
+msgid "Total of all requests in state \"New\""
+msgstr "Total des requêtes avec l'état \"Nouveau\""
+
+msgid "Total of all approved requests"
+msgstr "Total des requêtes approuvées"
+
+msgid "Create request by choosing an article or project"
+msgstr "Créer une requête en choisissant un article ou un projet"
+
+msgid "Current total of budget period"
+msgstr "Total actuel de la période de budget"
+
+msgid "Current total of category"
+msgstr "Total actuel de la catégorie"
+
+msgid "Current total of selected requests"
+msgstr "Total actuel des requêtes sélectionnées"
+
+msgid "% used (category limit - total of selected requests)"
+msgstr "% utilisé (limite de catégorie - total des requêtes sélectionnées)"
+
+msgid "Add new article to category"
+msgstr "Ajouter un nouvel article à une catégorie"
+
+msgid "Delete category with all it's articles/projects"
+msgstr "Supprimer une catégorie avec tous ses articles/projets"
+
+msgid "Add new requester"
+msgstr "Ajouter un nouveau demandeur"
+
+msgid "Main category"
+msgstr "Catégorie principale"
+
+msgid "Subcategory"
+msgstr "Sous-catégorie"
+
+msgid "Subcategories"
+msgstr "Sous-catégories"
+
+msgid "Add new main category"
+msgstr "Ajouter une nouvelle catégorie principale"
+
+msgid "Add new subcategory"
+msgstr "Ajouter une nouvelle sous-catégorie"
+
+msgid "Delete main category"
+msgstr "Supprimer une catégorie principale"
+
+msgid "Delete subcategory"
+msgstr "Supprimer une sous-catégorie"
+
+msgid "Choose a suggested article or a category"
+msgstr "Choisissez un article suggéré ou une catégorie"
+
+msgid ""
+"You do not have the responsibility to lend this item. Responsible for this "
+"item is the pool \"%s\"."
+msgstr ""
+"Vous ne pouvez pas prêter cet élément. Le groupe responsable de celui-ci "
+"est  \"%s\"."
+
+msgid "First admin user"
+msgstr "Premier utilisateur admin"
+
+msgid ""
+"First admin user has been created. Default database authentication system "
+"has been configured."
+msgstr ""
+"Le premier utilisateur admin a été créé. Le système d'authentification de "
+"base de donnée par défaut a été configuré."
+
+msgid "Authentication System"
+msgstr "Système d'authentification"
+
+msgid "Authentication Systems"
+msgstr "Systèmes d'authentification"
+
+msgid "List of Authentication Systems"
+msgstr "Liste des systèmes d'authentification"
+
+msgid "Same or similar serial number already exists."
+msgstr "Un numéro de série semblable existe déjà."
+
+msgid "Active"
 msgstr "Actif"
 
+msgid "active"
+msgstr "actif"
+
+msgid "inactive"
+msgstr "inactif"
+
+msgid "admin_active"
+msgstr "admin_actif"
+
 msgid "admin_inactive"
-msgstr "Inactif"
+msgstr "admin_inactif"
 
 msgid "admin_all"
-msgstr "Tous"
+msgstr "admin_tous"
+
+msgid ""
+"Inventory pool can't be deactivated due to existing orders or signed "
+"contracts."
+msgstr ""
+"Le groupe d'inventaire ne peut être désactivé, car il existe des commandes "
+"ou des contrats signés."
+
+msgid ""
+"Inventory pool can't be deactivated due to existing items which are not yet "
+"retired."
+msgstr ""
+"Le groupe d'inventaire ne peut être désactivé, car il existe des éléments "
+"actifs."
+
+msgid "Action"
+msgstr "Action"
+
+msgid "Entity"
+msgstr "Entité"
+
+msgid ""
+"Upload a comma separated CSV file (with UTF-8 encoding), each row describing "
+"an item."
+msgstr ""
+"Uploader un fichier CSV séparé par des virgules (encodage UTF-8), chaque "
+"ligne décrit un élément."
+
+msgid "Accepted columns"
+msgstr "Colonnes acceptées"
+
+msgid "required"
+msgstr "requis"
+
+msgid "All other columns are ignored."
+msgstr "Toutes les autres colonnes sont ignorées."
+
+msgid "or"
+msgstr "ou"
+
+msgid "Insert a default comment"
+msgstr "Insérer un commentaire par défaut"
+
+msgid "1 value per line, blank lines ignored"
+msgstr "1 valeur par ligne, les lignes vides sont ignorées"
+
+msgid "accounting type"
+msgstr "Type de comptabilité"
+
+msgid "internal order"
+msgstr "commande interne"
+
+msgid "general ledger account"
+msgstr "compte du grand livre"
+
+msgid "cost center"
+msgstr "centre de coût"
+
+msgid "investment"
+msgstr "investissement"
+
+msgid "aquisition"
+msgstr "acquisition"
+
+msgid "Accounts"
+msgstr "Comptes"
+
+msgid "(unknown)"
+msgstr "(inconnu)"
+
+msgid "Languages"
+msgstr "Langues"
+
+msgid "List of Languages"
+msgstr "Liste des langues"
+
+msgid "Update"
+msgstr "Mise à jour"
+
+msgid "Fields have been updated successfully."
+msgstr "Les champs ont été actualisé."
 
 msgid "Refresh Page"
 msgstr "Rafraîchir la page"
 
+msgid "is not a valid URL"
+msgstr "n’est pas une URL valide"
+
+msgid "is not a HTTP(S) URL"
+msgstr "n’est pas une URL HTTP(S)"
+
+msgid "all models"
+msgstr "tous les modèles"
+
+msgid "only models with items"
+msgstr "seul les modèles avec éléments"
+
+msgid "only models without items"
+msgstr "seul les modèles sans éléments"
+
 msgid "Only enter whole numbers"
 msgstr "Entrez uniquement des nombres entiers"
+
+msgid "No orders are possible on this end date"
+msgstr "Aucune commande n'est possible pour cette date de fin"
+
+msgid ""
+"The readonly attributes are managed through settings.yml file. More "
+"information is "
+msgstr ""
+"Les attributs de lecture seul sont géré via le fichier settings.yml. Plus "
+"d'information est"
+
+msgid "You are suspended for this inventory pool"
+msgstr "L'utilisateur a été suspendu pour ce groupe d'inventaire"
+
+msgid "Does not have any borrowable items"
+msgstr "N'a pas d'éléments empruntables"
+
+msgid ""
+"These mail templates are copied for a new inventory pool when it is created."
+msgstr ""
+"Ces gabarits d'email sont copiés pour un nouveau groupe d'inventaire à la "
+"création."
 
 msgid "User does not have access to inventory pool: %s"
 msgstr "L'utilisateur n'a pas accès à l'inventaire: %s"
@@ -3089,514 +3581,59 @@ msgstr "L'utilisateur a été suspendu pour cette inventaires: %s"
 msgid "An order can not have multiple delegated users."
 msgstr "Un ordre ne peut pas avoir plusieurs utilisateurs délégués."
 
-#~ msgid "Organisations of the requesters"
-#~ msgstr "Organisations selon la liste des demandeurs"
+msgid "click here to reload"
+msgstr "cliquer ici pour recharger"
 
-#~ msgid "Administrators"
-#~ msgstr "Administrateurs"
+msgid "Does not have any reservable items"
+msgstr "N'a pas d'éléments réservables"
 
-#~ msgid "Save anyway"
-#~ msgstr "Sauver tout de même"
+msgid "Item was not saved"
+msgstr "L'élément n'a pas été sauvé"
 
-#~ msgid "Borrowed until"
-#~ msgstr "Emprunté jusqu'au"
+msgid "Item was saved."
+msgstr "L'élément a été sauvé."
 
-#~ msgid "Building together with a general room successfully created"
-#~ msgstr "Bâtiment avec une salle générale créée avec succès"
+msgid "Please select an item."
+msgstr "Veuillez sélectionner un élément."
 
-#~ msgid "CSV import"
-#~ msgstr "Importer un CSV"
+msgid "Unexpected error."
+msgstr "Erreur inattendue."
 
-#~ msgid "Accepted columns: "
-#~ msgstr "Colonnes acceptées: "
+msgid "use barcode scanner to assign fields to item immediately"
+msgstr ""
+"utiliser le scanner de code barre pour assigner des champs à un élément "
+"immédiatement"
 
-#~ msgid "All other columns are ignored."
-#~ msgstr "Toutes les autres colonnes sont ignorées."
+msgid "or search for item"
+msgstr "ou chercher l'élément"
 
-#~ msgid "Import"
-#~ msgstr "Importer"
+msgid "and assign fields"
+msgstr "et les champs assignés"
 
-#~ msgid "Export"
-#~ msgstr "Exporter"
+msgid "Enable"
+msgstr "Activer"
 
-#~ msgid ""
-#~ "Upload a comma separated CSV file (with UTF-8 encoding), each row "
-#~ "describing an item."
-#~ msgstr ""
-#~ "Uploader un fichier CSV séparé par des virgules (encodage UTF-8), chaque "
-#~ "ligne décrit un élément."
+msgid "Disable"
+msgstr "Désactiver"
 
-#~ msgid "Excel export"
-#~ msgstr "Export Excel"
+msgid "enabled"
+msgstr "activé"
 
-#~ msgid "Delete line"
-#~ msgstr "Supprimer la ligne"
+msgid "disabled"
+msgstr "désactivé"
 
-#~ msgid "Item saved"
-#~ msgstr "Elément sauvé"
+msgid "for licenses"
+msgstr "pour les licences"
 
-#~ msgid "Hand Over Purpose"
-#~ msgstr "Motif pour la transmission"
+msgid "for items"
+msgstr "pour les éléments"
 
-#~ msgid "Checked before"
-#~ msgstr "Vérifé avant le"
+msgid ""
+"Allocations in other groups considered - still available quantity of "
+"borrowable and not retired items"
+msgstr ""
+"Allocations dans d'autres groupes considérés - quantité encore disponible "
+"d'éléments empruntables et non retirés"
 
-#~ msgid "List of %s"
-#~ msgstr "Liste de %s"
-
-#~ msgid "List of Rooms"
-#~ msgstr "Liste des salles"
-
-#~ msgid "Not categorized"
-#~ msgstr "Non-catégorisé"
-
-#~ msgid "Quantities"
-#~ msgstr "Quantités"
-
-#~ msgid "Contact"
-#~ msgstr "Contact"
-
-#~ msgid "No orders are possible on this start date"
-#~ msgstr "Aucune commande n'est possible pour cette date de début"
-
-#~ msgid "Booking is no longer possible on this start date"
-#~ msgstr "Les réservations ne sont plus possible pour cette date de début"
-
-#~ msgid "Booking is no longer possible on this end date"
-#~ msgstr "Les réservations ne sont plus possible pour cette date de fin"
-
-#~ msgid "Inventory managers"
-#~ msgstr "Gestionnaires d'inventaire"
-
-#~ msgid "New"
-#~ msgstr "Nouveau"
-
-#~ msgid "Returns"
-#~ msgstr "Retours"
-
-#~ msgid "%s room"
-#~ msgid_plural "%s rooms"
-#~ msgstr[0] "%s salle"
-#~ msgstr[1] "%s salles"
-
-#~ msgid "Product"
-#~ msgstr "Produit"
-
-#~ msgid "Min. number of days between order and hand over"
-#~ msgstr "Min. de jours entre une commande et une transmission"
-
-#~ msgid "Which item is busiest?"
-#~ msgstr "Quel élément est le plus utilisé ?"
-
-#~ msgid "Which inventory pool has the most contracts?"
-#~ msgstr "Quel groupe d'inventaire a le plus de contrats ?"
-
-#~ msgid "Currency"
-#~ msgstr "Monnaie"
-
-#~ msgid "Field"
-#~ msgstr "Champ"
-
-#~ msgid "Show all fields"
-#~ msgstr "Afficher tous les champs"
-
-#~ msgid "Reset visibility of all fields on the item forms"
-#~ msgstr "Réinitialiser la visibilité de tous les champs des formulaires"
-
-#~ msgid "Hide this field from all item forms"
-#~ msgstr "Cacher ce champ de tous les formulaires"
-
-#~ msgid "last used +1"
-#~ msgstr "dernier utilisé +1"
-
-#~ msgid "fill up gaps"
-#~ msgstr "combler les vides"
-
-#~ msgid "assign highest available"
-#~ msgstr "attribuer le plus élevée disponible"
-
-#~ msgid "Swap Model"
-#~ msgstr "Echanger le modèle"
-
-#~ msgid "Budget limits"
-#~ msgstr "Limites de budget"
-
-#~ msgid "Budget period"
-#~ msgstr "Période de budget"
-
-#~ msgid "Budget periods"
-#~ msgstr "Périodes de budget"
-
-#~ msgid "Budget period end date"
-#~ msgstr "Date de fin de la période de budget"
-
-#~ msgid "The budget period is closed"
-#~ msgstr "La période de budget est fermée"
-
-#~ msgid "requesting phase until %s"
-#~ msgstr "phase de demande jusqu'au %s"
-
-#~ msgid "inspection phase until %s"
-#~ msgstr "phase d'inspection jusqu'au %s"
-
-#~ msgid "Model name"
-#~ msgstr "Nom du modèle"
-
-#~ msgid "Requested quantity"
-#~ msgstr "Quantité demandée"
-
-#~ msgid "Approved quantity"
-#~ msgstr "Quantité approuvée"
-
-#~ msgid "Order quantity"
-#~ msgstr "Quantité de la commande"
-
-#~ msgid "Requests"
-#~ msgstr "Requêtes"
-
-#~ msgid "Template Categories"
-#~ msgstr "Catégories de gabarit"
-
-#~ msgid "Edit templates"
-#~ msgstr "Editer des gabarit"
-
-#~ msgid "Requester"
-#~ msgstr "Demandeur"
-
-#~ msgid "Requesters"
-#~ msgstr "Demandeurs"
-
-#~ msgid "Not a requester"
-#~ msgstr "N'est pas un demandeur"
-
-#~ msgid "My groups"
-#~ msgstr "Mes groupes"
-
-#~ msgid "My requests"
-#~ msgstr "Mes requêtes"
-
-#~ msgid "Motivation"
-#~ msgstr "Motif"
-
-#~ msgid "Inspectors"
-#~ msgstr "Inspecteur"
-
-#~ msgid "Inspection"
-#~ msgstr "Inspection"
-
-#~ msgid "Inspection comment"
-#~ msgstr "Commentaire de l'inspection"
-
-#~ msgid "Inspection start date"
-#~ msgstr "Date de début de l'inspection"
-
-#~ msgid "Priority"
-#~ msgstr "Priorité"
-
-#~ msgid "Inspector's priority"
-#~ msgstr "Priorité de l'inspecteur"
-
-#~ msgid "Name of receiver"
-#~ msgstr "Nom du destinataire"
-
-#~ msgid "Organisation"
-#~ msgstr "Organisation"
-
-#~ msgid "Organisations"
-#~ msgstr "Organisations"
-
-#~ msgid "Organisation unit"
-#~ msgstr "Unité d'organisation"
-
-#~ msgid "Department"
-#~ msgstr "Département"
-
-#~ msgid "Attachment"
-#~ msgstr "Pièce jointe"
-
-#~ msgid "In inspection"
-#~ msgstr "En inspection"
-
-#~ msgid "Denied"
-#~ msgstr "Refusé"
-
-#~ msgid "Partially approved"
-#~ msgstr "Approuvé partiellement"
-
-#~ msgid "incl. VAT"
-#~ msgstr "inc. TVA"
-
-#~ msgid "Item price"
-#~ msgstr "Prix de la pièce"
-
-#~ msgid "State"
-#~ msgstr "Etat"
-
-#~ msgid "State of Request"
-#~ msgstr "Etat de la requête"
-
-#~ msgid "Move to another group"
-#~ msgstr "Déplacer dans un autre groupe"
-
-#~ msgid "Move to another budget period"
-#~ msgstr "Déplacer à une autre période de budget"
-
-#~ msgid "Point of Delivery"
-#~ msgstr "Point de livraison"
-
-#~ msgid "max 255 characters"
-#~ msgstr "max. 255 caractères"
-
-#~ msgid "Article or Project"
-#~ msgstr "Article ou projet"
-
-#~ msgid "Procurement"
-#~ msgstr "Approvisionnement"
-
-#~ msgid "Inquiry to procurement request"
-#~ msgstr "Enquête sur la demande d'approvisionnement"
-
-#~ msgid "Article nr. or Producer nr."
-#~ msgstr "Article n° ou Producteur n°"
-
-#~ msgid "Replacement"
-#~ msgstr "Remplacement"
-
-#~ msgid "Choose an article/project"
-#~ msgstr "Choisir un article/projet"
-
-#~ msgid "Choose an article or a category"
-#~ msgstr "Choisir un article ou une catégorie"
-
-#~ msgid "Request moved"
-#~ msgstr "Requête déplacée"
-
-#~ msgid "Mandatory"
-#~ msgstr "Obligatoire"
-
-#~ msgid "High"
-#~ msgstr "Haut"
-
-#~ msgid "Normal"
-#~ msgstr "Normal"
-
-#~ msgid "Medium"
-#~ msgstr "Moyen"
-
-#~ msgid "Low"
-#~ msgstr "Bas"
-
-#~ msgid "Are you sure you want to delete '%s'?"
-#~ msgstr "Etes-vous sûr de vouloir supprimer '%s' ?"
-
-#~ msgid "Type in a search term"
-#~ msgstr "Entrer un terme de recherche"
-
-#~ msgid "No results"
-#~ msgstr "Aucun résultat"
-
-#~ msgid "Searching..."
-#~ msgstr "Recherche en cours..."
-
-#~ msgid "must be greater or equal to the inspection start date"
-#~ msgstr "doit être supérieur ou égal à la date de début d'inspection"
-
-#~ msgid "Check invalid fields"
-#~ msgstr "Il existe des champs invalides"
-
-#~ msgid "Name of the requester"
-#~ msgstr "Nom du demandeur"
-
-#~ msgid "Add article for specific group"
-#~ msgstr "Ajouter un article pour le groupe spécifique"
-
-#~ msgid "You have unsaved data. Would you like to delete the data?"
-#~ msgstr ""
-#~ "Vous avez des données non-sauvegardées. Voulez-vous supprimer celle-ci ?"
-
-#~ msgid "Special filters"
-#~ msgstr "Filtres spéciaux"
-
-#~ msgid "Only my own requests"
-#~ msgstr "Seulement mes propres requêtes"
-
-#~ msgid "Only my own categories"
-#~ msgstr "Seulement mes propres catégories"
-
-#~ msgid "Only categories with requests"
-#~ msgstr "Seulement les catégories avec requêtes"
-
-#~ msgid "New line (Add Article or Project)"
-#~ msgstr "Nouvelle ligne (Ajouter un article ou un projet)"
-
-#~ msgid "Create request for this category"
-#~ msgstr "Créer une requête pour cette catégorie"
-
-#~ msgid "Create request for another user"
-#~ msgstr "Créer une requête pour un autre utilisateur"
-
-#~ msgid "Select all"
-#~ msgstr "Sélectionner tout"
-
-#~ msgid "None selected"
-#~ msgstr "Aucun sélectionné"
-
-#~ msgid "All selected"
-#~ msgstr "Tout sélectionné"
-
-#~ msgid "selected"
-#~ msgstr "sélectionné"
-
-#~ msgid "You are not authorized for this action."
-#~ msgstr "Vous n'avez pas l'autorisation pour cette action."
-
-#~ msgid "Current budget period not defined yet"
-#~ msgstr "Aucune période de budget actuel n'a encore été définie"
-
-#~ msgid "No categories defined yet"
-#~ msgstr "Aucune catégorie n'a encore été définie"
-
-#~ msgid "No admins defined yet"
-#~ msgstr "Aucun admin n'a encore été défini"
-
-#~ msgid "No requesters defined yet"
-#~ msgstr "Aucun demandeur n'a encore été défini"
-
-#~ msgid "Create new budget period"
-#~ msgstr "Créer une nouvelle période de budget"
-
-#~ msgid "Total of all requests in state \"New\""
-#~ msgstr "Total des requêtes avec l'état \"Nouveau\""
-
-#~ msgid "Total of all approved requests"
-#~ msgstr "Total des requêtes approuvées"
-
-#~ msgid "Create request by choosing an article or project"
-#~ msgstr "Créer une requête en choisissant un article ou un projet"
-
-#~ msgid "Current total of budget period"
-#~ msgstr "Total actuel de la période de budget"
-
-#~ msgid "Current total of category"
-#~ msgstr "Total actuel de la catégorie"
-
-#~ msgid "Current total of selected requests"
-#~ msgstr "Total actuel des requêtes sélectionnées"
-
-#~ msgid "% used (category limit - total of selected requests)"
-#~ msgstr "% utilisé (limite de catégorie - total des requêtes sélectionnées)"
-
-#~ msgid "Add new article to category"
-#~ msgstr "Ajouter un nouvel article à une catégorie"
-
-#~ msgid "Delete category with all it's articles/projects"
-#~ msgstr "Supprimer une catégorie avec tous ses articles/projets"
-
-#~ msgid "Add new requester"
-#~ msgstr "Ajouter un nouveau demandeur"
-
-#~ msgid "Main category"
-#~ msgstr "Catégorie principale"
-
-#~ msgid "Subcategory"
-#~ msgstr "Sous-catégorie"
-
-#~ msgid "Subcategories"
-#~ msgstr "Sous-catégories"
-
-#~ msgid "Add new main category"
-#~ msgstr "Ajouter une nouvelle catégorie principale"
-
-#~ msgid "Add new subcategory"
-#~ msgstr "Ajouter une nouvelle sous-catégorie"
-
-#~ msgid "Delete main category"
-#~ msgstr "Supprimer une catégorie principale"
-
-#~ msgid "Delete subcategory"
-#~ msgstr "Supprimer une sous-catégorie"
-
-#~ msgid "Choose a suggested article or a category"
-#~ msgstr "Choisissez un article suggéré ou une catégorie"
-
-#~ msgid ""
-#~ "You do not have the responsibility to lend this item. Responsible for "
-#~ "this item is the pool \"%s\"."
-#~ msgstr ""
-#~ "Vous ne pouvez pas prêter cet élément. Le groupe responsable de celui-ci "
-#~ "est  \"%s\"."
-
-#~ msgid "First admin user"
-#~ msgstr "Premier utilisateur admin"
-
-#~ msgid ""
-#~ "First admin user has been created. Default database authentication system "
-#~ "has been configured."
-#~ msgstr ""
-#~ "Le premier utilisateur admin a été créé. Le système d'authentification de "
-#~ "base de donnée par défaut a été configuré."
-
-#~ msgid "Authentication System"
-#~ msgstr "Système d'authentification"
-
-#~ msgid "Authentication Systems"
-#~ msgstr "Systèmes d'authentification"
-
-#~ msgid "List of Authentication Systems"
-#~ msgstr "Liste des systèmes d'authentification"
-
-#~ msgid "Same or similar serial number already exists."
-#~ msgstr "Un numéro de série semblable existe déjà."
-
-#~ msgid "Active"
-#~ msgstr "Actif"
-
-#~ msgid "active"
-#~ msgstr "actif"
-
-#~ msgid "inactive"
-#~ msgstr "inactif"
-
-#~ msgid ""
-#~ "Inventory pool can't be deactivated due to existing orders or signed "
-#~ "contracts."
-#~ msgstr ""
-#~ "Le groupe d'inventaire ne peut être désactivé, car il existe des "
-#~ "commandes ou des contrats signés."
-
-#~ msgid ""
-#~ "Inventory pool can't be deactivated due to existing items which are not "
-#~ "yet retired."
-#~ msgstr ""
-#~ "Le groupe d'inventaire ne peut être désactivé, car il existe des éléments "
-#~ "actifs."
-
-#~ msgid "Startdate"
-#~ msgstr "Date de début"
-
-#~ msgid "Enddate"
-#~ msgstr "Date de fin"
-
-#~ msgid "Languages"
-#~ msgstr "Langues"
-
-#~ msgid "List of Languages"
-#~ msgstr "Liste des langues"
-
-#~ msgid "In list"
-#~ msgstr "Dans la liste"
-
-#~ msgid "required"
-#~ msgstr "requis"
-
-#~ msgid "is not a valid URL"
-#~ msgstr "n’est pas une URL valide"
-
-#~ msgid "is not a HTTP(S) URL"
-#~ msgstr "n’est pas une URL HTTP(S)"
-
-#~ msgid "Invalid date"
-#~ msgstr "Date non valide"
-
-#~ msgid "Start and end date cannot be in the past"
-#~ msgstr "Date de début et de fin ne peut pas être dans le passé"
+msgid "Total quantity of borrowable and not retired items"
+msgstr "Quantité totale d'éléments empruntables et non retirés"
