@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::Base
   include MainHelpers
 
+  if Rails.env.production?
+    helper_method(:sign_in_path, :sign_out_path)
+  end
+
   layout 'splash'
 
   # FIXME: workaround for this bug:

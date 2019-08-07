@@ -111,9 +111,6 @@ module MainHelpers
     def sign_out_path
       '/sign-out'
     end
-
-    helper_method(:sign_in_path,
-                  :sign_out_path)
   end
 
 end
